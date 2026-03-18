@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Quest App">
 <meta name="theme-color" content="#7C5CBF">
 <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;rect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;22&#39; fill=&#39;%237C5CBF&#39;/&gt;&lt;text y=&#39;.9em&#39; font-size=&#39;72&#39; x=&#39;50%&#39; text-anchor=&#39;middle&#39;&gt;%E2%9A%94%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;">
-<link href="./Daily_Adventure_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -176,6 +176,18 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   background:var(--green);color:#fff;border-radius:10px;padding:1px 5px;font-weight:800}
 .shop-equipped-badge{position:absolute;top:4px;right:4px;font-size:.6rem;
   background:var(--purple);color:#fff;border-radius:10px;padding:1px 5px;font-weight:800}
+.shop-item.streak-locked{opacity:.75;background:#F8F8F0;border-color:#FFD93D}
+.shop-item.streak-locked:hover{transform:none;border-color:#FFD93D;background:#F8F8F0}
+.streak-lock-badge{font-family:'Fredoka One',cursive;font-size:.65rem;color:#c08000;
+  background:#fff8d0;border-radius:8px;padding:2px 5px;border:1px solid #FFD93D;
+  display:block;margin-top:2px}
+.milestone-banner{background:linear-gradient(135deg,#FF6B35,#FFD93D);
+  border-radius:14px;padding:10px 14px;margin-bottom:12px;
+  display:none;align-items:center;gap:10px;box-shadow:0 3px 0 rgba(200,100,0,.3)}
+.milestone-banner.show{display:flex}
+.milestone-banner-text{font-family:'Fredoka One',cursive;font-size:.82rem;color:#fff;flex:1;line-height:1.3}
+.milestone-banner-days{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#fff;
+  background:rgba(0,0,0,.15);border-radius:10px;padding:2px 10px;white-space:nowrap}
 
 /* PET CARD (quest view) */
 .pet-card{background:var(--card);border-radius:20px;padding:14px 16px;margin-bottom:14px;
@@ -690,14 +702,14 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 </div>
 
 <!-- PIN OVERLAY -->
-<div id="pin-overlay">
+<div id="pin-overlay" class="">
   <div class="pin-box">
     <div class="pin-title">🔐 Parent Access</div>
     <div class="pin-subtitle" id="pin-subtitle">Enter your 4-digit PIN</div>
     <div class="pin-setup-step" id="pin-setup-step" style="display:none"></div>
     <div class="pin-dots" id="pin-dots">
-      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
-      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot filled" id="pd0"></div><div class="pin-dot filled" id="pd1"></div>
+      <div class="pin-dot filled" id="pd2"></div><div class="pin-dot filled" id="pd3"></div>
     </div>
     <div class="pin-error-msg" id="pin-error"></div>
     <div class="pin-keypad">
@@ -713,7 +725,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
       <button class="pin-key" onclick="pinKey(&#39;0&#39;)" style="grid-column:2">0</button>
       <button class="pin-key del" onclick="pinDel()">⌫</button>
     </div>
-    <button class="pin-cancel" id="pin-cancel-btn" onclick="closePinOverlay()">Cancel</button>
+    <button class="pin-cancel" id="pin-cancel-btn" onclick="closePinOverlay()" style="display: block;">Cancel</button>
   </div>
 </div>
 
@@ -761,7 +773,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 </div>
 
 <!-- ══════ QUEST VIEW ══════ -->
-<div id="quest-view" class="view active">
+<div id="quest-view" class="view">
   <div class="app-header">
     <div class="header-left">
       <div class="hero-avatar-badge" id="header-avatar">🦄</div>
@@ -776,6 +788,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   <div class="streak-danger" id="streak-danger">
     <span style="font-size:1.5rem">🔥</span>
     <div class="streak-danger-text" id="streak-danger-text">Your streak is on fire! Don't let it go out!</div>
+  </div>
+  <div class="milestone-banner" id="milestone-banner">
+    <span style="font-size:1.5rem">🏆</span>
+    <div class="milestone-banner-text" id="milestone-banner-text">Keep going!</div>
+    <div class="milestone-banner-days" id="milestone-banner-days">Xd</div>
   </div>
 
   <div class="grace-bar" id="grace-bar">
@@ -801,7 +818,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
       </div>
       <div class="pet-level" id="pet-level">Lv.1 · 0/50 XP</div>
       <div class="pet-xp-bar-wrap"><div class="pet-xp-bar" id="pet-xp-bar" style="width:0%"></div></div>
-      <div class="pet-speech" id="pet-speech">"I believe in you! Start a quest!"</div>
+      <div class="pet-speech" id="pet-speech">"The adventure begins when you try! ⚔️"</div>
     </div>
   </div>
 
@@ -981,7 +998,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 </div>
 
 <!-- ══════ PARENT VIEW ══════ -->
-<div id="parent-view" class="view">
+<div id="parent-view" class="view active">
   <div class="app-header">
     <span class="app-title" style="color:var(--yellow)">🛡️ Parent HQ</span>
     <button class="hbtn" onclick="navTo(&#39;quest-view&#39;)">← Back</button>
@@ -995,20 +1012,324 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   <div class="parent-section active" id="tab-quests">
     <div class="settings-card">
       <h3>📅 Weekly Quest Planner</h3>
-      <div class="day-tabs" id="day-tabs"></div>
+      <div class="day-tabs" id="day-tabs"><button class="day-tab" data-day="Monday">🔴 Mon<span class="tab-count">8</span></button><button class="day-tab" data-day="Tuesday">🟠 Tue<span class="tab-count">9</span></button><button class="day-tab active" data-day="Wednesday">🔵 Wed<span class="tab-count">8</span></button><button class="day-tab" data-day="Thursday">🟣 Thu<span class="tab-count">9</span></button><button class="day-tab" data-day="Friday">🩵 Fri<span class="tab-count">7</span></button><button class="day-tab" data-day="Saturday">🩷 Sat<span class="tab-count">7</span></button><button class="day-tab" data-day="Sunday">🟡 Sun<span class="tab-count">7</span></button></div>
       <div class="task-list-hdr">
-        <span class="active-day-lbl" id="active-day-lbl">Monday's Quests</span>
-        <button class="sync-btn" id="sync-btn" onclick="syncToAllDays()" style="display:none">✨ Sync to All Days</button>
+        <span class="active-day-lbl" id="active-day-lbl"><span style="color:#54A0FF">🔵 Wednesday's Quests</span></span>
+        <button class="sync-btn" id="sync-btn" onclick="syncToAllDays()" style="display: none;">✨ Sync to All Days</button>
       </div>
       <div style="font-family:&#39;Fredoka One&#39;,cursive;font-size:.85rem;color:var(--dark);margin-bottom:8px;display:flex;align-items:center;gap:6px">
         ⚔️ Daily Tasks <span style="font-size:.7rem;font-weight:700;color:#aaa;font-family:&#39;Nunito&#39;,sans-serif">(affect streak)</span>
       </div>
-      <div id="parent-task-list"></div>
+      <div id="parent-task-list"><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="Homework" placeholder="Quest name..." oninput="updTask(0,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="25" oninput="updTask(0,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(0,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(0,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy">🟢 Easy</option>
+          <option value="medium" selected="">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(0,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-0d" style="display:block">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-0d">
+    <div class="step-edit-row">
+      <input type="text" value="Start" placeholder="Step 1..." oninput="updStep(0,0,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(0,0,false)">✕</button>
+    </div>
+    <div class="step-edit-row">
+      <input type="text" value="Spelling" placeholder="Step 2..." oninput="updStep(0,1,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(0,1,false)">✕</button>
+    </div>
+    <div class="step-edit-row">
+      <input type="text" value="Math" placeholder="Step 3..." oninput="updStep(0,2,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(0,2,false)">✕</button>
+    </div>
+    <div class="step-edit-row">
+      <input type="text" value="Into the satchel " placeholder="Step 4..." oninput="updStep(0,3,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(0,3,false)">✕</button>
+    </div>
+    <div class="step-edit-row">
+      <input type="text" value="Satchel in bag" placeholder="Step 5..." oninput="updStep(0,4,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(0,4,false)">✕</button>
+    </div>
+    <div class="step-edit-row">
+      <input type="text" value="Finish" placeholder="Step 6..." oninput="updStep(0,5,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(0,5,false)">✕</button>
+    </div></div>
+      <button class="add-step-btn" onclick="addStep(0,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-0d&#39;)">
+        ▲ Hide steps
+      </button>
+    </div></div><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="Packing School Bag" placeholder="Quest name..." oninput="updTask(1,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="10" oninput="updTask(1,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(1,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(1,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy" selected="">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(1,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-1d" style="display:none">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-1d"></div>
+      <button class="add-step-btn" onclick="addStep(1,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-1d&#39;)">
+        📋 Add sub-steps
+      </button>
+    </div></div><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="Swimming" placeholder="Quest name..." oninput="updTask(2,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="45" oninput="updTask(2,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(2,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(2,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard" selected="">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(2,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-2d" style="display:none">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-2d"></div>
+      <button class="add-step-btn" onclick="addStep(2,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-2d&#39;)">
+        📋 Add sub-steps
+      </button>
+    </div></div><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="BA Guide" placeholder="Quest name..." oninput="updTask(3,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="35" oninput="updTask(3,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(3,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(3,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy">🟢 Easy</option>
+          <option value="medium" selected="">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(3,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-3d" style="display:block">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-3d">
+    <div class="step-edit-row">
+      <input type="text" value="Read" placeholder="Step 1..." oninput="updStep(3,0,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(3,0,false)">✕</button>
+    </div>
+    <div class="step-edit-row">
+      <input type="text" value="Notebook" placeholder="Step 2..." oninput="updStep(3,1,this.value,false)">
+      <button class="step-del-btn" onclick="delStep(3,1,false)">✕</button>
+    </div></div>
+      <button class="add-step-btn" onclick="addStep(3,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-3d&#39;)">
+        ▲ Hide steps
+      </button>
+    </div></div><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="AWA" placeholder="Quest name..." oninput="updTask(4,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="15" oninput="updTask(4,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(4,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(4,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard" selected="">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(4,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-4d" style="display:none">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-4d"></div>
+      <button class="add-step-btn" onclick="addStep(4,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-4d&#39;)">
+        📋 Add sub-steps
+      </button>
+    </div></div><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="Duo" placeholder="Quest name..." oninput="updTask(5,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="15" oninput="updTask(5,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(5,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(5,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy" selected="">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(5,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-5d" style="display:none">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-5d"></div>
+      <button class="add-step-btn" onclick="addStep(5,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-5d&#39;)">
+        📋 Add sub-steps
+      </button>
+    </div></div><div class="task-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">Quest Name</div>
+        <input type="text" value="French" placeholder="Quest name..." oninput="updTask(6,&#39;name&#39;,this.value,false)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="10" oninput="updTask(6,&#39;duration&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(6,&#39;weight&#39;,+this.value,false)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(6,&#39;difficulty&#39;,this.value,false)">
+          <option value="easy" selected="">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(6,false)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-6d" style="display:none">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-6d"></div>
+      <button class="add-step-btn" onclick="addStep(6,false)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-6d&#39;)">
+        📋 Add sub-steps
+      </button>
+    </div></div></div>
       <button class="add-task-btn" onclick="addTaskRow(false)">＋ Add Daily Quest</button>
       <div style="font-family:&#39;Fredoka One&#39;,cursive;font-size:.85rem;color:#d48000;margin-bottom:8px;margin-top:6px;display:flex;align-items:center;gap:6px">
         ⭐ Bonus Tasks <span style="font-size:.7rem;font-weight:700;color:#aaa;font-family:&#39;Nunito&#39;,sans-serif">(optional · 1.5×)</span>
       </div>
-      <div id="parent-bonus-list"></div>
+      <div id="parent-bonus-list"><div class="task-row bonus-row" style="flex-direction: column; align-items: stretch; gap: 6px;">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">⭐ Bonus</div>
+        <input type="text" value="Superspeed" placeholder="Quest name..." oninput="updTask(0,&#39;name&#39;,this.value,true)">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="15" oninput="updTask(0,&#39;duration&#39;,+this.value,true)"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="1" oninput="updTask(0,&#39;weight&#39;,+this.value,true)"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(0,&#39;difficulty&#39;,this.value,true)">
+          <option value="easy">🟢 Easy</option>
+          <option value="medium" selected="">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(0,true)">✕</button>
+    </div>
+    <div class="steps-editor" id="steps-editor-0b" style="display:none">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:&#39;Nunito&#39;,sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-0b"></div>
+      <button class="add-step-btn" onclick="addStep(0,true)">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor(&#39;steps-editor-0b&#39;)">
+        📋 Add sub-steps
+      </button>
+    </div></div></div>
       <button class="add-bonus-btn" onclick="addTaskRow(true)">⭐ Add Bonus Quest</button>
     </div>
     <button class="save-btn" onclick="saveAll()">💾 Save All Quests</button>
@@ -1019,8 +1340,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
       <div class="profile-row"><label>Name</label><input type="text" id="hero-name" placeholder="Hero&#39;s name..."></div>
       <div style="margin-bottom:10px">
         <div style="font-size:.8rem;font-weight:700;color:#666;margin-bottom:6px">Choose Avatar</div>
-        <div class="avatar-preview" id="avatar-preview">🧙</div>
-        <div class="avatar-picker" id="avatar-picker"></div>
+        <div class="avatar-preview" id="avatar-preview">🦄</div>
+        <div class="avatar-picker" id="avatar-picker"><div class="avatar-opt">🧙</div><div class="avatar-opt">🦸</div><div class="avatar-opt">🧝</div><div class="avatar-opt">🧛</div><div class="avatar-opt">🧜</div><div class="avatar-opt">🧚</div><div class="avatar-opt">🥷</div><div class="avatar-opt">🦊</div><div class="avatar-opt">🐱</div><div class="avatar-opt">🐶</div><div class="avatar-opt">🦁</div><div class="avatar-opt">🐸</div><div class="avatar-opt">🐼</div><div class="avatar-opt">🦋</div><div class="avatar-opt selected">🦄</div><div class="avatar-opt">🐉</div><div class="avatar-opt">⚔️</div><div class="avatar-opt">🚀</div><div class="avatar-opt">🌈</div><div class="avatar-opt">🎮</div></div>
       </div>
       <button class="save-btn" onclick="saveProfile()">💾 Save Profile</button>
     </div>
@@ -1055,12 +1376,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
           <div class="user-avatar-fallback" id="user-avatar-fallback">Y</div>
           <div class="user-info">
             <div class="user-name" id="user-display-name">Yaoxin Hu</div>
-            <div class="user-email" id="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="354c545a4d5c5b1b5d400d755258545c591b565a58">[email&#160;protected]</a></div>
+            <div class="user-email" id="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="067f67697e6f68286e733e46616b676f6a2865696b">[email&#160;protected]</a></div>
           </div>
           <button class="signout-btn" onclick="signOutGoogle()">Sign out</button>
         </div>
         <button class="sync-now-btn" onclick="forceSyncNow()">🔄 Sync Now</button>
-        <div class="sync-status-row" id="sync-status-row">Last synced: 18:54:57</div>
+        <div class="sync-status-row" id="sync-status-row">Last synced: 18:57:40</div>
       </div>
     </div>
 
@@ -1103,7 +1424,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" id="nav-quests" onclick="navTo(&#39;quest-view&#39;)">
+  <button class="nav-btn" id="nav-quests" onclick="navTo(&#39;quest-view&#39;)">
     <span class="nav-icon">⚔️</span><span class="nav-lbl">Quests</span>
   </button>
   <button class="nav-btn" id="nav-home" onclick="navTo(&#39;home-view&#39;)">
@@ -1112,9 +1433,10 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 </nav>
 
 <!-- Firebase SDKs — loaded right before app code to guarantee availability -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="./Daily_Adventure_files/firebase-app-compat.js.download"></script>
-<script src="./Daily_Adventure_files/firebase-auth-compat.js.download"></script>
-<script src="./Daily_Adventure_files/firebase-database-compat.js.download"></script>
+<!-- Firebase SDKs from CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
 // ════════════════════════════════════════════════
@@ -1132,15 +1454,22 @@ const DEFAULT_PIN='1234';
 const AVATAR_OPTIONS=['🧙','🦸','🧝','🧛','🧜','🧚','🥷','🦊','🐱','🐶',
   '🦁','🐸','🐼','🦋','🦄','🐉','⚔️','🚀','🌈','🎮'];
 const PET_STAGES=[
-  {min:0,   emoji:'🐣',name:'Baby Egg',    mood:'😴',speech:["I'm still hatching...","Feed me quests! 🍽️","One day I'll be huge!"]},
-  {min:50,  emoji:'🐥',name:'Fluffy Chick',mood:'😊',speech:["Cheep cheep! You did it!","I love when you do quests!","You're my favourite hero! 🌟"]},
-  {min:200, emoji:'🐱',name:'Curious Cat', mood:'😄',speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You're amazing! 😸"]},
-  {min:500, emoji:'🦊',name:'Clever Fox',  mood:'😎',speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team! 🦊⚔️"]},
-  {min:1000,emoji:'🐉',name:'Mini Dragon', mood:'🤩',speech:["ROAR! We crushed those quests!","Dragon power activated! 🔥","I'll protect you always! 🐉"]},
-  {min:2000,emoji:'🦄',name:'Magic Unicorn',mood:'🥰',speech:["Magical vibes only! ✨","You're absolutely legendary!","Sprinkle sprinkle quest dust! 🌈"]},
-  {min:4000,emoji:'🌟',name:'Star Guardian',mood:'✨',speech:["You have reached the stars! 🌟","The universe thanks you!","Beyond legendary! Keep going! ⭐"]},
+  {min:0,    emoji:'🐣',name:'Baby Egg',    mood:'😴',speech:["I'm still hatching...","Feed me quests! 🍽️","One day I'll be huge!"]},
+  {min:300,  emoji:'🐥',name:'Fluffy Chick',mood:'😊',speech:["Cheep cheep! You did it!","I love when you do quests!","You're my favourite hero! 🌟"]},
+  {min:800,  emoji:'🐱',name:'Curious Cat', mood:'😄',speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You're amazing! 😸"]},
+  {min:2000, emoji:'🦊',name:'Clever Fox',  mood:'😎',speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team! 🦊⚔️"]},
+  {min:5000, emoji:'🐉',name:'Mini Dragon', mood:'🤩',speech:["ROAR! We crushed those quests!","Dragon power activated! 🔥","I'll protect you always! 🐉"]},
+  {min:12000,emoji:'🦄',name:'Magic Unicorn',mood:'🥰',speech:["Magical vibes only! ✨","You're absolutely legendary!","Sprinkle sprinkle quest dust! 🌈"]},
+  {min:25000,emoji:'🌟',name:'Star Guardian',mood:'✨',speech:["You have reached the stars! 🌟","The universe thanks you!","Beyond legendary! Keep going! ⭐"]},
 ];
-const LVL_XP=[50,80,120,180,260,380,520];
+const LVL_XP=[100,160,240,360,520,760,1040];
+const STREAK_MILESTONES=[
+  {days:3,  coins:50,  shards:0,label:'3-Day Hero!',     emoji:'🔥'},
+  {days:7,  coins:150, shards:1,label:'One Week Wonder!', emoji:'🌟'},
+  {days:14, coins:300, shards:2,label:'Two Week Legend!', emoji:'🏆'},
+  {days:30, coins:600, shards:5,label:'Monthly Master!',  emoji:'👑'},
+  {days:60, coins:1000,shards:8,label:'Unstoppable!',     emoji:'⚡'},
+];
 const HATCH_PETS=['🐰','🐸','🦋','🐼','🦁','🐬','🦅','🦔','🐙','🦖'];
 
 // ── Pet speech lines by completion level ──
@@ -1151,44 +1480,39 @@ const SPEECH_BY_PROGRESS=[
   {min:100, lines:["ALL DONE! You're incredible! 🎉","Perfect day! The room glows for you! ✨","LEGENDARY! Time to rest, hero! 😴"]},
 ];
 
-// ── SHOP CATALOG ──
+// ── SHOP CATALOG ── (prices x3 vs original; streakRequired = days needed to unlock)
 const SHOP_CATS=['🌅 Background','🛏 Bed','🌱 Plant','💡 Light','🎮 Toy','✨ Effect'];
 const SHOP_ITEMS=[
-  // Backgrounds
   {id:'bg_meadow',cat:0,name:'Sunny Meadow',icon:'🌄',price:0,type:'bg',colors:['#87CEEB','#90EE90','#8FBC8F'],owned:true},
-  {id:'bg_night',cat:0,name:'Night Sky',icon:'🌃',price:30,type:'bg',colors:['#0a0a2e','#1a1a4e','#2a2060']},
-  {id:'bg_ocean',cat:0,name:'Ocean Deep',icon:'🌊',price:50,type:'bg',colors:['#006994','#0099CC','#00CED1']},
-  {id:'bg_castle',cat:0,name:'Magic Castle',icon:'🏰',price:80,type:'bg',colors:['#8B6FBF','#A080D0','#C0A0E8']},
-  {id:'bg_candy',cat:0,name:'Candy Land',icon:'🍭',price:100,type:'bg',colors:['#FFB3C6','#FF8FA3','#FFC8DD']},
-  // Beds
+  {id:'bg_night',cat:0,name:'Night Sky',icon:'🌃',price:80,type:'bg',colors:['#0a0a2e','#1a1a4e','#2a2060']},
+  {id:'bg_ocean',cat:0,name:'Ocean Deep',icon:'🌊',price:150,type:'bg',colors:['#006994','#0099CC','#00CED1']},
+  {id:'bg_castle',cat:0,name:'Magic Castle',icon:'🏰',price:250,type:'bg',colors:['#8B6FBF','#A080D0','#C0A0E8']},
+  {id:'bg_candy',cat:0,name:'Candy Land',icon:'🍭',price:300,type:'bg',colors:['#FFB3C6','#FF8FA3','#FFC8DD']},
+  {id:'bg_galaxy',cat:0,name:'Galaxy ✦',icon:'🌌',price:0,type:'bg',colors:['#0d0d2b','#1a0533','#0a1a3e'],streakRequired:30},
   {id:'bed_basic',cat:1,name:'Cozy Nest',icon:'🛏',price:0,type:'item',owned:true},
-  {id:'bed_cloud',cat:1,name:'Cloud Bed',icon:'☁️',price:20,type:'item'},
-  {id:'bed_hammock',cat:1,name:'Hammock',icon:'🏕',price:40,type:'item'},
-  {id:'bed_royal',cat:1,name:'Royal Bed',icon:'👑',price:60,type:'item'},
-  // Plants
+  {id:'bed_cloud',cat:1,name:'Cloud Bed',icon:'☁️',price:60,type:'item'},
+  {id:'bed_hammock',cat:1,name:'Hammock',icon:'🏕',price:120,type:'item'},
+  {id:'bed_royal',cat:1,name:'Royal Bed',icon:'👑',price:200,type:'item',streakRequired:14},
   {id:'plant_none',cat:2,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'plant_cactus',cat:2,name:'Cactus',icon:'🌵',price:15,type:'item'},
-  {id:'plant_flower',cat:2,name:'Flower',icon:'🌸',price:20,type:'item'},
-  {id:'plant_tree',cat:2,name:'Bonsai',icon:'🌳',price:35,type:'item'},
-  {id:'plant_mushroom',cat:2,name:'Mushroom',icon:'🍄',price:45,type:'item'},
-  // Lights
+  {id:'plant_cactus',cat:2,name:'Cactus',icon:'🌵',price:40,type:'item'},
+  {id:'plant_flower',cat:2,name:'Flower',icon:'🌸',price:60,type:'item'},
+  {id:'plant_tree',cat:2,name:'Bonsai',icon:'🌳',price:100,type:'item'},
+  {id:'plant_mushroom',cat:2,name:'Mushroom',icon:'🍄',price:140,type:'item'},
   {id:'light_none',cat:3,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'light_candle',cat:3,name:'Candle',icon:'🕯',price:20,type:'item'},
-  {id:'light_moon',cat:3,name:'Moon Lamp',icon:'🌙',price:35,type:'item'},
-  {id:'light_rainbow',cat:3,name:'Rainbow',icon:'🌈',price:60,type:'item'},
-  {id:'light_fairy',cat:3,name:'Fairy Lights',icon:'✨',price:80,type:'item'},
-  // Toys
+  {id:'light_candle',cat:3,name:'Candle',icon:'🕯',price:60,type:'item'},
+  {id:'light_moon',cat:3,name:'Moon Lamp',icon:'🌙',price:100,type:'item'},
+  {id:'light_rainbow',cat:3,name:'Rainbow',icon:'🌈',price:180,type:'item',streakRequired:7},
+  {id:'light_fairy',cat:3,name:'Fairy Lights',icon:'✨',price:240,type:'item'},
   {id:'toy_none',cat:4,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'toy_ball',cat:4,name:'Ball',icon:'⚽',price:10,type:'item'},
-  {id:'toy_book',cat:4,name:'Magic Book',icon:'📚',price:20,type:'item'},
-  {id:'toy_telescope',cat:4,name:'Telescope',icon:'🔭',price:40,type:'item'},
-  {id:'toy_chest',cat:4,name:'Treasure',icon:'💰',price:60,type:'item'},
-  // Effects
+  {id:'toy_ball',cat:4,name:'Ball',icon:'⚽',price:30,type:'item'},
+  {id:'toy_book',cat:4,name:'Magic Book',icon:'📚',price:60,type:'item'},
+  {id:'toy_telescope',cat:4,name:'Telescope',icon:'🔭',price:120,type:'item'},
+  {id:'toy_chest',cat:4,name:'Treasure',icon:'💰',price:180,type:'item',streakRequired:14},
   {id:'fx_none',cat:5,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'fx_bubbles',cat:5,name:'Bubbles',icon:'🫧',price:50,type:'item'},
-  {id:'fx_stars',cat:5,name:'Stars',icon:'⭐',price:60,type:'item'},
-  {id:'fx_firefly',cat:5,name:'Firefly',icon:'🌟',price:80,type:'item'},
-  {id:'fx_aurora',cat:5,name:'Aurora',icon:'🎆',price:120,type:'item'},
+  {id:'fx_bubbles',cat:5,name:'Bubbles',icon:'🫧',price:150,type:'item'},
+  {id:'fx_stars',cat:5,name:'Stars',icon:'⭐',price:180,type:'item',streakRequired:7},
+  {id:'fx_firefly',cat:5,name:'Firefly',icon:'🌟',price:240,type:'item',streakRequired:14},
+  {id:'fx_aurora',cat:5,name:'Aurora',icon:'🎆',price:360,type:'item',streakRequired:30},
 ];
 
 // ════════════════════════════════════════════════
@@ -1691,8 +2015,32 @@ function renderChild(){
     dangerTextEl.textContent=`🔥 Streak is in danger! ${remaining} quest${remaining!==1?'s':''} left to protect your ${stats.streak}-day streak!`;
   } else dangerEl.classList.remove('show');
 
+  // Milestone banner (show when within 3 days of next milestone)
+  const streakNow=stats.streak||0;
+  const nextMil=STREAK_MILESTONES.find(m=>m.days>streakNow);
+  const mBanner=document.getElementById('milestone-banner');
+  if(nextMil&&mBanner){
+    const dLeft=nextMil.days-streakNow;
+    if(dLeft<=3){
+      mBanner.classList.add('show');
+      document.getElementById('milestone-banner-text').textContent=
+        dLeft===1?'Tomorrow: '+nextMil.days+'-day milestone! +'+nextMil.coins+'🪙'+(nextMil.shards?' +'+nextMil.shards+'🔮':'')+'!'
+        :'Only '+dLeft+' days to '+nextMil.coins+'🪙'+(nextMil.shards?' +'+nextMil.shards+'🔮':'')+' bonus!';
+      document.getElementById('milestone-banner-days').textContent=dLeft+'d left';
+    } else mBanner.classList.remove('show');
+  } else if(mBanner) mBanner.classList.remove('show');
+
   document.getElementById('stat-xp').textContent=stats.xp;
-  document.getElementById('stat-streak').textContent=stats.streak;
+  // Streak card with next milestone hint
+  document.getElementById('stat-streak').textContent=streakNow;
+  const sCard=document.getElementById('streak-card');
+  const prevHint=sCard.querySelector('.streak-hint');if(prevHint)prevHint.remove();
+  if(nextMil){
+    const hint=document.createElement('div');hint.className='streak-hint';
+    hint.style.cssText='font-size:.52rem;color:#aaa;font-weight:800;margin-top:1px';
+    hint.textContent=(nextMil.days-streakNow)+'d to '+nextMil.emoji;
+    sCard.appendChild(hint);
+  }
   document.getElementById('stat-gems').textContent=stats.gems;
   document.getElementById('stat-coins').textContent=stats.coins||0;
   document.getElementById('stat-shards').textContent=(load('petData',defPet()).shards||0);
@@ -2082,12 +2430,23 @@ function collectDayRewards(){
   const bonusDone=bonusTasks.filter((_,i)=>prog['b_'+i]==='done'||prog['b_'+i]==='partial').length;
   if(!dailyDone&&!bonusDone){showToast('⚠️ No completed quests!');return;}
   const allDailyDone=dailyDone===tasks.length&&tasks.length>0;
-  let bonusCoins=0;
+  let bonusCoins=0,milestone=null;
   if(allDailyDone){
-    stats.streak=(stats.streak||0)+1;
+    const prev=stats.streak||0;
+    stats.streak=prev+1;
     stats.coins=(stats.coins||0)+20;bonusCoins=20;
     let pet=load('petData',defPet());pet.shards=Math.min((pet.shards||0)+1,SHARDS_NEEDED*2);save('petData',pet);
     markHistoryAllDone(todayStr);
+    // Check streak milestone
+    milestone=STREAK_MILESTONES.find(m=>m.days===stats.streak);
+    if(milestone){
+      stats.coins=(stats.coins||0)+milestone.coins;bonusCoins+=milestone.coins;
+      if(milestone.shards>0){
+        let pet2=load('petData',defPet());
+        pet2.shards=Math.min((pet2.shards||0)+milestone.shards,SHARDS_NEEDED*2);
+        save('petData',pet2);
+      }
+    }
   }
   stats.lastRewardDate=todayStr;save('heroStats',stats);
   save('todayProgress',{});save('timerData',{});save('stepProgress',{});
@@ -2098,16 +2457,22 @@ function collectDayRewards(){
   const items=[];
   if(allDailyDone){
     items.push({text:'+1 🔮 Shard',type:'shard'});
-    items.push(`🔥 Streak: ${stats.streak} day${stats.streak!==1?'s':''}`);
+    items.push('🔥 Streak: '+stats.streak+' day'+(stats.streak!==1?'s':''));
     items.push({text:'+20🪙 All-Done Bonus!',type:'coin'});
+    if(milestone){
+      items.push({text:'+'+milestone.coins+'🪙 '+milestone.label,type:'coin'});
+      if(milestone.shards>0)items.push({text:'+'+milestone.shards+' 🔮 Milestone Shards!',type:'shard'});
+    }
   }
-  if(bonusDone)items.push(`⭐ ${bonusDone} Bonus Quest${bonusDone>1?'s':''} done!`);
-  if(!allDailyDone&&tasks.length>0)items.push(`${dailyDone}/${tasks.length} daily done`);
+  if(bonusDone)items.push('⭐ '+bonusDone+' Bonus Quest'+(bonusDone>1?'s':'')+' done!');
+  if(!allDailyDone&&tasks.length>0)items.push(dailyDone+'/'+tasks.length+' daily done');
+  const nextAfter=STREAK_MILESTONES.find(m=>m.days>(stats.streak||0));
+  const hint=nextAfter?'Next milestone: '+nextAfter.days+' days — +'+nextAfter.coins+'🪙'+(nextAfter.shards?' +'+nextAfter.shards+'🔮':'')+'!':'Legendary hero! 🏆';
   showPopup(
-    allDailyDone?`🏆 All Done, ${heroName()}!`:'💪 Partial Rewards!',
-    allDailyDone?'🎊':'⚡',items,
-    allDailyDone?`+20🪙 bonus! Spend coins in Pet Home! 🏠`:'Complete all daily quests for extra 20🪙 bonus!');
-  if(allDailyDone)launchConfetti(100);
+    milestone?milestone.emoji+' '+milestone.label:allDailyDone?'🏆 All Done, '+heroName()+'!':'💪 Partial Rewards!',
+    milestone?milestone.emoji:allDailyDone?'🎊':'⚡',items,
+    allDailyDone?hint:'Complete all daily quests for extra 20🪙 bonus!');
+  if(allDailyDone)launchConfetti(milestone?150:100);
   renderChild();
 }
 
@@ -2301,21 +2666,22 @@ function renderShop(){
 
   // Items
   const gridEl=document.getElementById('shop-grid');gridEl.innerHTML='';
+  const curStreak=(load('heroStats',defStats()).streak||0);
   const catItems=SHOP_ITEMS.filter(item=>item.cat===shopActiveCat);
   catItems.forEach(item=>{
     const owned=shopData.owned[item.id]||item.owned;
     const equipped=shopData.equipped[item.cat]===item.id;
     const canAfford=coins>=item.price;
+    const sNeeded=item.streakRequired||0;
+    const sLocked=sNeeded>0&&curStreak<sNeeded&&!owned;
     const div=document.createElement('div');
-    div.className='shop-item'+(owned?' owned':'')+(equipped?' equipped':'');
-    const priceHtml=owned
-      ?(equipped?'<div class="shop-owned-badge" style="background:var(--purple)">ON</div>':'<div class="shop-owned-badge">✓</div>')
-      :`<div class="shop-item-price${canAfford?'':' cant-afford'}">🪙 ${item.price}</div>`;
-    div.innerHTML=`
-      <span class="shop-item-icon">${item.icon}</span>
-      <div class="shop-item-name">${item.name}</div>
-      ${priceHtml}`;
-    div.onclick=()=>shopItemTapped(item,owned,equipped,canAfford);
+    div.className='shop-item'+(owned?' owned':'')+(equipped?' equipped':'')+(sLocked?' streak-locked':'');
+    let priceHtml;
+    if(owned) priceHtml=equipped?'<div class="shop-owned-badge" style="background:var(--purple)">ON</div>':'<div class="shop-owned-badge">&#10003;</div>';
+    else if(sLocked) priceHtml='<div class="streak-lock-badge">&#x1F525;'+sNeeded+'d streak</div>';
+    else priceHtml='<div class="shop-item-price'+(canAfford?'':' cant-afford')+'">&#x1FA99; '+item.price+'</div>';
+    div.innerHTML='<span class="shop-item-icon">'+(sLocked?'&#x1F512;':item.icon)+'</span><div class="shop-item-name">'+item.name+'</div>'+priceHtml;
+    div.onclick=()=>sLocked?showToast('&#x1F525; Reach a '+sNeeded+'-day streak to unlock!'):shopItemTapped(item,owned,equipped,canAfford);
     gridEl.appendChild(div);
   });
 }
