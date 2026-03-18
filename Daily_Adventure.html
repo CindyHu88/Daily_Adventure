@@ -1156,27 +1156,30 @@ function pullFromCloud(){
   showSyncBar('syncing','Loading your data...');
   fbDB.ref('users/'+uid).once('value').then(snap=>{
     const cloud = snap.val();
-    if(!cloud){ 
+    if(!cloud){
       // No cloud data yet — push local data up
-      pushToCloud(); 
-      return; 
-    }
-    // Compare timestamps: use whichever is newer
-    const cloudTime = cloud._syncedAt || 0;
-    const localTime = load('_lastLocalWrite', 0);
-    if(cloudTime >= localTime){
-      // Cloud is newer or equal — restore from cloud
-      ALL_KEYS.forEach(k=>{ if(cloud[k]!==undefined) localStorage.setItem(k,JSON.stringify(cloud[k])); });
-      if(cloud._dataVersion) save('dataVersion', cloud._dataVersion);
-      runMigrations();
-      showSyncBar('synced','☁️ Data loaded from cloud!');
-      setTimeout(hideSyncBar, 2500);
-      renderChild();
-      updateSyncStatusRow();
-    } else {
-      // Local is newer — push up
       pushToCloud();
+      return;
     }
+    // Always restore from cloud when pulling
+    // (Sync Now button and login always trust the cloud)
+    ALL_KEYS.forEach(k=>{
+      if(cloud[k]!==undefined) localStorage.setItem(k,JSON.stringify(cloud[k]));
+    });
+    if(cloud._dataVersion) localStorage.setItem('dataVersion',JSON.stringify(cloud._dataVersion));
+    // Update local write timestamp to match cloud so next auto-sync doesn't overwrite
+    localStorage.setItem('_lastLocalWrite', JSON.stringify(cloud._syncedAt||Date.now()));
+    runMigrations();
+    lastSyncTime = new Date();
+    showSyncBar('synced','☁️ Data loaded from cloud!');
+    setTimeout(hideSyncBar, 2500);
+    updateSyncStatusRow();
+    // Re-render whichever view is currently active
+    const activeView = document.querySelector('.view.active');
+    const viewId = activeView ? activeView.id : 'quest-view';
+    if(viewId==='quest-view') renderChild();
+    else if(viewId==='home-view') renderHome();
+    else if(viewId==='parent-view') renderParent();
   }).catch(err=>{
     console.warn('Pull error:',err);
     showSyncBar('offline','📱 Using local data (offline)');
@@ -1186,7 +1189,8 @@ function pullFromCloud(){
 
 function forceSyncNow(){
   if(!fbUser){ showToast('⚠️ Sign in first!'); return; }
-  pushToCloud();
+  // Pull from cloud to get latest data (e.g. tasks set on another device)
+  pullFromCloud();
 }
 
 // Track local writes with timestamp
