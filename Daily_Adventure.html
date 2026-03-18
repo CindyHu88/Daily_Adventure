@@ -1,0 +1,2246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ Quest App</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Quest App">
+<meta name="theme-color" content="#7C5CBF">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%237C5CBF'/><text y='.9em' font-size='72' x='50%' text-anchor='middle'>⚔️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#FFD93D;--orange:#FF6B35;--pink:#FF4D8D;
+  --purple:#7C5CBF;--blue:#4ECDC4;--green:#6BCB77;
+  --red:#FF4444;--dark:#2D2D44;--card:#FFFDF7;
+  --shadow:0 4px 0 rgba(0,0,0,0.13);--r:16px;
+  --mon:#FF6B6B;--tue:#FF9F43;--wed:#54A0FF;
+  --thu:#5F27CD;--fri:#00D2D3;--sat:#FF9FF3;--sun:#FFD93D;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#F0E6FF;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(circle at 15% 20%,#FFD93D44 0%,transparent 40%),
+             radial-gradient(circle at 85% 10%,#FF4D8D33 0%,transparent 35%),
+             radial-gradient(circle at 50% 80%,#4ECDC444 0%,transparent 40%),
+             linear-gradient(135deg,#F0E6FF 0%,#E8D5FF 100%)}
+.view{display:none;min-height:100vh;padding:16px;max-width:480px;margin:0 auto;padding-bottom:90px}
+.view.active{display:block}
+
+/* NAV BAR */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;background:rgba(255,253,247,.95);
+  backdrop-filter:blur(10px);border-top:2px solid #EEE;
+  display:flex;z-index:50;padding:6px 8px;gap:4px}
+.nav-btn{flex:1;border:none;background:transparent;border-radius:12px;
+  padding:8px 4px;cursor:pointer;transition:all .15s;
+  display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav-btn.active{background:var(--purple)}
+.nav-icon{font-size:1.3rem;line-height:1}
+.nav-lbl{font-family:'Fredoka One',cursive;font-size:.58rem;color:#aaa;letter-spacing:.3px}
+.nav-btn.active .nav-lbl{color:#fff}
+.nav-btn:hover:not(.active){background:#F0EDFF}
+
+/* HEADER */
+.app-header{background:var(--purple);border-radius:20px;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;box-shadow:0 6px 0 #5a3fa0;gap:10px}
+.header-left{display:flex;align-items:center;gap:10px;min-width:0}
+.hero-avatar-badge{font-size:2rem;line-height:1;flex-shrink:0}
+.header-titles{display:flex;flex-direction:column;min-width:0}
+.app-title{font-family:'Fredoka One',cursive;color:var(--yellow);font-size:1.3rem;
+  letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-subtitle{font-size:.7rem;color:rgba(255,255,255,.65);font-weight:700;white-space:nowrap}
+.hbtn{background:var(--yellow);border:none;border-radius:12px;padding:7px 13px;
+  font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--dark);cursor:pointer;
+  box-shadow:0 3px 0 #c9a800;transition:transform .1s,box-shadow .1s;flex-shrink:0}
+.hbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c9a800}
+
+/* PIN OVERLAY */
+#pin-overlay{position:fixed;inset:0;z-index:600;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(160deg,rgba(45,45,68,.96),rgba(80,50,160,.96))}
+#pin-overlay.show{display:flex}
+.pin-box{background:#FFFDF7;border-radius:28px;padding:28px 24px;text-align:center;
+  max-width:300px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);
+  animation:popIn .3s cubic-bezier(.175,.885,.32,1.275)}
+.pin-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--dark);margin-bottom:4px}
+.pin-subtitle{font-size:.82rem;color:#999;font-weight:700;margin-bottom:20px}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:3px solid #DDD;background:#F5F5F5;transition:all .2s}
+.pin-dot.filled{background:var(--purple);border-color:var(--purple);transform:scale(1.15)}
+.pin-dot.error{background:var(--red);border-color:var(--red);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.pin-key{background:#F0EDFF;border:none;border-radius:14px;padding:16px 10px;
+  font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--dark);cursor:pointer;
+  box-shadow:0 3px 0 #D0C8F0;transition:all .1s}
+.pin-key:active{transform:translateY(2px);box-shadow:0 1px 0 #D0C8F0}
+.pin-key.del{background:#FFE5E5;color:var(--red);box-shadow:0 3px 0 #FFBBBB}
+.pin-cancel{width:100%;background:#EEE;border:none;border-radius:12px;padding:11px;
+  font-family:'Fredoka One',cursive;font-size:.9rem;color:#888;cursor:pointer}
+.pin-error-msg{color:var(--red);font-weight:800;font-size:.82rem;margin-bottom:10px;min-height:18px}
+.pin-setup-step{font-size:.8rem;font-weight:800;color:var(--purple);margin-bottom:8px}
+
+/* DAY BANNER */
+.day-banner{background:linear-gradient(135deg,var(--orange),var(--pink));
+  border-radius:var(--r);padding:12px 16px;margin-bottom:14px;
+  color:#fff;font-weight:800;font-size:1rem;box-shadow:0 4px 0 rgba(0,0,0,.15);
+  display:flex;align-items:center;gap:8px}
+
+/* STREAK DANGER */
+.streak-danger{background:linear-gradient(135deg,#FF4444,#FF8800);
+  border-radius:14px;padding:10px 14px;margin-bottom:12px;
+  display:none;align-items:center;gap:10px;animation:dangerPulse 1.5s ease-in-out infinite}
+.streak-danger.show{display:flex}
+@keyframes dangerPulse{0%,100%{box-shadow:0 4px 0 #c03000}50%{box-shadow:0 4px 20px #FF8800,0 4px 0 #c03000}}
+.streak-danger-text{font-family:'Fredoka One',cursive;font-size:.88rem;color:#fff;flex:1}
+
+/* GRACE BAR */
+.grace-bar{background:linear-gradient(135deg,#fff3e0,#fff8f0);border:2px solid #FFD93D;
+  border-radius:12px;padding:10px 14px;margin-bottom:12px;
+  display:none;align-items:center;gap:10px}
+.grace-bar.show{display:flex}
+.grace-bar-text{font-size:.82rem;font-weight:800;color:#c47800;flex:1}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
+.stat-card{background:var(--card);border-radius:12px;padding:9px 4px;text-align:center;
+  box-shadow:var(--shadow);border:2px solid transparent;position:relative}
+.s-xp{border-color:var(--yellow)}.s-str{border-color:var(--orange)}
+.s-gem{border-color:var(--blue)}.s-shard{border-color:#a259ff}.s-coin{border-color:#f0a800}
+.stat-icon{font-size:1.3rem;display:block}
+.stat-val{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--dark)}
+.stat-lbl{font-size:.56rem;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.grace-shield{position:absolute;top:-6px;right:-6px;font-size:1rem;
+  animation:shieldPulse 2s ease-in-out infinite}
+@keyframes shieldPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* ── PET HOME VIEW ── */
+#home-view .view-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--dark);
+  margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.coin-badge{background:linear-gradient(135deg,#FFD93D,#FF9500);border-radius:20px;
+  padding:5px 14px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#fff;
+  box-shadow:0 2px 0 #c9a800;display:flex;align-items:center;gap:5px}
+
+/* Room canvas wrapper */
+.room-wrap{position:relative;border-radius:20px;overflow:hidden;
+  box-shadow:var(--shadow),0 0 0 3px #e0d0ff;margin-bottom:14px;
+  background:#fff;cursor:pointer}
+#room-canvas{display:block;width:100%;height:auto}
+.room-tap-hint{position:absolute;bottom:8px;right:10px;
+  font-size:.65rem;font-weight:800;color:rgba(255,255,255,.7);
+  background:rgba(0,0,0,.25);border-radius:20px;padding:3px 8px;pointer-events:none}
+
+/* Speech bubble */
+.speech-bubble{position:absolute;background:#fff;border-radius:16px;
+  padding:8px 12px;font-weight:800;font-size:.82rem;color:var(--dark);
+  box-shadow:0 3px 10px rgba(0,0,0,.15);border:2px solid #E8E0FF;
+  max-width:200px;text-align:center;pointer-events:none;
+  animation:bubblePop .3s cubic-bezier(.175,.885,.32,1.275)}
+.speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;
+  transform:translateX(-50%);border:5px solid transparent;
+  border-top-color:#E8E0FF}
+@keyframes bubblePop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* Shop */
+.shop-section{background:var(--card);border-radius:20px;padding:14px;
+  box-shadow:var(--shadow);margin-bottom:12px}
+.shop-section h3{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--dark);
+  margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.shop-cats{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:3px}
+.shop-cats::-webkit-scrollbar{height:2px}
+.shop-cat{flex-shrink:0;padding:6px 12px;border-radius:20px;border:2px solid #EEE;
+  font-family:'Fredoka One',cursive;font-size:.78rem;cursor:pointer;
+  background:#fff;color:#888;transition:all .15s;box-shadow:0 2px 0 #ddd}
+.shop-cat.active{background:var(--orange);color:#fff;border-color:var(--orange);
+  box-shadow:0 2px 0 #c03000}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.shop-item{background:#F8F5FF;border-radius:14px;padding:10px 6px;
+  text-align:center;border:2px solid #EEE;cursor:pointer;transition:all .15s;
+  position:relative}
+.shop-item:hover{border-color:var(--purple);background:#F0EDFF;transform:translateY(-2px)}
+.shop-item.owned{border-color:var(--green);background:#F0FFF5;cursor:default}
+.shop-item.owned:hover{transform:none}
+.shop-item.equipped{border-color:var(--purple);background:#EDE6FF;
+  box-shadow:0 0 0 3px rgba(124,92,191,.3)}
+.shop-item-icon{font-size:1.8rem;display:block;margin-bottom:4px}
+.shop-item-name{font-size:.68rem;font-weight:800;color:var(--dark);margin-bottom:4px;line-height:1.2}
+.shop-item-price{font-family:'Fredoka One',cursive;font-size:.75rem;
+  color:#f0a800;display:flex;align-items:center;justify-content:center;gap:2px}
+.shop-item-price.cant-afford{color:#ccc}
+.shop-owned-badge{position:absolute;top:4px;right:4px;font-size:.6rem;
+  background:var(--green);color:#fff;border-radius:10px;padding:1px 5px;font-weight:800}
+.shop-equipped-badge{position:absolute;top:4px;right:4px;font-size:.6rem;
+  background:var(--purple);color:#fff;border-radius:10px;padding:1px 5px;font-weight:800}
+
+/* PET CARD (quest view) */
+.pet-card{background:var(--card);border-radius:20px;padding:14px 16px;margin-bottom:14px;
+  box-shadow:var(--shadow);border:3px solid #e0d0ff;position:relative;
+  overflow:hidden;transition:background .6s,border-color .6s;
+  display:flex;align-items:center;gap:14px}
+.pet-card.bedtime{background:linear-gradient(160deg,#1a1a3e,#2d2060);border-color:#5a3fa0}
+.pet-left{text-align:center;flex-shrink:0;position:relative}
+.pet-emoji{font-size:3.2rem;display:block;line-height:1;
+  filter:drop-shadow(0 4px 8px rgba(124,92,191,.3));
+  animation:petBob 2.2s ease-in-out infinite}
+.pet-card.bedtime .pet-emoji{animation:petSleep 3s ease-in-out infinite}
+@keyframes petBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes petSleep{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(3deg)}}
+.zzz-overlay{position:absolute;top:-8px;right:-12px;font-size:1.2rem;
+  animation:zzzFloat 2s ease-in-out infinite;pointer-events:none;display:none}
+.zzz2{animation-delay:.8s!important}
+@keyframes zzzFloat{0%{opacity:0;transform:translate(0,0) scale(.7)}
+  50%{opacity:1;transform:translate(5px,-8px) scale(1)}
+  100%{opacity:0;transform:translate(10px,-18px) scale(.5)}}
+.pet-right{flex:1;min-width:0}
+.pet-name-row{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.pet-name{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--dark);transition:color .4s}
+.pet-card.bedtime .pet-name,.pet-card.bedtime .pet-level,.pet-card.bedtime .pet-speech{color:#b0a0ff}
+.pet-mood-icon{font-size:1rem}
+.pet-level{font-size:.72rem;font-weight:800;color:var(--purple);margin-bottom:4px}
+.pet-xp-bar-wrap{background:#eee;border-radius:20px;height:8px;margin-bottom:6px;overflow:hidden}
+.pet-card.bedtime .pet-xp-bar-wrap{background:#2a1f5a}
+.pet-xp-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--purple),var(--pink));transition:width .5s ease}
+.pet-speech{font-size:.75rem;font-weight:800;color:#888;font-style:italic;
+  background:#F5F0FF;border-radius:8px;padding:4px 8px;line-height:1.3;
+  border-left:2px solid var(--purple)}
+.pet-card.bedtime .pet-speech{background:#2a2060;border-color:#6040a0}
+.pet-pj-badge{display:none;background:linear-gradient(135deg,#4a3080,#7C5CBF);
+  color:#fff;border-radius:12px;padding:2px 8px;font-family:'Fredoka One',cursive;
+  font-size:.65rem;margin-top:4px;width:fit-content}
+.pet-card.bedtime .pet-pj-badge{display:block}
+.pet-stars{position:absolute;inset:0;pointer-events:none;display:none;overflow:hidden}
+.pet-card.bedtime .pet-stars{display:block}
+.star-dot{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;
+  animation:starTwinkle 2s ease-in-out infinite}
+@keyframes starTwinkle{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* Shard bar */
+.shard-section{background:var(--card);border-radius:var(--r);padding:12px 14px;
+  margin-bottom:14px;box-shadow:var(--shadow);border:2px solid #e0d0ff}
+.shard-label{font-size:.7rem;font-weight:800;color:#a259ff;margin-bottom:6px;
+  display:flex;align-items:center;justify-content:space-between}
+.shard-row{display:flex;align-items:center;gap:3px;flex-wrap:wrap}
+.shard-pip{width:14px;height:14px;border-radius:50%;border:2px solid #ddd;
+  background:#f5f5f5;font-size:.55rem;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.shard-pip.filled{background:linear-gradient(135deg,#a259ff,#ff4d8d);border-color:#a259ff;color:#fff}
+.new-pet-btn{width:100%;background:linear-gradient(135deg,#a259ff,var(--pink));
+  border:none;border-radius:12px;padding:9px;font-family:'Fredoka One',cursive;
+  font-size:.88rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #7a00d4;
+  margin-top:8px;transition:all .1s;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.new-pet-btn:active{transform:scale(.98)}
+
+/* SECTION TITLE */
+.sec-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--dark);
+  margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.sec-title.bonus-title{color:#d4750a}
+
+/* BONUS SECTION */
+.bonus-section{background:linear-gradient(135deg,#fff8ed,#fff3e0);
+  border-radius:20px;padding:14px;margin-top:4px;margin-bottom:10px;
+  border:2px dashed #FFD93D;box-shadow:0 3px 0 rgba(255,160,0,.2)}
+.bonus-desc{font-size:.74rem;font-weight:700;color:#b57300;
+  background:#fff3cc;border-radius:8px;padding:5px 10px;margin-bottom:10px;
+  border-left:3px solid var(--yellow)}
+
+/* QUEST CARDS */
+.quest-card{background:var(--card);border-radius:var(--r);padding:14px;
+  margin-bottom:10px;box-shadow:var(--shadow);border:2px solid #EEE;transition:all .25s}
+.quest-card.done{border-color:var(--green);background:#F2FFF5;opacity:.75}
+.quest-card.done .q-name{text-decoration:line-through;color:#aaa}
+.quest-card.partial-done{border-color:var(--orange);background:#FFF8F0;opacity:.75}
+.quest-card.partial-done .q-name{text-decoration:line-through;color:#aaa}
+.quest-card.in-progress{border-color:var(--blue);background:#F0FDFF}
+.quest-card.bonus-card{border-color:#FFD93D;background:#FFFBF0}
+.quest-card.bonus-card.done{border-color:var(--green)}
+.q-top{display:flex;align-items:flex-start;gap:10px}
+.q-info{flex:1;min-width:0}
+.q-name{font-weight:800;color:var(--dark);font-size:.95rem}
+.q-meta{font-size:.72rem;color:#bbb;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.q-xp-badge{background:var(--yellow);border-radius:8px;padding:4px 9px;
+  font-family:'Fredoka One',cursive;font-size:.8rem;color:var(--dark);
+  white-space:nowrap;flex-shrink:0;align-self:flex-start}
+.q-xp-badge.bonus-badge{background:linear-gradient(135deg,var(--orange),var(--pink));color:#fff}
+.q-xp-badge.bonus-quest-badge{background:linear-gradient(135deg,#FF9500,#FFD93D);color:#fff}
+.q-timer-row{display:flex;align-items:center;gap:8px;margin-top:10px;
+  border-radius:10px;padding:8px 10px;transition:background .5s}
+.q-timer-row.phase-green{background:#e8fff0}
+.q-timer-row.phase-yellow{background:#fffbe6}
+.q-timer-row.phase-orange{background:#fff3e0}
+.q-timer-row.phase-red{background:#fff0f0;animation:timerDanger 1s ease-in-out infinite}
+@keyframes timerDanger{0%,100%{background:#fff0f0}50%{background:#ffe0e0}}
+/* Countdown display — large, colour-coded */
+.timer-display{font-family:'Fredoka One',cursive;font-size:1.35rem;min-width:58px;transition:color .4s}
+.timer-display.phase-green{color:#2da84a}
+.timer-display.phase-yellow{color:#c8960a}
+.timer-display.phase-orange{color:var(--orange)}
+.timer-display.phase-red{color:var(--red);animation:timerPulse .6s ease-in-out infinite}
+@keyframes timerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.timer-display.overtime{color:var(--red)}
+/* Progress bar phases */
+.q-pbar-wrap{flex:1;background:#E0D8FF;border-radius:20px;height:10px;overflow:hidden}
+.q-pbar{height:100%;border-radius:20px;transition:width .8s linear,background .5s}
+.q-pbar.phase-green{background:linear-gradient(90deg,#2da84a,#6BCB77)}
+.q-pbar.phase-yellow{background:linear-gradient(90deg,#c8960a,var(--yellow))}
+.q-pbar.phase-orange{background:linear-gradient(90deg,#c04000,var(--orange))}
+.q-pbar.phase-red{background:linear-gradient(90deg,var(--red),#ff8888)}
+.q-pbar.full{background:linear-gradient(90deg,var(--orange),var(--red))}
+.timer-target{font-size:.66rem;font-weight:800;color:#bbb;white-space:nowrap}
+/* Overtime label */
+.overtime-label{font-size:.65rem;font-weight:800;color:var(--red);
+  background:#ffe0e0;border-radius:6px;padding:1px 6px;white-space:nowrap}
+
+/* ── 3-2-1 COUNTDOWN OVERLAY ── */
+#countdown-overlay{position:fixed;inset:0;z-index:800;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(45,45,68,.85);backdrop-filter:blur(4px)}
+#countdown-overlay.show{display:flex}
+.countdown-box{text-align:center;animation:cboxIn .2s ease-out}
+@keyframes cboxIn{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.countdown-num{font-family:'Fredoka One',cursive;font-size:7rem;line-height:1;
+  background:linear-gradient(135deg,#FFD93D,#FF6B35);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(255,180,0,.6));
+  animation:numPop .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes numPop{0%{transform:scale(1.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.countdown-label{font-family:'Fredoka One',cursive;font-size:1.1rem;color:rgba(255,255,255,.8);
+  margin-top:8px;letter-spacing:1px}
+.countdown-go{font-family:'Fredoka One',cursive;font-size:5rem;
+  background:linear-gradient(135deg,#6BCB77,#4ECDC4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(100,200,100,.7));
+  animation:goPop .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes goPop{0%{transform:scale(0) rotate(-15deg);opacity:0}
+  70%{transform:scale(1.2) rotate(3deg);opacity:1}
+  100%{transform:scale(1) rotate(0);opacity:1}}
+.countdown-task-name{font-size:1rem;font-weight:800;color:rgba(255,255,255,.9);
+  background:rgba(255,255,255,.12);border-radius:14px;padding:8px 20px;
+  margin-bottom:20px;max-width:280px;word-break:break-word}
+
+/* ── START BONUS FLOAT ── */
+.start-bonus-float{position:fixed;font-family:'Fredoka One',cursive;font-size:1rem;
+  color:#2da84a;text-shadow:0 2px 4px rgba(0,0,0,.2);pointer-events:none;z-index:500;
+  animation:startBonusFloat 1.6s ease-out forwards;white-space:nowrap}
+@keyframes startBonusFloat{
+  0%{opacity:0;transform:translateY(0) scale(.7)}
+  20%{opacity:1;transform:translateY(-10px) scale(1.1)}
+  80%{opacity:1;transform:translateY(-50px) scale(1)}
+  100%{opacity:0;transform:translateY(-70px) scale(.9)}}
+.q-btn-row{display:flex;gap:6px;margin-top:10px}
+.q-btn{flex:1;border:none;border-radius:10px;padding:10px 4px;
+  font-family:'Fredoka One',cursive;font-size:.8rem;cursor:pointer;
+  transition:all .12s;display:flex;align-items:center;justify-content:center;gap:3px}
+.q-btn:active{transform:translateY(2px)}
+.q-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.start-btn{background:linear-gradient(135deg,var(--blue),#36a8a0);color:#fff;box-shadow:0 3px 0 #268880}
+.complete-btn{background:linear-gradient(135deg,var(--green),#3dab4e);color:#fff;box-shadow:0 3px 0 #287a34}
+.partial-btn{background:linear-gradient(135deg,var(--orange),#d45500);color:#fff;box-shadow:0 3px 0 #953c00}
+.done-note{text-align:center;font-family:'Fredoka One',cursive;font-size:.83rem;
+  color:var(--green);margin-top:8px;padding:6px;background:#edfff0;border-radius:8px}
+.partial-note{text-align:center;font-family:'Fredoka One',cursive;font-size:.83rem;
+  color:var(--orange);margin-top:8px;padding:6px;background:#fff4e6;border-radius:8px}
+
+/* ── DIFFICULTY BADGE ── */
+.diff-badge{display:inline-flex;align-items:center;gap:3px;border-radius:20px;
+  padding:2px 9px;font-family:'Fredoka One',cursive;font-size:.7rem;font-weight:700;
+  white-space:nowrap;flex-shrink:0;margin-right:4px}
+.diff-easy  {background:#e8fff0;color:#287a34;border:1.5px solid #6BCB77}
+.diff-medium{background:#fff8e6;color:#c08000;border:1.5px solid #FFD93D}
+.diff-hard  {background:#fff0f0;color:#c03000;border:1.5px solid #FF6B35}
+
+/* ── STEPS CHECKLIST (child view) ── */
+.steps-list{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.step-item{display:flex;align-items:center;gap:8px;
+  background:#F5F0FF;border-radius:10px;padding:7px 10px;cursor:pointer;
+  transition:all .2s;border:2px solid transparent}
+.step-item:hover{border-color:var(--purple)}
+.step-item.checked{background:#edfff0;border-color:var(--green);opacity:.7}
+.step-item.checked .step-txt{text-decoration:line-through;color:#aaa}
+.step-check{width:22px;height:22px;border-radius:50%;border:2.5px solid #CCC;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:.85rem;transition:all .2s;background:#fff}
+.step-item.checked .step-check{background:var(--green);border-color:var(--green);color:#fff}
+.step-txt{font-size:.83rem;font-weight:800;color:var(--dark);flex:1}
+.steps-progress{font-size:.7rem;font-weight:800;color:var(--purple);
+  margin-top:6px;text-align:right}
+.steps-nudge{font-size:.72rem;font-weight:800;color:var(--orange);
+  background:#fff8e6;border-radius:8px;padding:4px 8px;margin-top:6px;
+  border-left:2px solid var(--orange)}
+
+/* ── STEPS EDITOR (parent view) ── */
+.steps-editor{margin-top:8px;padding-top:8px;border-top:2px dashed #EEE}
+.steps-editor-title{font-size:.72rem;font-weight:800;color:var(--purple);
+  margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.step-edit-row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.step-edit-row input{flex:1;border:2px solid #EEE;border-radius:8px;
+  padding:5px 8px;font-family:'Nunito',sans-serif;font-size:.82rem;
+  font-weight:700;color:var(--dark);background:#FFFDF7;min-width:0}
+.step-edit-row input:focus{outline:none;border-color:var(--purple)}
+.step-del-btn{background:#FFE5E5;border:none;border-radius:6px;
+  width:24px;height:24px;cursor:pointer;font-size:.78rem;color:var(--red);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.add-step-btn{background:#F0EDFF;border:1.5px dashed var(--purple);
+  border-radius:8px;padding:5px 10px;font-family:'Fredoka One',cursive;
+  font-size:.75rem;color:var(--purple);cursor:pointer;width:100%;
+  transition:all .12s}
+.add-step-btn:hover{background:var(--purple);color:#fff}
+.diff-select{border:2px solid #EEE;border-radius:8px;padding:5px 6px;
+  font-family:'Fredoka One',cursive;font-size:.8rem;color:var(--dark);
+  background:#FFFDF7;cursor:pointer;flex-shrink:0}
+.diff-select:focus{outline:none;border-color:var(--purple)}
+.expand-steps-btn{background:none;border:1.5px solid #DDD;border-radius:8px;
+  padding:3px 8px;font-size:.7rem;font-weight:800;color:#aaa;cursor:pointer;
+  margin-left:4px;transition:all .12s}
+.expand-steps-btn:hover{border-color:var(--purple);color:var(--purple)}
+
+/* COLLECT BAR */
+.collect-bar{background:var(--card);border-radius:var(--r);padding:14px;
+  margin-top:8px;box-shadow:var(--shadow);text-align:center}
+.progress-summary{font-weight:800;font-size:.86rem;color:var(--dark);margin-bottom:7px}
+.day-pbar-wrap{background:#EEE;border-radius:20px;height:12px;margin-bottom:10px;overflow:hidden}
+.day-pbar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .4s}
+.collect-btn{width:100%;background:linear-gradient(135deg,var(--orange),var(--pink));
+  border:none;border-radius:14px;padding:14px;font-family:'Fredoka One',cursive;
+  font-size:1rem;color:#fff;cursor:pointer;box-shadow:0 5px 0 #c0305a;transition:all .1s}
+.collect-btn:disabled{background:#CCC;box-shadow:0 5px 0 #aaa;cursor:not-allowed}
+.collect-btn:not(:disabled):active{transform:translateY(3px);box-shadow:0 2px 0 #c0305a}
+.empty-state{text-align:center;padding:30px 20px;color:#bbb;font-size:.93rem;font-weight:700}
+.empty-state span{font-size:2.6rem;display:block;margin-bottom:8px}
+
+/* MISSION OVERLAY */
+#mission-overlay{position:fixed;inset:0;z-index:300;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(160deg,rgba(26,26,62,.92),rgba(45,32,96,.95))}
+#mission-overlay.show{display:flex}
+.mission-box{background:linear-gradient(160deg,#1e1b4b,#2d2060);
+  border-radius:28px;padding:32px 24px;text-align:center;max-width:340px;width:100%;
+  border:2px solid rgba(160,120,255,.4);
+  box-shadow:0 0 60px rgba(120,80,255,.5),0 20px 60px rgba(0,0,0,.5);
+  animation:missionIn .5s cubic-bezier(.175,.885,.32,1.275);position:relative}
+@keyframes missionIn{0%{transform:scale(.6) translateY(40px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+.mission-pet{font-size:5rem;display:block;margin:8px auto;animation:missionBob 2s ease-in-out infinite}
+@keyframes missionBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.mission-title{font-family:'Fredoka One',cursive;font-size:1.8rem;
+  background:linear-gradient(135deg,#FFD93D,#FF9FF3);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.mission-sub{color:#b0a0ff;font-weight:700;font-size:.9rem;line-height:1.6;margin-bottom:18px}
+.mission-hero-name{color:#FFD93D;font-size:1.05rem}
+.mission-close{background:linear-gradient(135deg,var(--purple),var(--pink));
+  border:none;border-radius:16px;padding:14px 28px;font-family:'Fredoka One',cursive;
+  font-size:1rem;color:#fff;cursor:pointer;box-shadow:0 5px 0 #4a1a70;transition:all .1s}
+.mission-close:active{transform:translateY(3px);box-shadow:0 2px 0 #4a1a70}
+.mission-moon{position:absolute;top:14px;left:18px;font-size:1.5rem;animation:moonRock 4s ease-in-out infinite}
+@keyframes moonRock{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
+
+/* SONIC FLASH */
+#sonic-flash{position:fixed;inset:0;z-index:400;pointer-events:none;display:none}
+#sonic-flash.show{display:block}
+.sonic-ring{position:absolute;border-radius:50%;border:4px solid var(--yellow);animation:sonicExpand .7s ease-out forwards}
+@keyframes sonicExpand{0%{width:0;height:0;opacity:1;top:50%;left:50%;transform:translate(-50%,-50%)}
+  100%{width:200vmax;height:200vmax;opacity:0;top:50%;left:50%;transform:translate(-50%,-50%)}}
+.sonic-ring:nth-child(2){border-color:var(--orange);animation-delay:.12s}
+.sonic-ring:nth-child(3){border-color:var(--pink);animation-delay:.24s}
+.sonic-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Fredoka One',cursive;font-size:2.5rem;color:var(--yellow);
+  text-shadow:0 0 20px var(--orange),0 4px 0 #c9a800;
+  animation:sonicText .8s ease-out forwards;white-space:nowrap}
+@keyframes sonicText{0%{transform:translate(-50%,-50%) scale(0) rotate(-20deg);opacity:0}
+  40%{transform:translate(-50%,-50%) scale(1.3) rotate(5deg);opacity:1}
+  70%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}
+  100%{transform:translate(-50%,-60%) scale(.9);opacity:0}}
+
+/* COIN EARN FLOATER */
+.coin-float{position:fixed;font-family:'Fredoka One',cursive;font-size:1.1rem;
+  color:#f0a800;text-shadow:0 2px 0 rgba(0,0,0,.2);pointer-events:none;z-index:500;
+  animation:coinFloat 1.4s ease-out forwards}
+@keyframes coinFloat{0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-60px) scale(1.3)}}
+
+/* PARENT */
+.panel-hdr{background:linear-gradient(135deg,var(--purple),#5a3fa0);
+  border-radius:20px;padding:18px;margin-bottom:16px;
+  box-shadow:0 6px 0 #3d2870;color:#fff;text-align:center}
+.panel-hdr h2{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--yellow)}
+.panel-hdr p{font-size:.8rem;opacity:.8;margin-top:3px}
+.parent-nav{display:flex;gap:6px;margin-bottom:16px}
+.parent-tab{flex:1;padding:9px 4px;border-radius:14px;border:2px solid transparent;
+  font-family:'Fredoka One',cursive;font-size:.8rem;cursor:pointer;
+  background:#fff;color:#888;transition:all .2s;box-shadow:0 2px 0 #ddd;text-align:center}
+.parent-tab.active{background:var(--purple);color:#fff;border-color:var(--purple);box-shadow:0 3px 0 #4a2090}
+.parent-section{display:none}.parent-section.active{display:block}
+.day-tabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+.day-tabs::-webkit-scrollbar{height:3px}
+.day-tab{flex-shrink:0;padding:7px 12px;border-radius:30px;border:2px solid transparent;
+  font-family:'Fredoka One',cursive;font-size:.83rem;cursor:pointer;
+  background:#fff;color:#888;transition:all .2s;box-shadow:0 2px 0 #ddd}
+.day-tab[data-day="Monday"]{--dc:var(--mon)}.day-tab[data-day="Tuesday"]{--dc:var(--tue)}
+.day-tab[data-day="Wednesday"]{--dc:var(--wed)}.day-tab[data-day="Thursday"]{--dc:var(--thu)}
+.day-tab[data-day="Friday"]{--dc:var(--fri)}.day-tab[data-day="Saturday"]{--dc:var(--sat)}
+.day-tab[data-day="Sunday"]{--dc:var(--sun)}
+.day-tab.active{background:var(--dc);color:#fff;border-color:var(--dc);
+  box-shadow:0 3px 0 rgba(0,0,0,.2);transform:translateY(-2px)}
+.tab-count{display:inline-block;background:rgba(0,0,0,.14);border-radius:20px;
+  font-size:.63rem;padding:1px 5px;margin-left:3px}
+.day-tab.active .tab-count{background:rgba(255,255,255,.35)}
+.settings-card{background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
+.settings-card h3{font-family:'Fredoka One',cursive;color:var(--dark);margin-bottom:10px;font-size:.93rem}
+.profile-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.profile-row label{font-weight:700;font-size:.83rem;color:#666;min-width:68px}
+.profile-row input{flex:1;border:2px solid #EEE;border-radius:10px;padding:7px 10px;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:.87rem;color:var(--dark)}
+.profile-row input:focus{outline:none;border-color:var(--purple)}
+.avatar-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.avatar-opt{font-size:1.6rem;width:44px;height:44px;border-radius:12px;
+  border:2px solid #EEE;background:#F5F5F5;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.avatar-opt:hover{border-color:var(--purple);background:#F0EDFF;transform:scale(1.1)}
+.avatar-opt.selected{border-color:var(--purple);background:#E8E0FF;
+  box-shadow:0 0 0 3px rgba(124,92,191,.3);transform:scale(1.1)}
+.avatar-preview{font-size:2.5rem;text-align:center;padding:10px;
+  background:#F5F0FF;border-radius:14px;margin-bottom:8px;border:2px dashed var(--purple)}
+.pin-set-row{display:flex;gap:8px;margin-top:8px}
+.pin-set-row input{flex:1;border:2px solid #EEE;border-radius:10px;padding:8px 12px;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:6px;text-align:center;color:var(--dark)}
+.pin-set-row input:focus{outline:none;border-color:var(--purple)}
+.pin-change-btn{background:linear-gradient(135deg,var(--purple),var(--pink));
+  border:none;border-radius:10px;padding:8px 14px;font-family:'Fredoka One',cursive;
+  font-size:.82rem;color:#fff;cursor:pointer;box-shadow:0 3px 0 #5a3fa0;white-space:nowrap}
+.task-list-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.active-day-lbl{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--dark)}
+.sync-btn{background:linear-gradient(135deg,#FF9FF3,var(--pink));border:none;
+  border-radius:10px;padding:6px 11px;font-size:.74rem;font-weight:800;color:#fff;
+  cursor:pointer;box-shadow:0 3px 0 #c0305a;transition:all .1s}
+.sync-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c0305a}
+.task-row{background:var(--card);border-radius:var(--r);padding:10px 12px;
+  margin-bottom:7px;box-shadow:var(--shadow);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.task-row input[type="text"]{flex:1;min-width:80px;border:2px solid #EEE;border-radius:10px;
+  padding:7px 9px;font-family:'Nunito',sans-serif;font-size:.83rem;font-weight:700;color:var(--dark);background:#FFFDF7}
+.task-row input[type="text"]:focus{outline:none;border-color:var(--purple)}
+.task-row input[type="number"]{width:50px;border:2px solid #EEE;border-radius:10px;
+  padding:7px 4px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;
+  color:var(--dark);text-align:center;background:#FFFDF7}
+.task-row input[type="number"]:focus{outline:none;border-color:var(--purple)}
+.mini-lbl{font-size:.63rem;color:#bbb;font-weight:700;text-align:center;margin-bottom:2px}
+.del-btn{background:#FFE5E5;border:none;border-radius:8px;width:28px;height:28px;
+  cursor:pointer;font-size:.9rem;color:var(--red);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:background .15s}
+.del-btn:hover{background:var(--red);color:#fff}
+.speed-btn{background:linear-gradient(135deg,#FFD93D,#FF9500);border:none;
+  border-radius:8px;padding:5px 9px;font-family:'Fredoka One',cursive;
+  font-size:.72rem;color:var(--dark);cursor:pointer;white-space:nowrap;
+  box-shadow:0 2px 0 #c9a800;transition:all .1s;flex-shrink:0}
+.speed-btn:active{transform:translateY(1px)}
+.task-row.bonus-row{border-left:3px solid var(--yellow);background:#FFFBF0}
+.add-task-btn{width:100%;background:#F5F0FF;border:2px dashed var(--purple);
+  border-radius:var(--r);padding:11px;cursor:pointer;font-family:'Fredoka One',cursive;
+  font-size:.93rem;color:var(--purple);transition:all .15s;margin-bottom:6px}
+.add-task-btn:hover{background:var(--purple);color:#fff}
+.add-bonus-btn{width:100%;background:#FFF8E6;border:2px dashed #FFB800;
+  border-radius:var(--r);padding:11px;cursor:pointer;font-family:'Fredoka One',cursive;
+  font-size:.93rem;color:#d48000;transition:all .15s;margin-bottom:10px}
+.add-bonus-btn:hover{background:#FFB800;color:#fff}
+.save-btn{width:100%;background:linear-gradient(135deg,var(--green),#3aa84a);
+  border:none;border-radius:var(--r);padding:14px;font-family:'Fredoka One',cursive;
+  font-size:1rem;color:#fff;cursor:pointer;box-shadow:0 5px 0 #287a34;transition:all .1s}
+.save-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #287a34}
+/* History */
+.history-filter{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+.hist-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;border:2px solid #EEE;
+  font-family:'Fredoka One',cursive;font-size:.8rem;cursor:pointer;background:#fff;color:#888;transition:all .15s}
+.hist-tab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.history-entry{background:var(--card);border-radius:14px;padding:12px 14px;
+  margin-bottom:8px;box-shadow:var(--shadow);border-left:4px solid var(--purple)}
+.history-entry.all-done{border-left-color:var(--green)}
+.history-entry.partial{border-left-color:var(--orange)}
+.hist-date{font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--dark)}
+.hist-meta{font-size:.75rem;color:#aaa;font-weight:700;margin-top:2px}
+.hist-tasks{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
+.hist-chip{font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:20px;border:1.5px solid #EEE;color:#666}
+.hist-chip.done{background:#edfff0;border-color:var(--green);color:#287a34}
+.hist-chip.partial{background:#fff4e6;border-color:var(--orange);color:#953c00}
+.hist-chip.bonus{background:#fffbe6;border-color:var(--yellow);color:#9a6600}
+.clear-hist-btn{background:#FFE5E5;border:none;border-radius:10px;padding:8px 14px;
+  font-family:'Fredoka One',cursive;font-size:.8rem;color:var(--red);cursor:pointer;
+  margin-bottom:12px;float:right}
+
+/* ── BACKUP CARD ── */
+.backup-card{background:var(--card);border-radius:var(--r);padding:16px;
+  box-shadow:var(--shadow);margin-bottom:12px;border:2px solid #e0d0ff}
+.backup-card h3{font-family:'Fredoka One',cursive;color:var(--dark);margin-bottom:4px;font-size:.93rem}
+.backup-desc{font-size:.75rem;color:#aaa;font-weight:700;margin-bottom:12px;line-height:1.5}
+.backup-row{display:flex;gap:8px;flex-wrap:wrap}
+.backup-btn{flex:1;min-width:120px;border:none;border-radius:12px;padding:12px 8px;
+  font-family:'Fredoka One',cursive;font-size:.85rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .12s}
+.backup-btn:active{transform:translateY(2px)}
+.export-btn{background:linear-gradient(135deg,var(--blue),#36a8a0);color:#fff;box-shadow:0 3px 0 #268880}
+.import-btn{background:linear-gradient(135deg,var(--purple),#5a3fa0);color:#fff;box-shadow:0 3px 0 #3d2870}
+.backup-status{margin-top:10px;font-size:.75rem;font-weight:800;padding:6px 10px;
+  border-radius:8px;display:none}
+.backup-status.ok {background:#edfff0;color:#287a34;display:block}
+.backup-status.err{background:#fff0f0;color:#c03000;display:block}
+.pwa-tip{background:linear-gradient(135deg,#f0eaff,#e8e0ff);border-radius:12px;
+  padding:12px 14px;margin-bottom:12px;border:2px solid #c8b8ff}
+.pwa-tip-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--purple);margin-bottom:4px}
+.pwa-tip-body{font-size:.75rem;color:#666;font-weight:700;line-height:1.55}
+.pwa-tip-body strong{color:var(--purple)}
+.version-badge{font-size:.65rem;font-weight:800;color:#aaa;text-align:center;
+  padding:4px;margin-top:8px}
+
+/* TOAST */
+#toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--dark);color:#fff;border-radius:30px;padding:10px 22px;
+  font-weight:800;font-size:.86rem;z-index:700;transition:transform .3s ease;
+  pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* REWARD POPUP */
+#reward-popup{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:20px}
+#reward-popup.show{display:flex}
+.popup-box{background:#FFFDF7;border-radius:24px;padding:26px 22px;text-align:center;
+  max-width:310px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:popIn .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+.popup-title{font-family:'Fredoka One',cursive;font-size:1.45rem;color:var(--dark)}
+.popup-emoji{font-size:3.2rem;display:block;margin:8px 0}
+.popup-items{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:10px 0}
+.pop-item{background:#F0F0FF;border-radius:10px;padding:6px 12px;
+  font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--purple)}
+.pop-item.bonus{background:#FFF0D0;color:var(--orange)}
+.pop-item.shard{background:#F3D0FF;color:#a259ff}
+.pop-item.coin{background:#FFF8D0;color:#c08000}
+.popup-msg{font-size:.8rem;color:#999;font-weight:700;margin-bottom:6px}
+.popup-close{width:100%;background:linear-gradient(135deg,var(--purple),var(--pink));
+  border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;
+  font-size:.95rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #5a3fa0;margin-top:6px}
+
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div id="toast"></div>
+
+<!-- PIN OVERLAY -->
+<div id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-title">🔐 Parent Access</div>
+    <div class="pin-subtitle" id="pin-subtitle">Enter your 4-digit PIN</div>
+    <div class="pin-setup-step" id="pin-setup-step" style="display:none"></div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-error-msg" id="pin-error"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" onclick="pinKey('0')" style="grid-column:2">0</button>
+      <button class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+    <button class="pin-cancel" id="pin-cancel-btn" onclick="closePinOverlay()">Cancel</button>
+  </div>
+</div>
+
+<!-- MISSION OVERLAY -->
+<div id="mission-overlay">
+  <div class="mission-box">
+    <div class="mission-moon">🌙</div>
+    <div style="font-size:2rem;letter-spacing:4px;margin-bottom:8px">⭐ ✨ 🌟 ✨ ⭐</div>
+    <span class="mission-pet" id="mission-pet-emoji">🐣</span>
+    <span style="font-size:1.2rem;display:block;margin-bottom:6px">💤</span>
+    <div class="mission-title">Mission Accomplished!</div>
+    <div class="mission-sub">
+      All tasks cleared! 🎖️<br>
+      <span class="mission-hero-name" id="mission-hero-name">Great job, Commander!</span><br>
+      <span style="color:#a0d4ff">Brain is now in rest mode. 🧠✨</span>
+    </div>
+    <button class="mission-close" onclick="closeMission()">✨ Sweet Dreams!</button>
+  </div>
+</div>
+
+<!-- SONIC FLASH -->
+<div id="sonic-flash">
+  <div class="sonic-ring"></div><div class="sonic-ring"></div><div class="sonic-ring"></div>
+  <div class="sonic-text">⚡ SPEED BONUS! ⚡</div>
+</div>
+
+<!-- 3-2-1 COUNTDOWN OVERLAY -->
+<div id="countdown-overlay">
+  <div class="countdown-box">
+    <div class="countdown-task-name" id="cd-task-name">Brush Teeth</div>
+    <div class="countdown-num" id="cd-num">3</div>
+    <div class="countdown-label" id="cd-label">Get Ready...</div>
+  </div>
+</div>
+
+<!-- REWARD POPUP -->
+<div id="reward-popup">
+  <div class="popup-box">
+    <div class="popup-title" id="pop-title">Quest Complete!</div>
+    <span class="popup-emoji" id="pop-emoji">🌟</span>
+    <div class="popup-items" id="pop-items"></div>
+    <div class="popup-msg" id="pop-msg"></div>
+    <button class="popup-close" onclick="closePopup()">Awesome! ✨</button>
+  </div>
+</div>
+
+<!-- ══════ QUEST VIEW ══════ -->
+<div id="quest-view" class="view active">
+  <div class="app-header">
+    <div class="header-left">
+      <div class="hero-avatar-badge" id="header-avatar">⚔️</div>
+      <div class="header-titles">
+        <div class="app-title" id="header-hero-name">Quest App</div>
+        <div class="app-subtitle" id="header-subtitle">Today's Adventures Await!</div>
+      </div>
+    </div>
+    <button class="hbtn" onclick="showPinOverlay()">🔐 Parent</button>
+  </div>
+
+  <div class="streak-danger" id="streak-danger">
+    <span style="font-size:1.5rem">🔥</span>
+    <div class="streak-danger-text" id="streak-danger-text">Your streak is on fire! Don't let it go out!</div>
+  </div>
+
+  <div class="grace-bar" id="grace-bar">
+    <span style="font-size:1.3rem">🛡️</span>
+    <div class="grace-bar-text">Shield Active! Streak protected until 10:00 AM. Keep going!</div>
+  </div>
+
+  <!-- PET COMPACT CARD -->
+  <div class="pet-card" id="pet-card">
+    <div class="pet-stars" id="pet-stars"></div>
+    <div class="pet-left">
+      <div style="position:relative;display:inline-block">
+        <span class="pet-emoji" id="pet-emoji">🐣</span>
+        <span class="zzz-overlay" id="zzz1">💤</span>
+        <span class="zzz-overlay zzz2" id="zzz2">💤</span>
+      </div>
+      <div class="pet-pj-badge">😴 PJ Mode</div>
+    </div>
+    <div class="pet-right">
+      <div class="pet-name-row">
+        <span class="pet-name" id="pet-name">Baby Egg</span>
+        <span class="pet-mood-icon" id="pet-mood">😴</span>
+      </div>
+      <div class="pet-level" id="pet-level">Lv.1 · 0/50 XP</div>
+      <div class="pet-xp-bar-wrap"><div class="pet-xp-bar" id="pet-xp-bar" style="width:0%"></div></div>
+      <div class="pet-speech" id="pet-speech">Tap me to visit my home! 🏠</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card s-xp"><span class="stat-icon">🏅</span><div class="stat-val" id="stat-xp">0</div><div class="stat-lbl">XP</div></div>
+    <div class="stat-card s-str" id="streak-card"><span class="stat-icon">🔥</span><div class="stat-val" id="stat-streak">0</div><div class="stat-lbl">Streak</div></div>
+    <div class="stat-card s-gem"><span class="stat-icon">💎</span><div class="stat-val" id="stat-gems">0</div><div class="stat-lbl">Gems</div></div>
+    <div class="stat-card s-coin"><span class="stat-icon">🪙</span><div class="stat-val" id="stat-coins">0</div><div class="stat-lbl">Coins</div></div>
+    <div class="stat-card s-shard"><span class="stat-icon">🔮</span><div class="stat-val" id="stat-shards">0</div><div class="stat-lbl">Shards</div></div>
+  </div>
+
+  <div class="day-banner"><span>📅</span><span id="day-banner-text">Today – Hero's Quests</span></div>
+  <div class="sec-title">⚔️ Daily Quests</div>
+  <div id="quest-list"></div>
+
+  <div class="bonus-section">
+    <div class="sec-title bonus-title">⭐ Bonus Quests <span style="font-size:.73rem;font-weight:700;color:#b57300">(Optional)</span></div>
+    <div class="bonus-desc">🎁 Extra quests — <strong>1.5× XP & Coins</strong>, won't affect your streak!</div>
+    <div id="bonus-quest-list"></div>
+    <div id="bonus-empty" class="empty-state" style="padding:14px 20px;display:none"><span style="font-size:1.6rem">🌟</span>No bonus quests yet!</div>
+  </div>
+
+  <!-- Shard bar -->
+  <div class="shard-section">
+    <div class="shard-label">
+      <span>🔮 Shards — collect 20 to hatch a new pet!</span>
+      <span id="shard-count-lbl" style="color:#888">0 / 20</span>
+    </div>
+    <div class="shard-row" id="shard-row"></div>
+    <button class="new-pet-btn" id="new-pet-btn" onclick="hatchNewPet()" style="display:none">🥚 Hatch New Pet! (20 Shards ready!)</button>
+  </div>
+
+  <div class="collect-bar">
+    <div class="progress-summary" id="progress-summary">0 / 0 quests done</div>
+    <div class="day-pbar-wrap"><div class="day-pbar" id="day-pbar" style="width:0%"></div></div>
+    <button class="collect-btn" id="collect-btn" onclick="collectDayRewards()" disabled>Complete quests first!</button>
+  </div>
+</div>
+
+<!-- ══════ PET HOME VIEW ══════ -->
+<div id="home-view" class="view">
+  <div class="app-header">
+    <div class="header-left">
+      <div class="hero-avatar-badge" id="home-avatar">🏠</div>
+      <div class="header-titles">
+        <div class="app-title" style="font-size:1.1rem" id="home-pet-title">Pet's Home</div>
+        <div class="app-subtitle" id="home-coin-sub">🪙 0 coins to spend</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room canvas -->
+  <div class="room-wrap" id="room-wrap" onclick="petTapped()">
+    <canvas id="room-canvas" width="440" height="280"></canvas>
+    <div class="room-tap-hint">Tap pet to chat! 💬</div>
+    <div id="bubble-container" style="position:absolute;inset:0;pointer-events:none"></div>
+  </div>
+
+  <!-- Shop -->
+  <div class="shop-section">
+    <h3>🛒 Pet Shop <span style="font-size:.75rem;font-weight:700;color:#aaa;font-family:'Nunito',sans-serif">— decorate your pet's home!</span></h3>
+    <div class="shop-cats" id="shop-cats"></div>
+    <div class="shop-grid" id="shop-grid"></div>
+  </div>
+</div>
+
+<!-- ══════ PARENT VIEW ══════ -->
+<div id="parent-view" class="view">
+  <div class="app-header">
+    <span class="app-title" style="color:var(--yellow)">🛡️ Parent HQ</span>
+    <button class="hbtn" onclick="navTo('quest-view')">← Back</button>
+  </div>
+  <div class="panel-hdr"><h2>⚙️ Quest Settings</h2><p>Manage quests, profile & history</p></div>
+  <div class="parent-nav">
+    <button class="parent-tab active" onclick="switchParentTab('quests',this)">📅 Quests</button>
+    <button class="parent-tab" onclick="switchParentTab('profile',this)">🦸 Profile</button>
+    <button class="parent-tab" onclick="switchParentTab('history',this)">📊 History</button>
+  </div>
+  <div class="parent-section active" id="tab-quests">
+    <div class="settings-card">
+      <h3>📅 Weekly Quest Planner</h3>
+      <div class="day-tabs" id="day-tabs"></div>
+      <div class="task-list-hdr">
+        <span class="active-day-lbl" id="active-day-lbl">Monday's Quests</span>
+        <button class="sync-btn" id="sync-btn" onclick="syncToAllDays()" style="display:none">✨ Sync to All Days</button>
+      </div>
+      <div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--dark);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        ⚔️ Daily Tasks <span style="font-size:.7rem;font-weight:700;color:#aaa;font-family:'Nunito',sans-serif">(affect streak)</span>
+      </div>
+      <div id="parent-task-list"></div>
+      <button class="add-task-btn" onclick="addTaskRow(false)">＋ Add Daily Quest</button>
+      <div style="font-family:'Fredoka One',cursive;font-size:.85rem;color:#d48000;margin-bottom:8px;margin-top:6px;display:flex;align-items:center;gap:6px">
+        ⭐ Bonus Tasks <span style="font-size:.7rem;font-weight:700;color:#aaa;font-family:'Nunito',sans-serif">(optional · 1.5×)</span>
+      </div>
+      <div id="parent-bonus-list"></div>
+      <button class="add-bonus-btn" onclick="addTaskRow(true)">⭐ Add Bonus Quest</button>
+    </div>
+    <button class="save-btn" onclick="saveAll()">💾 Save All Quests</button>
+  </div>
+  <div class="parent-section" id="tab-profile">
+    <div class="settings-card">
+      <h3>🦸 Hero Profile</h3>
+      <div class="profile-row"><label>Name</label><input type="text" id="hero-name" placeholder="Hero's name..."></div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:.8rem;font-weight:700;color:#666;margin-bottom:6px">Choose Avatar</div>
+        <div class="avatar-preview" id="avatar-preview">🧙</div>
+        <div class="avatar-picker" id="avatar-picker"></div>
+      </div>
+      <button class="save-btn" onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+    <div class="settings-card">
+      <h3>🔐 Change PIN</h3>
+      <div style="font-size:.8rem;color:#aaa;font-weight:700;margin-bottom:8px">Enter a new 4-digit PIN.</div>
+      <div class="pin-set-row">
+        <input type="password" id="new-pin-input" maxlength="4" placeholder="····" inputmode="numeric">
+        <button class="pin-change-btn" onclick="changePin()">Set PIN ✓</button>
+      </div>
+    </div>
+    <div class="backup-card">
+      <h3>💾 Data Backup</h3>
+      <div class="backup-desc">
+        Export your data as a JSON file and store it in Files app.<br>
+        Import to restore everything on this or any device.
+      </div>
+      <div class="pwa-tip">
+        <div class="pwa-tip-title">📱 Tip: Add to Home Screen!</div>
+        <div class="pwa-tip-body">
+          Open in Safari → tap <strong>Share □↑</strong> → <strong>"Add to Home Screen"</strong><br>
+          This prevents Safari from ever clearing your data automatically.
+        </div>
+      </div>
+      <div class="backup-row">
+        <button class="backup-btn export-btn" onclick="exportData()">
+          📤 Export Backup
+        </button>
+        <button class="backup-btn import-btn" onclick="document.getElementById('import-file').click()">
+          📂 Import Backup
+        </button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+      <div class="backup-status" id="backup-status"></div>
+      <div class="version-badge" id="version-badge">App Version —</div>
+    </div>
+  </div>
+  <div class="parent-section" id="tab-history">
+    <div class="settings-card" style="padding:12px">
+      <h3 style="margin-bottom:8px">📊 Completion History</h3>
+      <button class="clear-hist-btn" onclick="clearHistory()">🗑 Clear All</button>
+      <div style="clear:both"></div>
+      <div class="history-filter" id="history-filter"></div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-quests" onclick="navTo('quest-view')">
+    <span class="nav-icon">⚔️</span><span class="nav-lbl">Quests</span>
+  </button>
+  <button class="nav-btn" id="nav-home" onclick="navTo('home-view')">
+    <span class="nav-icon">🏠</span><span class="nav-lbl">Pet Home</span>
+  </button>
+</nav>
+
+<script>
+// ════════════════════════════════════════════════
+// CONSTANTS
+// ════════════════════════════════════════════════
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_COLORS={Monday:'#FF6B6B',Tuesday:'#FF9F43',Wednesday:'#54A0FF',
+  Thursday:'#5F27CD',Friday:'#00D2D3',Saturday:'#FF9FF3',Sunday:'#FFD93D'};
+const DAY_ICONS={Monday:'🔴',Tuesday:'🟠',Wednesday:'🔵',
+  Thursday:'🟣',Friday:'🩵',Saturday:'🩷',Sunday:'🟡'};
+const JS_TO_DAY=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const SHARDS_NEEDED=20;
+const GRACE_HOUR=10;
+const DEFAULT_PIN='1234';
+const AVATAR_OPTIONS=['🧙','🦸','🧝','🧛','🧜','🧚','🥷','🦊','🐱','🐶',
+  '🦁','🐸','🐼','🦋','🦄','🐉','⚔️','🚀','🌈','🎮'];
+const PET_STAGES=[
+  {min:0,   emoji:'🐣',name:'Baby Egg',    mood:'😴',speech:["I'm still hatching...","Feed me quests! 🍽️","One day I'll be huge!"]},
+  {min:50,  emoji:'🐥',name:'Fluffy Chick',mood:'😊',speech:["Cheep cheep! You did it!","I love when you do quests!","You're my favourite hero! 🌟"]},
+  {min:200, emoji:'🐱',name:'Curious Cat', mood:'😄',speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You're amazing! 😸"]},
+  {min:500, emoji:'🦊',name:'Clever Fox',  mood:'😎',speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team! 🦊⚔️"]},
+  {min:1000,emoji:'🐉',name:'Mini Dragon', mood:'🤩',speech:["ROAR! We crushed those quests!","Dragon power activated! 🔥","I'll protect you always! 🐉"]},
+  {min:2000,emoji:'🦄',name:'Magic Unicorn',mood:'🥰',speech:["Magical vibes only! ✨","You're absolutely legendary!","Sprinkle sprinkle quest dust! 🌈"]},
+  {min:4000,emoji:'🌟',name:'Star Guardian',mood:'✨',speech:["You have reached the stars! 🌟","The universe thanks you!","Beyond legendary! Keep going! ⭐"]},
+];
+const LVL_XP=[50,80,120,180,260,380,520];
+const HATCH_PETS=['🐰','🐸','🦋','🐼','🦁','🐬','🦅','🦔','🐙','🦖'];
+
+// ── Pet speech lines by completion level ──
+const SPEECH_BY_PROGRESS=[
+  {min:0,   lines:["Let's start some quests today! 💪","I believe in you! Start a quest!","The adventure begins when you try! ⚔️"]},
+  {min:25,  lines:["Great start! Keep going! 🚀","You're on your way! Don't stop!","Halfway done is not done — push through!"]},
+  {min:60,  lines:["Almost there! You're so close! ⭐","So proud of you right now! 🌟","Last few quests — you've got this!"]},
+  {min:100, lines:["ALL DONE! You're incredible! 🎉","Perfect day! The room glows for you! ✨","LEGENDARY! Time to rest, hero! 😴"]},
+];
+
+// ── SHOP CATALOG ──
+const SHOP_CATS=['🌅 Background','🛏 Bed','🌱 Plant','💡 Light','🎮 Toy','✨ Effect'];
+const SHOP_ITEMS=[
+  // Backgrounds
+  {id:'bg_meadow',cat:0,name:'Sunny Meadow',icon:'🌄',price:0,type:'bg',colors:['#87CEEB','#90EE90','#8FBC8F'],owned:true},
+  {id:'bg_night',cat:0,name:'Night Sky',icon:'🌃',price:30,type:'bg',colors:['#0a0a2e','#1a1a4e','#2a2060']},
+  {id:'bg_ocean',cat:0,name:'Ocean Deep',icon:'🌊',price:50,type:'bg',colors:['#006994','#0099CC','#00CED1']},
+  {id:'bg_castle',cat:0,name:'Magic Castle',icon:'🏰',price:80,type:'bg',colors:['#8B6FBF','#A080D0','#C0A0E8']},
+  {id:'bg_candy',cat:0,name:'Candy Land',icon:'🍭',price:100,type:'bg',colors:['#FFB3C6','#FF8FA3','#FFC8DD']},
+  // Beds
+  {id:'bed_basic',cat:1,name:'Cozy Nest',icon:'🛏',price:0,type:'item',owned:true},
+  {id:'bed_cloud',cat:1,name:'Cloud Bed',icon:'☁️',price:20,type:'item'},
+  {id:'bed_hammock',cat:1,name:'Hammock',icon:'🏕',price:40,type:'item'},
+  {id:'bed_royal',cat:1,name:'Royal Bed',icon:'👑',price:60,type:'item'},
+  // Plants
+  {id:'plant_none',cat:2,name:'None',icon:'⬜',price:0,type:'item',owned:true},
+  {id:'plant_cactus',cat:2,name:'Cactus',icon:'🌵',price:15,type:'item'},
+  {id:'plant_flower',cat:2,name:'Flower',icon:'🌸',price:20,type:'item'},
+  {id:'plant_tree',cat:2,name:'Bonsai',icon:'🌳',price:35,type:'item'},
+  {id:'plant_mushroom',cat:2,name:'Mushroom',icon:'🍄',price:45,type:'item'},
+  // Lights
+  {id:'light_none',cat:3,name:'None',icon:'⬜',price:0,type:'item',owned:true},
+  {id:'light_candle',cat:3,name:'Candle',icon:'🕯',price:20,type:'item'},
+  {id:'light_moon',cat:3,name:'Moon Lamp',icon:'🌙',price:35,type:'item'},
+  {id:'light_rainbow',cat:3,name:'Rainbow',icon:'🌈',price:60,type:'item'},
+  {id:'light_fairy',cat:3,name:'Fairy Lights',icon:'✨',price:80,type:'item'},
+  // Toys
+  {id:'toy_none',cat:4,name:'None',icon:'⬜',price:0,type:'item',owned:true},
+  {id:'toy_ball',cat:4,name:'Ball',icon:'⚽',price:10,type:'item'},
+  {id:'toy_book',cat:4,name:'Magic Book',icon:'📚',price:20,type:'item'},
+  {id:'toy_telescope',cat:4,name:'Telescope',icon:'🔭',price:40,type:'item'},
+  {id:'toy_chest',cat:4,name:'Treasure',icon:'💰',price:60,type:'item'},
+  // Effects
+  {id:'fx_none',cat:5,name:'None',icon:'⬜',price:0,type:'item',owned:true},
+  {id:'fx_bubbles',cat:5,name:'Bubbles',icon:'🫧',price:50,type:'item'},
+  {id:'fx_stars',cat:5,name:'Stars',icon:'⭐',price:60,type:'item'},
+  {id:'fx_firefly',cat:5,name:'Firefly',icon:'🌟',price:80,type:'item'},
+  {id:'fx_aurora',cat:5,name:'Aurora',icon:'🎆',price:120,type:'item'},
+];
+
+// ════════════════════════════════════════════════
+// STORAGE
+// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+// DATA VERSION & MIGRATION
+// ════════════════════════════════════════════════
+const APP_VERSION = '2.0';
+const DATA_VERSION = 4; // bump this whenever data structure changes
+
+// All localStorage keys that belong to this app
+const ALL_KEYS = [
+  'weeklyTasks','heroStats','heroProfile','petData','shopData',
+  'questHistory','todayProgress','timerData','stepProgress',
+  'parentPin','lastProgressDate','dataVersion',
+];
+
+function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// ── Migration runner — called once on startup ──
+function runMigrations(){
+  const saved = load('dataVersion', 1);
+
+  // v1→v2: weeklyTasks was {day:[...tasks]} → {day:{tasks:[],bonus:[]}}
+  if(saved < 2){
+    let wt = load('weeklyTasks', null);
+    if(wt){
+      DAYS.forEach(d=>{
+        if(Array.isArray(wt[d])) wt[d]={tasks:wt[d],bonus:[]};
+        if(!wt[d]) wt[d]={tasks:[],bonus:[]};
+        if(!wt[d].bonus) wt[d].bonus=[];
+      });
+      save('weeklyTasks', wt);
+    }
+    console.log('Migration v1→v2 done');
+  }
+
+  // v2→v3: heroStats missing coins field
+  if(saved < 3){
+    const s = load('heroStats', null);
+    if(s && s.coins === undefined){ s.coins = 0; save('heroStats', s); }
+    console.log('Migration v2→v3 done');
+  }
+
+  // v3→v4: tasks missing difficulty + steps fields
+  if(saved < 4){
+    let wt = load('weeklyTasks', null);
+    if(wt){
+      DAYS.forEach(d=>{
+        const day = wt[d]||{tasks:[],bonus:[]};
+        ['tasks','bonus'].forEach(type=>{
+          (day[type]||[]).forEach(t=>{
+            if(!t.difficulty) t.difficulty = 'medium';
+            if(!t.steps) t.steps = [];
+          });
+        });
+        wt[d] = day;
+      });
+      save('weeklyTasks', wt);
+    }
+    console.log('Migration v3→v4 done');
+  }
+
+  save('dataVersion', DATA_VERSION);
+}
+
+// ════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ════════════════════════════════════════════════
+function exportData(){
+  const bundle = { _appVersion: APP_VERSION, _dataVersion: DATA_VERSION, _exportedAt: new Date().toISOString() };
+  ALL_KEYS.forEach(k=>{ const v=load(k,null); if(v!==null) bundle[k]=v; });
+
+  const json = JSON.stringify(bundle, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const name = heroName().replace(/[^a-z0-9]/gi,'_');
+  const date = new Date().toISOString().slice(0,10);
+  const a = document.createElement('a');
+  a.href = url; a.download = `QuestApp_${name}_${date}.json`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+
+  showBackupStatus('ok', `✅ Backup saved! File: QuestApp_${name}_${date}.json`);
+  showToast('📤 Backup exported to Files!');
+}
+
+function importData(input){
+  const file = input.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const bundle = JSON.parse(e.target.result);
+      if(!bundle._dataVersion){
+        showBackupStatus('err','⚠️ Invalid backup file — missing version info.');
+        return;
+      }
+      // Restore all keys (skip meta keys starting with _)
+      let restored = 0;
+      ALL_KEYS.forEach(k=>{
+        if(bundle[k] !== undefined){ save(k, bundle[k]); restored++; }
+      });
+      // Run migrations on imported data in case it's from an older version
+      save('dataVersion', bundle._dataVersion);
+      runMigrations();
+      showBackupStatus('ok', `✅ Restored ${restored} data records from ${bundle._exportedAt ? bundle._exportedAt.slice(0,10) : 'backup'}. Reloading...`);
+      showToast('📂 Data restored! Reloading...');
+      setTimeout(()=>{ renderChild(); renderHome(); }, 800);
+    } catch(err){
+      showBackupStatus('err','❌ Could not read file. Make sure it is a valid Quest App backup.');
+    }
+    input.value=''; // reset so same file can be re-imported
+  };
+  reader.readAsText(file);
+}
+
+function showBackupStatus(type, msg){
+  const el = document.getElementById('backup-status');
+  if(!el) return;
+  el.className = 'backup-status ' + type;
+  el.textContent = msg;
+  if(type === 'ok') setTimeout(()=>{ el.style.display='none'; }, 5000);
+}
+
+function updateVersionBadge(){
+  const el = document.getElementById('version-badge');
+  if(el) el.textContent = 'App v' + APP_VERSION + ' · Data schema v' + DATA_VERSION;
+}
+function defWeek(){const o={};DAYS.forEach(d=>o[d]={tasks:[],bonus:[]});return o}
+function defPet(){return{totalXp:0,shards:0,hatches:0}}
+function defStats(){return{xp:0,streak:0,gems:0,coins:0,lastRewardDate:null,lastProgressDate:null}}
+function defProfile(){return{name:'Hero',avatar:'🧙'}}
+function defShop(){
+  // owned items per category (by item id), equipped per category index
+  const owned={};const equipped={};
+  SHOP_ITEMS.filter(i=>i.owned).forEach(i=>owned[i.id]=true);
+  // default equipped per cat
+  equipped[0]='bg_meadow';equipped[1]='bed_basic';equipped[2]='plant_none';
+  equipped[3]='light_none';equipped[4]='toy_none';equipped[5]='fx_none';
+  return{owned,equipped};
+}
+
+function getWeek(){
+  let wt=load('weeklyTasks',null);
+  if(!wt){wt=defWeek();save('weeklyTasks',wt);return wt;}
+  DAYS.forEach(d=>{
+    if(Array.isArray(wt[d]))wt[d]={tasks:wt[d],bonus:[]};
+    if(!wt[d])wt[d]={tasks:[],bonus:[]};
+    if(!wt[d].bonus)wt[d].bonus=[];
+  });
+  return wt;
+}
+function getPin(){return load('parentPin',DEFAULT_PIN)}
+function heroName(){return load('heroProfile',defProfile()).name||'Hero'}
+function heroAvatar(){return load('heroProfile',defProfile()).avatar||'🧙'}
+function getShop(){
+  let s=load('shopData',null);
+  if(!s){s=defShop();save('shopData',s);}
+  if(!s.owned){s.owned={};SHOP_ITEMS.filter(i=>i.owned).forEach(i=>s.owned[i.id]=true);}
+  if(!s.equipped){s.equipped={0:'bg_meadow',1:'bed_basic',2:'plant_none',3:'light_none',4:'toy_none',5:'fx_none'};}
+  return s;
+}
+
+// ════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════
+function todayName(){return JS_TO_DAY[new Date().getDay()]}
+function taskXP(t,isBonus){const base=Math.round((t.weight||1)*10*Math.ceil((t.duration||5)/10));return isBonus?Math.round(base*1.5):base}
+function taskCoins(t,isBonus){const base=Math.max(2,Math.round((t.weight||1)*3*Math.ceil((t.duration||5)/10)));return isBonus?Math.round(base*1.5):base}
+function taskGems(t){return Math.max(1,Math.floor(Math.round((t.weight||1)*10*Math.ceil((t.duration||5)/10))/30))}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtTime(sec){const s=Math.floor(Math.abs(sec)),m=Math.floor(s/60),ss=s%60;return`${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`}
+function petStage(xp){let st=PET_STAGES[0];PET_STAGES.forEach(s=>{if(xp>=s.min)st=s;});return st}
+function petLvInfo(xp){
+  const si=PET_STAGES.reduce((a,s,i)=>xp>=s.min?i:a,0);
+  const xpInStage=xp-PET_STAGES[si].min;
+  const xpPerLv=LVL_XP[Math.min(si,LVL_XP.length-1)];
+  const lv=Math.floor(xpInStage/xpPerLv)+1;
+  const inLv=xpInStage%xpPerLv;
+  return{lv,inLv,xpPerLv,pct:Math.min(100,Math.round(inLv/xpPerLv*100)),si};
+}
+function isGracePeriod(){
+  const stats=load('heroStats',defStats());
+  const now=new Date();
+  if(!stats.lastProgressDate||stats.lastProgressDate===now.toDateString())return false;
+  if(now.getHours()>=GRACE_HOUR)return false;
+  const wt=getWeek();
+  const yDay=JS_TO_DAY[new Date(stats.lastProgressDate).getDay()];
+  if(!(wt[yDay]?.tasks||[]).length)return false;
+  if(stats.lastRewardDate===stats.lastProgressDate)return false;
+  return true;
+}
+function getPetSpeech(pct){
+  let lines=SPEECH_BY_PROGRESS[0].lines;
+  SPEECH_BY_PROGRESS.forEach(s=>{if(pct>=s.min)lines=s.lines;});
+  return lines[Math.floor(Math.random()*lines.length)];
+}
+function floatCoins(amount, x, y){
+  const el=document.createElement('div');
+  el.className='coin-float';
+  el.textContent=`+${amount}🪙`;
+  el.style.left=(x||window.innerWidth/2)+'px';
+  el.style.top=(y||window.innerHeight/2)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1500);
+}
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+let currentView='quest-view';
+function navTo(viewId){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  currentView=viewId;
+  if(viewId==='quest-view'){document.getElementById('nav-quests').classList.add('active');renderChild();}
+  else if(viewId==='home-view'){document.getElementById('nav-home').classList.add('active');renderHome();}
+  else if(viewId==='parent-view'){renderParent();}
+}
+
+// ════════════════════════════════════════════════
+// PIN SYSTEM
+// ════════════════════════════════════════════════
+let pinBuffer='',pinMode='verify',pinSetupFirst='';
+function showPinOverlay(){
+  pinBuffer='';
+  const hasPin=load('parentPin',null);
+  if(!hasPin){
+    pinMode='setup1';
+    document.getElementById('pin-subtitle').textContent='Create a 4-digit PIN for Parent access';
+    document.getElementById('pin-setup-step').style.display='block';
+    document.getElementById('pin-setup-step').textContent='Step 1 of 2: Enter new PIN';
+    document.getElementById('pin-cancel-btn').style.display='none';
+  } else {
+    pinMode='verify';
+    document.getElementById('pin-subtitle').textContent='Enter your 4-digit PIN';
+    document.getElementById('pin-setup-step').style.display='none';
+    document.getElementById('pin-cancel-btn').style.display='block';
+  }
+  document.getElementById('pin-error').textContent='';
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.add('show');
+}
+function closePinOverlay(){document.getElementById('pin-overlay').classList.remove('show');pinBuffer='';}
+function pinKey(d){if(pinBuffer.length>=4)return;pinBuffer+=d;updatePinDots();if(pinBuffer.length===4)setTimeout(processPinInput,120);}
+function pinDel(){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();document.getElementById('pin-error').textContent='';}
+function updatePinDots(){for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);d.classList.toggle('filled',i<pinBuffer.length);d.classList.remove('error');}}
+function pinShakeError(msg){for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.add('error');document.getElementById('pin-error').textContent=msg;pinBuffer='';setTimeout(updatePinDots,400);}
+function processPinInput(){
+  if(pinMode==='verify'){
+    if(pinBuffer===getPin()){closePinOverlay();navTo('parent-view');}
+    else pinShakeError('Wrong PIN. Try again!');
+  } else if(pinMode==='setup1'){
+    pinSetupFirst=pinBuffer;pinBuffer='';pinMode='setup2';
+    document.getElementById('pin-setup-step').textContent='Step 2 of 2: Confirm your PIN';
+    document.getElementById('pin-subtitle').textContent='Repeat the same PIN';updatePinDots();
+  } else if(pinMode==='setup2'){
+    if(pinBuffer===pinSetupFirst){save('parentPin',pinBuffer);closePinOverlay();navTo('parent-view');showToast('🔐 PIN set!');}
+    else{pinShakeError("PINs don't match!");pinBuffer='';pinSetupFirst='';pinMode='setup1';
+      document.getElementById('pin-setup-step').textContent='Step 1 of 2: Enter new PIN';
+      document.getElementById('pin-subtitle').textContent='Create a 4-digit PIN for Parent access';}
+  }
+}
+function changePin(){
+  const v=document.getElementById('new-pin-input').value.trim();
+  if(!/^\d{4}$/.test(v)){showToast('⚠️ PIN must be 4 digits!');return;}
+  save('parentPin',v);document.getElementById('new-pin-input').value='';showToast('🔐 PIN changed!');
+}
+
+// ════════════════════════════════════════════════
+// CHILD DASHBOARD
+// ════════════════════════════════════════════════
+let activeDay=todayName();
+let taskTimers={};
+
+function updateHeader(){
+  const name=heroName(),avatar=heroAvatar();
+  document.getElementById('header-avatar').textContent=avatar;
+  document.getElementById('header-hero-name').textContent=`${name}'s Quest App`;
+  document.getElementById('header-subtitle').textContent="Today's Adventures Await!";
+}
+
+function renderChild(){
+  activeDay=todayName();
+  updateHeader();
+  let stats=load('heroStats',defStats());
+  const todayStr=new Date().toDateString();
+
+  if(stats.lastProgressDate&&stats.lastProgressDate!==todayStr){
+    if(!isGracePeriod()){
+      dayRollover(stats);
+      save('todayProgress',{});save('timerData',{});save('stepProgress',{});
+      Object.values(taskTimers).forEach(id=>clearInterval(id));taskTimers={};
+    }
+  }
+  stats.lastProgressDate=todayStr;
+  save('heroStats',stats);
+
+  // Grace & streak danger
+  const graceActive=isGracePeriod();
+  document.getElementById('grace-bar').className='grace-bar'+(graceActive?' show':'');
+  const shieldEl=document.getElementById('streak-card').querySelector('.grace-shield');
+  if(shieldEl)shieldEl.remove();
+  if(graceActive){const sh=document.createElement('div');sh.className='grace-shield';sh.textContent='🛡️';document.getElementById('streak-card').appendChild(sh);}
+
+  // Streak danger: has streak > 0, today not yet collected, past 6pm
+  const now=new Date();
+  const wt=getWeek();
+  const todayTasks=(wt[activeDay]||{tasks:[]}).tasks||[];
+  const prog=load('todayProgress',{});
+  const dailyDone=todayTasks.filter((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial').length;
+  const dangerEl=document.getElementById('streak-danger');
+  const dangerTextEl=document.getElementById('streak-danger-text');
+  if(stats.streak>0&&stats.lastRewardDate!==todayStr&&now.getHours()>=18&&todayTasks.length>0){
+    dangerEl.classList.add('show');
+    const remaining=todayTasks.length-dailyDone;
+    dangerTextEl.textContent=`🔥 Streak is in danger! ${remaining} quest${remaining!==1?'s':''} left to protect your ${stats.streak}-day streak!`;
+  } else dangerEl.classList.remove('show');
+
+  document.getElementById('stat-xp').textContent=stats.xp;
+  document.getElementById('stat-streak').textContent=stats.streak;
+  document.getElementById('stat-gems').textContent=stats.gems;
+  document.getElementById('stat-coins').textContent=stats.coins||0;
+  document.getElementById('stat-shards').textContent=(load('petData',defPet()).shards||0);
+  document.getElementById('day-banner-text').textContent=`Today is ${activeDay} – ${heroName()}'s Quests ⚔️`;
+
+  renderPetCompact(dailyDone, todayTasks.length);
+
+  const bonusTasks=(wt[activeDay]||{tasks:[],bonus:[]}).bonus||[];
+  const tdata=load('timerData',{});
+
+  const listEl=document.getElementById('quest-list');listEl.innerHTML='';
+  let doneDaily=0;
+  if(!todayTasks.length){
+    listEl.innerHTML=`<div class="empty-state"><span>🏖️</span>No daily quests today!</div>`;
+  } else {
+    todayTasks.forEach((task,i)=>{
+      const state=prog['d_'+i]||'pending';
+      if(state==='done'||state==='partial')doneDaily++;
+      listEl.appendChild(makeCard(task,i,state,tdata['d_'+i]||null,false));
+    });
+    if(doneDaily===todayTasks.length&&todayTasks.length>0&&!load('missionShown_'+todayStr,false)){
+      save('missionShown_'+todayStr,true);
+      setTimeout(()=>triggerMissionAccomplished(),600);
+    }
+  }
+
+  const bonusEl=document.getElementById('bonus-quest-list');bonusEl.innerHTML='';
+  document.getElementById('bonus-empty').style.display=bonusTasks.length?'none':'block';
+  bonusTasks.forEach((task,i)=>{
+    const state=prog['b_'+i]||'pending';
+    bonusEl.appendChild(makeCard(task,i,state,tdata['b_'+i]||null,true));
+  });
+
+  const bonusDone=bonusTasks.filter((_,i)=>prog['b_'+i]==='done'||prog['b_'+i]==='partial').length;
+  setCollectBar(doneDaily+bonusDone,todayTasks.length,doneDaily,todayTasks.length+bonusTasks.length);
+
+  const pet=load('petData',defPet());
+  const shards=pet.shards||0;
+  document.getElementById('shard-count-lbl').textContent=`${shards} / 20`;
+  const shardRow=document.getElementById('shard-row');shardRow.innerHTML='';
+  for(let s=0;s<SHARDS_NEEDED;s++){const p=document.createElement('div');p.className='shard-pip'+(s<shards?' filled':'');p.textContent=s<shards?'🔮':'';shardRow.appendChild(p);}
+  document.getElementById('new-pet-btn').style.display=shards>=SHARDS_NEEDED?'block':'none';
+
+  todayTasks.forEach((task,i)=>{if((prog['d_'+i]||'')==='running')tickTimer('d_'+i,task,tdata['d_'+i]||{elapsed:0});});
+  bonusTasks.forEach((task,i)=>{if((prog['b_'+i]||'')==='running')tickTimer('b_'+i,task,tdata['b_'+i]||{elapsed:0});});
+}
+
+function renderPetCompact(doneCount, totalCount){
+  const pet=load('petData',defPet());const txp=pet.totalXp||0;
+  const stage=petStage(txp);const lv=petLvInfo(txp);
+  const allDone=totalCount>0&&doneCount===totalCount;
+  const pct=totalCount>0?Math.round(doneCount/totalCount*100):0;
+  const speech=getPetSpeech(pct);
+
+  document.getElementById('pet-emoji').textContent=stage.emoji;
+  document.getElementById('pet-name').textContent=stage.name;
+  document.getElementById('pet-mood').textContent=allDone?'😴':stage.mood;
+  document.getElementById('pet-level').textContent=`Lv.${lv.lv} · ${lv.inLv}/${lv.xpPerLv} XP`;
+  document.getElementById('pet-xp-bar').style.width=lv.pct+'%';
+  document.getElementById('pet-speech').textContent=`"${speech}"`;
+
+  const card=document.getElementById('pet-card');
+  const z1=document.getElementById('zzz1'),z2=document.getElementById('zzz2');
+  if(allDone){
+    card.classList.add('bedtime');z1.style.display='block';z2.style.display='block';
+    const st=document.getElementById('pet-stars');
+    if(!st.children.length){for(let s=0;s<16;s++){const d=document.createElement('div');d.className='star-dot';d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*2}s`;st.appendChild(d);}}
+  } else {
+    card.classList.remove('bedtime');z1.style.display='none';z2.style.display='none';
+    document.getElementById('pet-stars').innerHTML='';
+  }
+}
+
+function makeCard(task,i,state,td,isBonus){
+  const xp=taskXP(task,isBonus),coins=taskCoins(task,isBonus),gems=taskGems(task);
+  const durSec=(task.duration||15)*60;
+  const elapsed=computeElapsed(td);
+  const pct=Math.min(100,Math.round(elapsed/durSec*100));
+  const early=state==='done'&&elapsed>0&&elapsed<durSec*.9;
+  const overtime=state==='running'&&elapsed>durSec;
+  const key=isBonus?'b_'+i:'d_'+i;
+  const card=document.createElement('div');
+  let cls='quest-card'+(isBonus?' bonus-card':'');
+  if(state==='done')cls+=' done';
+  else if(state==='partial')cls+=' partial-done';
+  else if(state==='running')cls+=' in-progress';
+  card.className=cls;card.id='qcard-'+key;
+  let badgeLbl=`+${xp}XP +${coins}🪙`;
+  let badgeCls='q-xp-badge'+(isBonus?' bonus-quest-badge':'');
+  if(state==='done'&&early){badgeLbl='⚡ EARLY BONUS!';badgeCls='q-xp-badge bonus-badge';}
+  else if(state==='partial'){badgeLbl=`+${Math.floor(xp*.5)}XP`;}
+  const earlyHint=state==='running'&&elapsed<durSec*.9?`<span style="color:var(--green);font-weight:800;font-size:.7rem">🚀 Finish early = Speed Bonus!</span>`:'';
+  // Countdown: show remaining time; bar shrinks
+  const remaining=Math.max(0,durSec-elapsed);
+  const isOver=elapsed>durSec;
+  function timerPhaseStatic(rem,total){const f=rem/total;if(f>.6)return'green';if(f>.35)return'yellow';if(f>.12)return'orange';return'red';}
+  const phase=isOver?'red':timerPhaseStatic(remaining,durSec);
+  const barPct=isOver?100:Math.round(remaining/durSec*100);
+  const displayTime=isOver?('+'+fmtTime(elapsed-durSec)):fmtTime(remaining);
+  let timerHtml='';
+  if(state!=='pending'){
+    timerHtml=`<div class="q-timer-row phase-${phase}" id="trow-${key}">
+      <div class="timer-display phase-${phase}${isOver?' overtime':''}" id="tmr-${key}">${displayTime}</div>
+      <div class="q-pbar-wrap"><div class="q-pbar phase-${phase}${isOver?' full':''}" id="pb-${key}" style="width:${barPct}%"></div></div>
+      <div class="timer-target">${fmtTime(durSec)}</div></div>`;
+  }
+  let btnHtml='';
+  if(state==='pending')btnHtml=`<div class="q-btn-row"><button class="q-btn start-btn" onclick="startTask('${key}')">▶ Start Timer</button></div>`;
+  else if(state==='running')btnHtml=`<div class="q-btn-row">
+    <button class="q-btn complete-btn" onclick="finishTask('${key}',false,${isBonus})">✅ Complete</button>
+    <button class="q-btn partial-btn" onclick="finishTask('${key}',true,${isBonus})">⚡ Partial</button></div>`;
+  // Build steps checklist
+  const steps=task.steps||[];
+  const stepProg=load('stepProgress',{});
+  const taskStepKey=key;
+  const stepsDone=(stepProg[taskStepKey]||[]);
+  let stepsHtml='';
+  if(steps.length>0&&(state==='running'||state==='pending'||state==='done'||state==='partial')){
+    const allStepsDone=steps.every((_,si)=>stepsDone[si]);
+    const doneCount=steps.filter((_,si)=>stepsDone[si]).length;
+    const firstPending=steps.findIndex((_,si)=>!stepsDone[si]);
+    const nudge=state==='pending'&&steps.length>0?`<div class="steps-nudge">👆 Start with Step 1: <strong>${esc(steps[0])}</strong></div>`:'';
+    stepsHtml=`<div class="steps-list">
+      ${steps.map((s,si)=>{
+        const done=!!stepsDone[si];
+        const isNext=si===firstPending&&state!=='done';
+        return `<div class="step-item${done?' checked':''}" onclick="toggleStep('${key}',${si})" style="${isNext?'border-color:var(--purple);background:#EDE6FF':''}">
+          <div class="step-check">${done?'✓':''}</div>
+          <div class="step-txt">${esc(s||'Step '+(si+1))}</div>
+          ${isNext?'<span style="font-size:.65rem;font-family:Fredoka One,cursive;color:var(--purple)">← Next</span>':''}
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="steps-progress">${doneCount}/${steps.length} steps done</div>
+    ${nudge}`;
+  }
+
+  let noteHtml='';
+  if(state==='done'){const bxp=early?Math.floor(xp*.3):0;noteHtml=`<div class="done-note">✅ Done! +${xp+bxp}XP +${coins}🪙 +${gems}💎${early?` ⚡+${bxp}XP early!`:''}</div>`;}
+  else if(state==='partial')noteHtml=`<div class="partial-note">⚡ Partial! +${Math.floor(xp*.5)}XP +${Math.floor(coins*.5)}🪙</div>`;
+  card.innerHTML=`
+    <div class="q-top">
+      <div class="q-info">
+        <div class="q-name">${esc(task.name||'Unnamed Quest')}${isBonus?' <span style="font-size:.65rem;color:#d48000">★BONUS</span>':''}</div>
+        <div class="q-meta" style="align-items:center">
+          ${task.difficulty?`<span class="diff-badge diff-${task.difficulty}">${task.difficulty==='easy'?'🟢 Easy':task.difficulty==='hard'?'🔴 Hard':'🟡 Medium'}</span>`:''}
+          <span>⏱ ${task.duration||15}min</span><span>⭐ Wt ${task.weight||1}</span>${earlyHint}</div>
+      </div>
+      <div class="${badgeCls}">${badgeLbl}</div>
+    </div>${timerHtml}${stepsHtml}${btnHtml}${noteHtml}`;
+  return card;
+}
+
+function computeElapsed(td){if(!td)return 0;let e=td.elapsed||0;if(td.startWall)e+=Math.floor((Date.now()-td.startWall)/1000);return Math.max(0,e);}
+
+function setCollectBar(totalDone,dailyTotal,dailyDone,totalAll){
+  const pct=dailyTotal>0?Math.round(dailyDone/dailyTotal*100):0;
+  document.getElementById('progress-summary').textContent=`${dailyDone}/${dailyTotal} daily · ${totalDone}/${totalAll} total`;
+  document.getElementById('day-pbar').style.width=pct+'%';
+  const btn=document.getElementById('collect-btn');
+  if(totalDone>0){btn.disabled=false;btn.textContent=dailyDone===dailyTotal&&dailyTotal>0?'🎉 Collect All Rewards + Shard!':`✨ Collect Rewards (${totalDone} done)`;}
+  else{btn.disabled=true;btn.textContent='Complete quests first!';}
+}
+
+// 3-2-1 Countdown + Brave Start Bonus
+function startTask(key){
+  const wt=getWeek();
+  const idx=parseInt(key.split('_')[1]);
+  const isB=key.startsWith('b_');
+  const dayData=wt[activeDay]||{tasks:[],bonus:[]};
+  const task=isB?(dayData.bonus||[])[idx]:(dayData.tasks||[])[idx];
+  const taskName=task?(task.name||'Quest'):'Quest';
+  showCountdown(taskName,function(){actuallyStartTask(key);});
+}
+
+function showCountdown(taskName,onGo){
+  const overlay=document.getElementById('countdown-overlay');
+  document.getElementById('cd-task-name').textContent=taskName;
+  overlay.classList.add('show');
+  const steps=[
+    {num:'3',lbl:'Take a deep breath... \uD83C\uDF2C\uFE0F',go:false},
+    {num:'2',lbl:'Hands ready... \u270B',go:false},
+    {num:'1',lbl:"You've got this! \uD83D\uDCAA",go:false},
+    {num:'GO!',lbl:'',go:true},
+  ];
+  let i=0;
+  if(navigator.vibrate)navigator.vibrate([80,60,80,60,120]);
+  function tick(){
+    var step=steps[i];
+    var container=document.getElementById('countdown-overlay').querySelector('.countdown-box');
+    var oldEl=document.getElementById('cd-num');
+    var fresh=document.createElement('div');
+    fresh.id='cd-num';
+    fresh.className=step.go?'countdown-go':'countdown-num';
+    fresh.textContent=step.num;
+    container.replaceChild(fresh,oldEl);
+    document.getElementById('cd-label').textContent=step.lbl;
+    i++;
+    if(step.go){setTimeout(function(){overlay.classList.remove('show');onGo();},700);}
+    else{setTimeout(tick,900);}
+  }
+  tick();
+}
+
+function actuallyStartTask(key){
+  // Brave Start Bonus +2 coins for just beginning
+  var stats=load('heroStats',defStats());
+  stats.coins=(stats.coins||0)+2;
+  save('heroStats',stats);
+  spawnStartBonusFloat();
+  var td=load('timerData',{});td[key]={elapsed:0,startWall:Date.now()};save('timerData',td);
+  var prog=load('todayProgress',{});prog[key]='running';save('todayProgress',prog);
+  renderChild();
+}
+
+function spawnStartBonusFloat(){
+  var el=document.createElement('div');
+  el.className='start-bonus-float';
+  el.textContent='\u26A1 +2\uD83E\uDE99 Brave Start!';
+  el.style.left=(30+Math.random()*40)+'%';
+  el.style.top='50%';
+  document.body.appendChild(el);
+  setTimeout(function(){el.remove();},1800);
+}
+
+function tickTimer(key,task,savedTd){
+  if(taskTimers[key])return;
+  const durSec=(task.duration||15)*60;
+  let elapsed=computeElapsed(savedTd);
+
+  // Phase thresholds (remaining fraction of total time)
+  function timerPhase(remaining,total){
+    const frac=remaining/total;
+    if(frac>0.6)return'green';
+    if(frac>0.35)return'yellow';
+    if(frac>0.12)return'orange';
+    return'red';
+  }
+
+  taskTimers[key]=setInterval(function(){
+    elapsed++;
+    if(elapsed%5===0){var td2=load('timerData',{});td2[key]={elapsed:elapsed,startWall:null};save('timerData',td2);}
+    var tmrEl=document.getElementById('tmr-'+key);
+    var pbEl=document.getElementById('pb-'+key);
+    var rowEl=document.getElementById('trow-'+key);
+    if(!tmrEl){clearInterval(taskTimers[key]);delete taskTimers[key];return;}
+
+    var remaining=Math.max(0,durSec-elapsed);
+    var isOver=elapsed>durSec;
+
+    if(isOver){
+      // Show overtime: how long past the deadline
+      var over=elapsed-durSec;
+      tmrEl.textContent='+'+fmtTime(over);
+      tmrEl.className='timer-display overtime';
+      if(pbEl){pbEl.style.width='100%';pbEl.className='q-pbar phase-red full';}
+      if(rowEl)rowEl.className='q-timer-row phase-red';
+    } else {
+      // Countdown: show time remaining
+      var phase=timerPhase(remaining,durSec);
+      tmrEl.textContent=fmtTime(remaining);
+      tmrEl.className='timer-display phase-'+phase;
+      var pct=Math.min(100,Math.round(remaining/durSec*100));
+      if(pbEl){
+        // Bar shrinks as time runs out
+        pbEl.style.width=pct+'%';
+        pbEl.className='q-pbar phase-'+phase;
+      }
+      if(rowEl)rowEl.className='q-timer-row phase-'+phase;
+    }
+  },1000);
+}
+
+function finishTask(key,partial,isBonus){
+  clearInterval(taskTimers[key]);delete taskTimers[key];
+  const td=load('timerData',{});const elapsed=computeElapsed(td[key]||{});
+  td[key]={elapsed,startWall:null};save('timerData',td);
+  const wt=getWeek();const idx=parseInt(key.split('_')[1]);const isB=key.startsWith('b_');
+  const dayData=wt[activeDay]||{tasks:[],bonus:[]};
+  const task=isB?(dayData.bonus||[])[idx]:(dayData.tasks||[])[idx];
+  if(!task)return;
+  const durSec=(task.duration||15)*60;
+  const xp=taskXP(task,isBonus),coins=taskCoins(task,isBonus),gems=taskGems(task);
+  const early=!partial&&elapsed>5&&elapsed<durSec*.9;
+  let xpGain=partial?Math.floor(xp*.5):xp;
+  let coinGain=partial?Math.floor(coins*.5):coins;
+  let gemGain=partial?0:gems;
+  let bonusXp=early?Math.floor(xp*.3):0;
+  let bonusCoins=early?Math.floor(coins*.3):0;
+  let bonusGem=early?1:0;
+  const savedMin=early?Math.floor((durSec-elapsed)/60):0;
+
+  let stats=load('heroStats',defStats());
+  stats.xp+=(xpGain+bonusXp);stats.gems+=(gemGain+bonusGem);
+  stats.coins=(stats.coins||0)+(coinGain+bonusCoins);
+  save('heroStats',stats);
+  feedPet(xpGain+bonusXp);
+
+  const prog=load('todayProgress',{});prog[key]=partial?'partial':'done';save('todayProgress',prog);
+  logTaskCompletion(task,xpGain+bonusXp,gemGain+bonusGem,coinGain+bonusCoins,partial,early,isBonus);
+
+  // Float coin animation
+  floatCoins(coinGain+bonusCoins, window.innerWidth*.6, window.innerHeight*.4);
+
+  const items=[`+${xpGain} XP`,{text:`+${coinGain}🪙 Coins`,type:'coin'}];
+  if(isBonus)items.push({text:'⭐ 1.5× Bonus!',type:'bonus'});
+  if(gemGain)items.push(`+${gemGain} 💎`);
+  if(bonusXp)items.push({text:`+${bonusXp}XP ⚡ Early!`,type:'bonus'});
+  if(bonusCoins)items.push({text:`+${bonusCoins}🪙 Early!`,type:'coin'});
+  showPopup(
+    partial?'⚡ Partial!':(early?`🚀 ${savedMin}m Early!`:'✅ Quest Done!'),
+    partial?'😤':(early?'⚡':'🌟'),items,
+    partial?`Half XP earned, ${heroName()}!`:(early?`Finished ${savedMin}min early! Speed bonus!`:'Your pet got fed! 🐾'));
+  launchConfetti(partial?20:(early?90:50));
+  renderChild();
+}
+
+// ════════════════════════════════════════════════
+// STEP CHECKLIST (child view)
+// ════════════════════════════════════════════════
+function toggleStep(key,si){
+  const stepProg=load('stepProgress',{});
+  if(!stepProg[key])stepProg[key]=[];
+  stepProg[key][si]=!stepProg[key][si];
+  save('stepProgress',stepProg);
+  // Haptic feedback
+  if(navigator.vibrate)navigator.vibrate(40);
+  renderChild();
+}
+
+// Clear step progress when task is reset
+function clearStepProgress(key){
+  const sp=load('stepProgress',{});
+  delete sp[key];
+  save('stepProgress',sp);
+}
+
+// ════════════════════════════════════════════════
+// HISTORY LOGGING
+// ════════════════════════════════════════════════
+function logTaskCompletion(task,xp,gems,coins,partial,early,isBonus){
+  const todayStr=new Date().toDateString();
+  let hist=load('questHistory',[]);
+  let entry=hist.find(e=>e.date===todayStr);
+  if(!entry){entry={date:todayStr,day:todayName(),tasks:[],totalXp:0,totalGems:0,totalCoins:0,allDone:false};hist.unshift(entry);}
+  entry.tasks.push({name:task.name||'Quest',xp,gems,coins,partial,early,isBonus});
+  entry.totalXp=(entry.totalXp||0)+xp;entry.totalGems=(entry.totalGems||0)+gems;entry.totalCoins=(entry.totalCoins||0)+coins;
+  if(hist.length>60)hist=hist.slice(0,60);
+  save('questHistory',hist);
+}
+function markHistoryAllDone(todayStr){let hist=load('questHistory',[]);const e=hist.find(e=>e.date===todayStr);if(e){e.allDone=true;save('questHistory',hist);}}
+
+// ════════════════════════════════════════════════
+// PET
+// ════════════════════════════════════════════════
+function feedPet(xp){let pet=load('petData',defPet());pet.totalXp=(pet.totalXp||0)+xp;save('petData',pet);}
+function hatchNewPet(){
+  let pet=load('petData',defPet());
+  if((pet.shards||0)<SHARDS_NEEDED){showToast('⚠️ Not enough shards!');return;}
+  pet.shards-=SHARDS_NEEDED;pet.totalXp=0;pet.hatches=(pet.hatches||0)+1;save('petData',pet);
+  const newEmoji=HATCH_PETS[pet.hatches%HATCH_PETS.length];
+  showPopup('🥚 New Pet Hatched!',newEmoji,[{text:'Used 20 🔮 Shards',type:'shard'},'Pet XP reset!'],`Keep completing quests, ${heroName()}!`);
+  launchConfetti(120);renderChild();
+}
+
+// ════════════════════════════════════════════════
+// MISSION ACCOMPLISHED
+// ════════════════════════════════════════════════
+function triggerMissionAccomplished(){
+  const pet=load('petData',defPet());const stage=petStage(pet.totalXp||0);
+  document.getElementById('mission-pet-emoji').textContent=stage.emoji;
+  document.getElementById('mission-hero-name').textContent=`Great job, ${heroName()}! 🎖️`;
+  document.getElementById('mission-overlay').classList.add('show');launchConfetti(120);
+}
+function closeMission(){document.getElementById('mission-overlay').classList.remove('show')}
+
+// ════════════════════════════════════════════════
+// COLLECT DAY
+// ════════════════════════════════════════════════
+function collectDayRewards(){
+  const wt=getWeek();const tasks=(wt[activeDay]||{tasks:[],bonus:[]}).tasks||[];
+  const bonusTasks=(wt[activeDay]||{tasks:[],bonus:[]}).bonus||[];
+  const prog=load('todayProgress',{});const todayStr=new Date().toDateString();
+  let stats=load('heroStats',defStats());
+  if(stats.lastRewardDate===todayStr){showToast('⚠️ Already collected today!');return;}
+  const dailyDone=tasks.filter((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial').length;
+  const bonusDone=bonusTasks.filter((_,i)=>prog['b_'+i]==='done'||prog['b_'+i]==='partial').length;
+  if(!dailyDone&&!bonusDone){showToast('⚠️ No completed quests!');return;}
+  const allDailyDone=dailyDone===tasks.length&&tasks.length>0;
+  let bonusCoins=0;
+  if(allDailyDone){
+    stats.streak=(stats.streak||0)+1;
+    stats.coins=(stats.coins||0)+20;bonusCoins=20;
+    let pet=load('petData',defPet());pet.shards=Math.min((pet.shards||0)+1,SHARDS_NEEDED*2);save('petData',pet);
+    markHistoryAllDone(todayStr);
+  }
+  stats.lastRewardDate=todayStr;save('heroStats',stats);
+  save('todayProgress',{});save('timerData',{});save('stepProgress',{});
+  Object.values(taskTimers).forEach(id=>clearInterval(id));taskTimers={};
+
+  if(bonusCoins>0)floatCoins(bonusCoins,window.innerWidth*.5,window.innerHeight*.5);
+
+  const items=[];
+  if(allDailyDone){
+    items.push({text:'+1 🔮 Shard',type:'shard'});
+    items.push(`🔥 Streak: ${stats.streak} day${stats.streak!==1?'s':''}`);
+    items.push({text:'+20🪙 All-Done Bonus!',type:'coin'});
+  }
+  if(bonusDone)items.push(`⭐ ${bonusDone} Bonus Quest${bonusDone>1?'s':''} done!`);
+  if(!allDailyDone&&tasks.length>0)items.push(`${dailyDone}/${tasks.length} daily done`);
+  showPopup(
+    allDailyDone?`🏆 All Done, ${heroName()}!`:'💪 Partial Rewards!',
+    allDailyDone?'🎊':'⚡',items,
+    allDailyDone?`+20🪙 bonus! Spend coins in Pet Home! 🏠`:'Complete all daily quests for extra 20🪙 bonus!');
+  if(allDailyDone)launchConfetti(100);
+  renderChild();
+}
+
+function dayRollover(stats){
+  const wt=getWeek();const d=stats.lastProgressDate;if(!d)return;
+  const yDay=JS_TO_DAY[new Date(d).getDay()];
+  const yTasks=(wt[yDay]||{tasks:[]}).tasks||[];
+  if(yTasks.length>0&&stats.lastRewardDate!==d)stats.streak=0;
+}
+
+// ════════════════════════════════════════════════
+// PET HOME + ROOM CANVAS
+// ════════════════════════════════════════════════
+let shopActiveCat=0;
+let bubbleTimer=null;
+
+function renderHome(){
+  const stats=load('heroStats',defStats());
+  const pet=load('petData',defPet());
+  const stage=petStage(pet.totalXp||0);
+  document.getElementById('home-avatar').textContent=stage.emoji;
+  document.getElementById('home-pet-title').textContent=`${stage.name}'s Home`;
+  document.getElementById('home-coin-sub').textContent=`🪙 ${stats.coins||0} coins to spend`;
+  drawRoom();
+  renderShop();
+}
+
+function drawRoom(){
+  const canvas=document.getElementById('room-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const shop=getShop();
+  const pet=load('petData',defPet());
+  const stage=petStage(pet.totalXp||0);
+  const bgItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[0])||SHOP_ITEMS[0];
+
+  // Background gradient
+  const grd=ctx.createLinearGradient(0,0,0,H);
+  const cols=bgItem.colors||['#87CEEB','#90EE90','#8FBC8F'];
+  grd.addColorStop(0,cols[0]);grd.addColorStop(.6,cols[1]||cols[0]);grd.addColorStop(1,cols[2]||cols[1]||cols[0]);
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+
+  // Floor
+  ctx.fillStyle='rgba(0,0,0,.12)';ctx.fillRect(0,H*.65,W,H*.35);
+  ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(0,H*.65,W,4);
+
+  // Wall texture lines for castle bg
+  if(bgItem.id==='bg_castle'){
+    ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;
+    for(let y=20;y<H*.65;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H*.65);ctx.stroke();}
+  }
+
+  // Draw equipped items
+  const bedItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[1]);
+  const plantItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[2]);
+  const lightItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[3]);
+  const toyItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[4]);
+  const fxItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[5]);
+
+  // Light glow effect
+  if(lightItem&&lightItem.id!=='light_none'){
+    const lx=W*.82,ly=H*.18;
+    const radGrd=ctx.createRadialGradient(lx,ly,0,lx,ly,120);
+    const lc=lightItem.id==='light_candle'?'rgba(255,200,80,'
+      :lightItem.id==='light_moon'?'rgba(200,220,255,'
+      :lightItem.id==='light_rainbow'?'rgba(255,100,200,'
+      :'rgba(255,255,180,';
+    radGrd.addColorStop(0,lc+'0.3)');radGrd.addColorStop(1,lc+'0)');
+    ctx.fillStyle=radGrd;ctx.fillRect(0,0,W,H);
+    drawEmoji(ctx,lightItem.icon,lx,ly,36);
+  }
+
+  // Plant (left side)
+  if(plantItem&&plantItem.id!=='plant_none')drawEmoji(ctx,plantItem.icon,W*.12,H*.58,44);
+
+  // Toy (right side lower)
+  if(toyItem&&toyItem.id!=='toy_none')drawEmoji(ctx,toyItem.icon,W*.82,H*.72,36);
+
+  // Bed / resting area (center-right)
+  if(bedItem){
+    if(bedItem.id==='bed_cloud'){
+      // draw cloud bed
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.beginPath();ctx.ellipse(W*.58,H*.78,70,22,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(W*.50,H*.74,40,18,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(W*.66,H*.74,35,16,0,0,Math.PI*2);ctx.fill();
+    } else if(bedItem.id==='bed_royal'){
+      ctx.fillStyle='rgba(180,120,255,.6)';ctx.beginPath();ctx.roundRect(W*.42,H*.68,W*.32,H*.18,8);ctx.fill();
+      ctx.fillStyle='rgba(255,215,0,.8)';ctx.beginPath();ctx.roundRect(W*.42,H*.64,14,H*.24,4);ctx.fill();
+      ctx.beginPath();ctx.roundRect(W*.74-14,H*.64,14,H*.24,4);ctx.fill();
+    } else if(bedItem.id==='bed_hammock'){
+      ctx.strokeStyle='rgba(180,120,60,.8)';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(W*.3,H*.6);ctx.quadraticCurveTo(W*.55,H*.82,W*.8,H*.6);ctx.stroke();
+      ctx.lineWidth=1.5;ctx.strokeStyle='rgba(180,120,60,.4)';
+      for(let x=W*.32;x<W*.78;x+=10){ctx.beginPath();ctx.moveTo(x,H*.62);ctx.lineTo(x,H*.75);ctx.stroke();}
+    } else {
+      // basic nest/default
+      ctx.fillStyle='rgba(200,160,100,.5)';ctx.beginPath();ctx.ellipse(W*.56,H*.78,50,16,0,0,Math.PI*2);ctx.fill();
+    }
+    drawEmoji(ctx,bedItem.icon,W*.58,H*.68,26);
+  }
+
+  // Particle FX
+  if(fxItem&&fxItem.id!=='fx_none'){
+    const t=Date.now()/1000;
+    if(fxItem.id==='fx_bubbles'||fxItem.id==='fx_stars'||fxItem.id==='fx_firefly'){
+      for(let p=0;p<8;p++){
+        const px=((Math.sin(t*.7+p*1.3)*.5+.5))*W;
+        const py=((Math.cos(t*.5+p*1.1)*.4+.3))*H*.65;
+        const icon=fxItem.id==='fx_bubbles'?'🫧':fxItem.id==='fx_stars'?'✨':'🌟';
+        ctx.globalAlpha=.4+Math.sin(t+p)*.3;
+        drawEmoji(ctx,icon,px,py,18);ctx.globalAlpha=1;
+      }
+    } else if(fxItem.id==='fx_aurora'){
+      for(let b=0;b<4;b++){
+        const bGrd=ctx.createLinearGradient(0,H*(.1+b*.05),W,H*(.2+b*.05));
+        bGrd.addColorStop(0,'rgba(0,255,180,0)');
+        bGrd.addColorStop(.5,`rgba(${b%2?'0,200,255':'180,0,255'},.15)`);
+        bGrd.addColorStop(1,'rgba(0,255,180,0)');
+        ctx.fillStyle=bGrd;ctx.fillRect(0,H*(.05+b*.08+Math.sin(t*.3+b)*.03),W,H*.1);
+      }
+    }
+  }
+
+  // PET in room (center)
+  const prog=load('todayProgress',{});
+  const wt=getWeek();const td=todayName();
+  const tasks=(wt[td]||{tasks:[]}).tasks||[];
+  const allDone=tasks.length>0&&tasks.every((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial');
+  const petEmoji=allDone?stage.emoji+'💤':stage.emoji;
+  ctx.globalAlpha=1;
+  const petY=allDone?H*.7:H*.65+Math.sin(Date.now()/800)*4;
+  drawEmoji(ctx,stage.emoji,W*.44,petY,64);
+  if(allDone){ctx.globalAlpha=.7;drawEmoji(ctx,'💤',W*.44+28,petY-26,22);ctx.globalAlpha=1;}
+}
+
+function drawEmoji(ctx,emoji,x,y,size){
+  ctx.font=`${size}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(emoji,x,y);
+}
+
+// Animate room if on home tab
+let roomAnimFrame=null;
+function startRoomAnim(){
+  if(roomAnimFrame)return;
+  function loop(){if(currentView==='home-view'){drawRoom();roomAnimFrame=requestAnimationFrame(loop);}else{roomAnimFrame=null;}}
+  roomAnimFrame=requestAnimationFrame(loop);
+}
+
+function petTapped(){
+  // Show speech bubble
+  clearTimeout(bubbleTimer);
+  const container=document.getElementById('bubble-container');container.innerHTML='';
+  const pet=load('petData',defPet());const txp=pet.totalXp||0;
+  const stage=petStage(txp);
+  const prog=load('todayProgress',{});const wt=getWeek();const td=todayName();
+  const tasks=(wt[td]||{tasks:[]}).tasks||[];
+  const doneCount=tasks.filter((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial').length;
+  const pct=tasks.length>0?Math.round(doneCount/tasks.length*100):0;
+  const speech=getPetSpeech(pct);
+  const canvas=document.getElementById('room-canvas');
+  const rect=canvas.getBoundingClientRect();
+  const bub=document.createElement('div');
+  bub.className='speech-bubble';
+  bub.textContent=speech;
+  bub.style.left=`${rect.width*.25}px`;
+  bub.style.top=`${rect.height*.08}px`;
+  container.appendChild(bub);
+  bubbleTimer=setTimeout(()=>container.innerHTML='',3200);
+}
+
+// ════════════════════════════════════════════════
+// SHOP SYSTEM
+// ════════════════════════════════════════════════
+function renderShop(){
+  const stats=load('heroStats',defStats());const coins=stats.coins||0;
+  const shopData=getShop();
+
+  // Category tabs
+  const catsEl=document.getElementById('shop-cats');catsEl.innerHTML='';
+  SHOP_CATS.forEach((cat,i)=>{
+    const btn=document.createElement('button');
+    btn.className='shop-cat'+(i===shopActiveCat?' active':'');
+    btn.textContent=cat;
+    btn.onclick=()=>{shopActiveCat=i;renderShop();};
+    catsEl.appendChild(btn);
+  });
+
+  // Items
+  const gridEl=document.getElementById('shop-grid');gridEl.innerHTML='';
+  const catItems=SHOP_ITEMS.filter(item=>item.cat===shopActiveCat);
+  catItems.forEach(item=>{
+    const owned=shopData.owned[item.id]||item.owned;
+    const equipped=shopData.equipped[item.cat]===item.id;
+    const canAfford=coins>=item.price;
+    const div=document.createElement('div');
+    div.className='shop-item'+(owned?' owned':'')+(equipped?' equipped':'');
+    const priceHtml=owned
+      ?(equipped?'<div class="shop-owned-badge" style="background:var(--purple)">ON</div>':'<div class="shop-owned-badge">✓</div>')
+      :`<div class="shop-item-price${canAfford?'':' cant-afford'}">🪙 ${item.price}</div>`;
+    div.innerHTML=`
+      <span class="shop-item-icon">${item.icon}</span>
+      <div class="shop-item-name">${item.name}</div>
+      ${priceHtml}`;
+    div.onclick=()=>shopItemTapped(item,owned,equipped,canAfford);
+    gridEl.appendChild(div);
+  });
+}
+
+function shopItemTapped(item,owned,equipped,canAfford){
+  const shopData=getShop();
+  if(equipped){showToast('Already equipped!');return;}
+  if(!owned){
+    if(!canAfford){showToast(`⚠️ Need ${item.price}🪙 — keep doing quests!`);return;}
+    let stats=load('heroStats',defStats());
+    stats.coins=(stats.coins||0)-item.price;save('heroStats',stats);
+    shopData.owned[item.id]=true;
+    showToast(`✨ Bought ${item.name}!`);
+    floatCoins(-item.price,window.innerWidth*.5,window.innerHeight*.5);
+    launchConfetti(20);
+  }
+  shopData.equipped[item.cat]=item.id;
+  save('shopData',shopData);
+  document.getElementById('home-coin-sub').textContent=`🪙 ${load('heroStats',defStats()).coins||0} coins to spend`;
+  renderShop();drawRoom();
+  showToast(`🏠 ${item.name} equipped!`);
+}
+
+// ════════════════════════════════════════════════
+// SPEED BONUS
+// ════════════════════════════════════════════════
+function grantSpeedBonus(){
+  let stats=load('heroStats',defStats());stats.xp+=50;stats.coins=(stats.coins||0)+10;save('heroStats',stats);
+  feedPet(50);logTaskCompletion({name:'⚡ Speed Bonus'},50,0,10,false,true,false);
+  showToast(`⚡ +50 XP +10🪙 Speed Bonus for ${heroName()}!`);
+  triggerSonicFlash();
+  floatCoins(10,window.innerWidth*.5,window.innerHeight*.4);
+}
+function triggerSonicFlash(){const el=document.getElementById('sonic-flash');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),900);}
+
+// ════════════════════════════════════════════════
+// PARENT PANEL
+// ════════════════════════════════════════════════
+let activeDayP='Monday';
+function showParent(){navTo('parent-view');}
+function renderParent(){renderTabs();renderDayList(activeDayP);}
+function switchParentTab(name,btn){
+  document.querySelectorAll('.parent-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.parent-section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('tab-'+name).classList.add('active');
+  if(name==='history')renderHistory();if(name==='profile')renderProfileTab();
+}
+function renderTabs(){
+  const wt=getWeek();const el=document.getElementById('day-tabs');el.innerHTML='';
+  DAYS.forEach(d=>{
+    const day=wt[d]||{tasks:[],bonus:[]};
+    const c=(day.tasks||[]).length+(day.bonus||[]).length;
+    const b=document.createElement('button');
+    b.className='day-tab'+(d===activeDayP?' active':'');
+    b.setAttribute('data-day',d);
+    b.innerHTML=`${DAY_ICONS[d]} ${d.slice(0,3)}<span class="tab-count">${c}</span>`;
+    b.onclick=()=>{activeDayP=d;renderParent();};
+    el.appendChild(b);
+  });
+}
+function renderDayList(day){
+  const wt=getWeek();const dayData=wt[day]||{tasks:[],bonus:[]};
+  const tasks=dayData.tasks||[],bonus=dayData.bonus||[];
+  document.getElementById('active-day-lbl').innerHTML=`<span style="color:${DAY_COLORS[day]}">${DAY_ICONS[day]} ${day}'s Quests</span>`;
+  document.getElementById('sync-btn').style.display=day==='Monday'?'block':'none';
+  const el=document.getElementById('parent-task-list');el.innerHTML='';
+  if(!tasks.length)el.innerHTML=`<div style="text-align:center;padding:12px;color:#bbb;font-weight:700;font-size:.83rem">No daily quests yet!</div>`;
+  else tasks.forEach((task,i)=>el.appendChild(makeParentRow(task,i,false,day)));
+  const bel=document.getElementById('parent-bonus-list');bel.innerHTML='';
+  if(!bonus.length)bel.innerHTML=`<div style="text-align:center;padding:12px;color:#bbb;font-weight:700;font-size:.83rem">No bonus quests yet!</div>`;
+  else bonus.forEach((task,i)=>bel.appendChild(makeParentRow(task,i,true,day)));
+}
+function makeParentRow(task,i,isBonus,day){
+  const row=document.createElement('div');
+  row.className='task-row'+(isBonus?' bonus-row':'');
+  row.style.cssText='flex-direction:column;align-items:stretch;gap:6px';
+
+  const diff=task.difficulty||'medium';
+  const steps=task.steps||[];
+
+  // Build steps editor HTML
+  const stepsEditorId='steps-editor-'+i+(isBonus?'b':'d');
+  const stepsVisible=steps.length>0; // show open if already has steps
+  let stepsEditRows=steps.map((s,si)=>`
+    <div class="step-edit-row">
+      <input type="text" value="${esc(s||'')}" placeholder="Step ${si+1}..."
+             oninput="updStep(${i},${si},this.value,${isBonus})">
+      <button class="step-del-btn" onclick="delStep(${i},${si},${isBonus})">✕</button>
+    </div>`).join('');
+
+  row.innerHTML=`
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px">
+        <div class="mini-lbl" style="text-align:left;margin-bottom:2px">${isBonus?'⭐ Bonus':'Quest Name'}</div>
+        <input type="text" value="${esc(task.name||'')}" placeholder="Quest name..."
+               oninput="updTask(${i},'name',this.value,${isBonus})">
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">Mins</div>
+        <input type="number" min="1" max="999" value="${task.duration||15}"
+               oninput="updTask(${i},'duration',+this.value,${isBonus})"></div>
+      <div style="flex-shrink:0"><div class="mini-lbl">⭐Wt</div>
+        <input type="number" min="1" max="5" value="${task.weight||1}"
+               oninput="updTask(${i},'weight',+this.value,${isBonus})"></div>
+      <div style="flex-shrink:0">
+        <div class="mini-lbl">Energy</div>
+        <select class="diff-select" onchange="updTask(${i},'difficulty',this.value,${isBonus})">
+          <option value="easy"  ${diff==='easy' ?'selected':''}>🟢 Easy</option>
+          <option value="medium"${diff==='medium'?'selected':''}>🟡 Medium</option>
+          <option value="hard"  ${diff==='hard' ?'selected':''}>🔴 Hard</option>
+        </select>
+      </div>
+      <div style="flex-shrink:0"><div class="mini-lbl">+50XP</div>
+        <button class="speed-btn" onclick="grantSpeedBonus()">⚡Speed</button></div>
+      <button class="del-btn" onclick="delTask(${i},${isBonus})">✕</button>
+    </div>
+    <div class="steps-editor" id="${stepsEditorId}" style="display:${stepsVisible?'block':'none'}">
+      <div class="steps-editor-title">
+        <span>📋 Sub-steps (optional)</span>
+        <span style="font-size:.68rem;color:#bbb;font-family:'Nunito',sans-serif">Tap each to complete in order</span>
+      </div>
+      <div id="step-rows-${i}${isBonus?'b':'d'}">${stepsEditRows}</div>
+      <button class="add-step-btn" onclick="addStep(${i},${isBonus})">＋ Add Step</button>
+    </div>
+    <div style="text-align:right">
+      <button class="expand-steps-btn" onclick="toggleStepsEditor('${stepsEditorId}')">
+        ${stepsVisible?'▲ Hide steps':'📋 Add sub-steps'}
+      </button>
+    </div>`;
+  return row;
+}
+
+function toggleStepsEditor(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const visible=el.style.display!=='none';
+  el.style.display=visible?'none':'block';
+  const btn=el.parentElement.querySelector('.expand-steps-btn');
+  if(btn)btn.textContent=visible?'📋 Add sub-steps':'▲ Hide steps';
+}
+
+function addStep(taskIdx,isBonus){
+  const wt=getWeek();if(!wt[activeDayP])wt[activeDayP]={tasks:[],bonus:[]};
+  const arr=isBonus?wt[activeDayP].bonus:wt[activeDayP].tasks;
+  if(!arr[taskIdx])arr[taskIdx]={};
+  if(!arr[taskIdx].steps)arr[taskIdx].steps=[];
+  arr[taskIdx].steps.push('');
+  if(isBonus)wt[activeDayP].bonus=arr;else wt[activeDayP].tasks=arr;
+  save('weeklyTasks',wt);
+  renderParent();
+  // Re-open the editor after re-render
+  const edId='steps-editor-'+taskIdx+(isBonus?'b':'d');
+  const ed=document.getElementById(edId);
+  if(ed){ed.style.display='block';const btn=ed.parentElement.querySelector('.expand-steps-btn');if(btn)btn.textContent='▲ Hide steps';}
+}
+
+function updStep(taskIdx,stepIdx,val,isBonus){
+  const wt=getWeek();if(!wt[activeDayP])wt[activeDayP]={tasks:[],bonus:[]};
+  const arr=isBonus?wt[activeDayP].bonus:wt[activeDayP].tasks;
+  if(!arr[taskIdx]||!arr[taskIdx].steps)return;
+  arr[taskIdx].steps[stepIdx]=val;
+  if(isBonus)wt[activeDayP].bonus=arr;else wt[activeDayP].tasks=arr;
+  save('weeklyTasks',wt);
+}
+
+function delStep(taskIdx,stepIdx,isBonus){
+  const wt=getWeek();if(!wt[activeDayP])wt[activeDayP]={tasks:[],bonus:[]};
+  const arr=isBonus?wt[activeDayP].bonus:wt[activeDayP].tasks;
+  if(!arr[taskIdx]||!arr[taskIdx].steps)return;
+  arr[taskIdx].steps.splice(stepIdx,1);
+  if(isBonus)wt[activeDayP].bonus=arr;else wt[activeDayP].tasks=arr;
+  save('weeklyTasks',wt);renderParent();
+}
+function updTask(i,f,v,isBonus){
+  const wt=getWeek();if(!wt[activeDayP])wt[activeDayP]={tasks:[],bonus:[]};
+  const arr=isBonus?wt[activeDayP].bonus:wt[activeDayP].tasks;
+  if(!arr[i])arr[i]={};arr[i][f]=v;
+  if(isBonus)wt[activeDayP].bonus=arr;else wt[activeDayP].tasks=arr;
+  save('weeklyTasks',wt);renderTabs();
+}
+function addTaskRow(isBonus){
+  const wt=getWeek();if(!wt[activeDayP])wt[activeDayP]={tasks:[],bonus:[]};
+  (isBonus?wt[activeDayP].bonus:wt[activeDayP].tasks).push({name:'',duration:15,weight:1,difficulty:'medium',steps:[]});
+  save('weeklyTasks',wt);renderParent();
+  setTimeout(()=>{const r=document.querySelectorAll('.task-row');if(r.length)r[r.length-1].scrollIntoView({behavior:'smooth',block:'nearest'})},50);
+}
+function delTask(i,isBonus){const wt=getWeek();if(isBonus)wt[activeDayP].bonus.splice(i,1);else wt[activeDayP].tasks.splice(i,1);save('weeklyTasks',wt);renderParent();}
+function syncToAllDays(){
+  const wt=getWeek();const mon=JSON.parse(JSON.stringify(wt['Monday']||{tasks:[],bonus:[]}));
+  const total=(mon.tasks||[]).length+(mon.bonus||[]).length;
+  if(!total){showToast('⚠️ Monday has no quests!');return;}
+  ['Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(d=>{wt[d]=JSON.parse(JSON.stringify(mon));});
+  save('weeklyTasks',wt);showToast(`✨ Synced ${total} quest(s) to all days!`);renderParent();
+}
+function saveAll(){showToast('💾 Quest schedule saved!');launchConfetti(30);}
+
+// ════════════════════════════════════════════════
+// PROFILE TAB
+// ════════════════════════════════════════════════
+function renderProfileTab(){
+  const p=load('heroProfile',defProfile());
+  document.getElementById('hero-name').value=p.name||'';
+  document.getElementById('avatar-preview').textContent=p.avatar||'🧙';
+  const picker=document.getElementById('avatar-picker');picker.innerHTML='';
+  AVATAR_OPTIONS.forEach(em=>{
+    const btn=document.createElement('div');btn.className='avatar-opt'+(em===p.avatar?' selected':'');
+    btn.textContent=em;
+    btn.onclick=()=>{document.querySelectorAll('.avatar-opt').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');document.getElementById('avatar-preview').textContent=em;};
+    picker.appendChild(btn);
+  });
+}
+function saveProfile(){
+  const name=document.getElementById('hero-name').value.trim()||'Hero';
+  const sel=document.querySelector('.avatar-opt.selected');
+  const avatar=sel?sel.textContent:(load('heroProfile',defProfile()).avatar||'🧙');
+  save('heroProfile',{name,avatar});
+  updateHeader();showToast(`✅ Profile saved! Welcome, ${name}!`);launchConfetti(40);
+}
+
+// ════════════════════════════════════════════════
+// HISTORY TAB
+// ════════════════════════════════════════════════
+let histFilter='all';
+function renderHistory(){
+  const hist=load('questHistory',[]);
+  const days=['All',...new Set(hist.map(e=>e.day))].slice(0,8);
+  const filterEl=document.getElementById('history-filter');filterEl.innerHTML='';
+  days.forEach(d=>{
+    const b=document.createElement('button');
+    b.className='hist-tab'+(histFilter===(d==='All'?'all':d)?' active':'');
+    b.textContent=d==='All'?`📋 All (${hist.length})`:(`${DAY_ICONS[d]||''} ${d}`);
+    b.onclick=()=>{histFilter=d==='All'?'all':d;renderHistory();};
+    filterEl.appendChild(b);
+  });
+  const listEl=document.getElementById('history-list');listEl.innerHTML='';
+  const filtered=histFilter==='all'?hist:hist.filter(e=>e.day===histFilter);
+  if(!filtered.length){listEl.innerHTML=`<div style="text-align:center;padding:24px;color:#bbb;font-weight:700">📭 No history yet!</div>`;return;}
+  filtered.forEach(entry=>{
+    const div=document.createElement('div');
+    div.className='history-entry'+(entry.allDone?' all-done':entry.tasks.length?' partial':'');
+    const earlyCount=entry.tasks.filter(t=>t.early).length;
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><div class="hist-date">${entry.allDone?'🏆 ':''}${entry.date} <span style="font-size:.7rem;color:#bbb">${entry.day}</span></div>
+          <div class="hist-meta">${entry.tasks.length} quest${entry.tasks.length!==1?'s':''} · +${entry.totalXp||0}XP · +${entry.totalCoins||0}🪙 · +${entry.totalGems||0}💎</div></div>
+        <div style="text-align:right">
+          ${entry.allDone?'<span style="font-family:Fredoka One,cursive;font-size:.75rem;color:var(--green)">ALL DONE ✓</span>':''}
+          ${earlyCount?`<div style="font-size:.7rem;font-weight:800;color:var(--orange)">⚡ ${earlyCount} early</div>`:''}
+        </div>
+      </div>
+      <div class="hist-tasks">${entry.tasks.map(t=>`<span class="hist-chip ${t.isBonus?'bonus':t.partial?'partial':'done'}">${t.partial?'⚡':'✅'} ${esc(t.name||'Quest')} +${t.xp}XP${t.isBonus?' ⭐':''}</span>`).join('')}</div>`;
+    listEl.appendChild(div);
+  });
+}
+function clearHistory(){if(!confirm('Clear all history?'))return;save('questHistory',[]);renderHistory();showToast('🗑 History cleared.');}
+
+// ════════════════════════════════════════════════
+// POPUP / TOAST / CONFETTI
+// ════════════════════════════════════════════════
+function showPopup(title,emoji,items,msg){
+  document.getElementById('pop-title').textContent=title;
+  document.getElementById('pop-emoji').textContent=emoji;
+  document.getElementById('pop-msg').textContent=msg||'';
+  const c=document.getElementById('pop-items');c.innerHTML='';
+  items.forEach(it=>{const d=document.createElement('div');
+    if(typeof it==='string'){d.className='pop-item';d.textContent=it;}
+    else{d.className='pop-item '+(it.type||'');d.textContent=it.text;}
+    c.appendChild(d);});
+  document.getElementById('reward-popup').classList.add('show');
+}
+function closePopup(){document.getElementById('reward-popup').classList.remove('show')}
+let toastTmr;
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTmr);toastTmr=setTimeout(()=>el.classList.remove('show'),3000);}
+function launchConfetti(n=60){
+  const cv=document.getElementById('confetti-canvas');const cx=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const cols=['#FFD93D','#FF6B35','#FF4D8D','#7C5CBF','#4ECDC4','#6BCB77'];
+  const ps=Array.from({length:n},()=>({x:Math.random()*cv.width,y:-10,w:Math.random()*10+4,h:Math.random()*6+3,
+    c:cols[Math.floor(Math.random()*cols.length)],vx:(Math.random()-.5)*4,vy:Math.random()*4+2,
+    r:Math.random()*360,vr:(Math.random()-.5)*8,a:1}));
+  function draw(){cx.clearRect(0,0,cv.width,cv.height);let alive=false;
+    ps.forEach(p=>{if(p.a<=0)return;alive=true;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      if(p.y>cv.height*.7)p.a-=.025;cx.save();cx.globalAlpha=Math.max(0,p.a);
+      cx.translate(p.x,p.y);cx.rotate(p.r*Math.PI/180);cx.fillStyle=p.c;
+      cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();});
+    if(alive)requestAnimationFrame(draw);else cx.clearRect(0,0,cv.width,cv.height);}
+  draw();
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+(function(){
+  // 1. Run data migrations FIRST (safe for old data)
+  runMigrations();
+
+  // 2. Ensure all default structures exist
+  getWeek();
+  if(!load('petData',null))    save('petData',defPet());
+  if(!load('heroStats',null))  save('heroStats',defStats());
+  if(!load('heroProfile',null))save('heroProfile',defProfile());
+  if(!load('shopData',null))   save('shopData',defShop());
+
+  // 3. Override navTo to start room animation
+  const origNavTo=navTo;
+  window.navTo=function(viewId){
+    origNavTo(viewId);
+    if(viewId==='home-view')setTimeout(startRoomAnim,100);
+  };
+
+  // 4. Show version in profile tab
+  updateVersionBadge();
+
+  // 5. Go!
+  renderChild();
+})();
+</script>
+</body>
+</html>
