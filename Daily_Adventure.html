@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="Quest App">
 <meta name="theme-color" content="#7C5CBF">
 <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;rect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;22&#39; fill=&#39;%237C5CBF&#39;/&gt;&lt;text y=&#39;.9em&#39; font-size=&#39;72&#39; x=&#39;50%&#39; text-anchor=&#39;middle&#39;&gt;%E2%9A%94%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -21,7 +23,7 @@
   --thu:#5F27CD;--fri:#00D2D3;--sat:#FF9FF3;--sun:#FFD93D;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito',sans-serif;background:#F0E6FF;min-height:100vh;overflow-x:hidden}
+body{font-family:'Nunito',sans-serif!important;background:#F0E6FF;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:-1;
   background:radial-gradient(circle at 15% 20%,#FFD93D44 0%,transparent 40%),
              radial-gradient(circle at 85% 10%,#FF4D8D33 0%,transparent 35%),
@@ -352,6 +354,8 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 .start-btn{background:linear-gradient(135deg,var(--blue),#36a8a0);color:#fff;box-shadow:0 3px 0 #268880}
 .complete-btn{background:linear-gradient(135deg,var(--green),#3dab4e);color:#fff;box-shadow:0 3px 0 #287a34}
 .partial-btn{background:linear-gradient(135deg,var(--orange),#d45500);color:#fff;box-shadow:0 3px 0 #953c00}
+.ontime-btn{background:linear-gradient(135deg,#3dab4e,#287a34);color:#fff;box-shadow:0 3px 0 #1a5c24}
+.timer-btn{background:linear-gradient(135deg,var(--blue),#36a8a0);color:#fff;box-shadow:0 3px 0 #268880;font-size:.75rem}
 .done-note{text-align:center;font-family:'Fredoka One',cursive;font-size:.83rem;
   color:var(--green);margin-top:8px;padding:6px;background:#edfff0;border-radius:8px}
 .partial-note{text-align:center;font-family:'Fredoka One',cursive;font-size:.83rem;
@@ -1615,6 +1619,7 @@ function pullFromCloud(){
     showSyncBar('synced','☁️ Data loaded from cloud!');
     setTimeout(hideSyncBar, 2500);
     updateSyncStatusRow();
+    showSyncUpdateToast();
     // Re-render whichever view is currently active
     const activeView = document.querySelector('.view.active');
     const viewId = activeView ? activeView.id : 'quest-view';
@@ -1919,7 +1924,7 @@ function navTo(viewId){
 // ════════════════════════════════════════════════
 // PIN SYSTEM
 // ════════════════════════════════════════════════
-let pinBuffer='',pinMode='verify',pinSetupFirst='';
+var pinBuffer='',pinMode='verify',pinSetupFirst='';
 function showPinOverlay(){
   pinBuffer='';
   const hasPin=load('parentPin',null);
@@ -2148,7 +2153,14 @@ function makeCard(task,i,state,td,isBonus){
       <div class="timer-target">${fmtTime(durSec)}</div></div>`;
   }
   let btnHtml='';
-  if(state==='pending')btnHtml=`<div class="q-btn-row"><button class="q-btn start-btn" onclick="startTask('${key}')">▶ Start Timer</button></div>`;
+  if(state==='pending')btnHtml=`
+    <div class="q-btn-row" style="flex-wrap:wrap;gap:5px">
+      <button class="q-btn ontime-btn" style="flex:2;min-width:120px" onclick="finishTask('${key}','ontime',${isBonus})">✅ Done On Time</button>
+      <button class="q-btn partial-btn" style="flex:1;min-width:80px" onclick="finishTask('${key}',true,${isBonus})">⚡ Partial</button>
+    </div>
+    <div class="q-btn-row" style="margin-top:5px">
+      <button class="q-btn timer-btn" onclick="startTask('${key}')">⏱ Start Timer (for early bonus)</button>
+    </div>`;
   else if(state==='running')btnHtml=`<div class="q-btn-row">
     <button class="q-btn complete-btn" onclick="finishTask('${key}',false,${isBonus})">✅ Complete</button>
     <button class="q-btn partial-btn" onclick="finishTask('${key}',true,${isBonus})">⚡ Partial</button></div>`;
@@ -2314,7 +2326,8 @@ function tickTimer(key,task,savedTd){
   },1000);
 }
 
-function finishTask(key,partial,isBonus){
+function finishTask(key,mode,isBonus){
+  // mode: false=normal(with timer), true=partial, 'ontime'=done without timer
   clearInterval(taskTimers[key]);delete taskTimers[key];
   const td=load('timerData',{});const elapsed=computeElapsed(td[key]||{});
   td[key]={elapsed,startWall:null};save('timerData',td);
@@ -2322,9 +2335,11 @@ function finishTask(key,partial,isBonus){
   const dayData=wt[activeDay]||{tasks:[],bonus:[]};
   const task=isB?(dayData.bonus||[])[idx]:(dayData.tasks||[])[idx];
   if(!task)return;
+  const partial=mode===true;
+  const ontime=mode==='ontime';
   const durSec=(task.duration||15)*60;
   const xp=taskXP(task,isBonus),coins=taskCoins(task,isBonus),gems=taskGems(task);
-  const early=!partial&&elapsed>5&&elapsed<durSec*.9;
+  const early=!partial&&!ontime&&elapsed>5&&elapsed<durSec*.9;
   let xpGain=partial?Math.floor(xp*.5):xp;
   let coinGain=partial?Math.floor(coins*.5):coins;
   let gemGain=partial?0:gems;
@@ -2332,29 +2347,24 @@ function finishTask(key,partial,isBonus){
   let bonusCoins=early?Math.floor(coins*.3):0;
   let bonusGem=early?1:0;
   const savedMin=early?Math.floor((durSec-elapsed)/60):0;
-
   let stats=load('heroStats',defStats());
   stats.xp+=(xpGain+bonusXp);stats.gems+=(gemGain+bonusGem);
   stats.coins=(stats.coins||0)+(coinGain+bonusCoins);
   save('heroStats',stats);
   feedPet(xpGain+bonusXp);
-
   const prog=load('todayProgress',{});prog[key]=partial?'partial':'done';save('todayProgress',prog);
   logTaskCompletion(task,xpGain+bonusXp,gemGain+bonusGem,coinGain+bonusCoins,partial,early,isBonus);
-
-  // Float coin animation
-  floatCoins(coinGain+bonusCoins, window.innerWidth*.6, window.innerHeight*.4);
-
-  const items=[`+${xpGain} XP`,{text:`+${coinGain}🪙 Coins`,type:'coin'}];
+  floatCoins(coinGain+bonusCoins,window.innerWidth*.6,window.innerHeight*.4);
+  const items=['+'+xpGain+' XP',{text:'+'+coinGain+'🪙 Coins',type:'coin'}];
   if(isBonus)items.push({text:'⭐ 1.5× Bonus!',type:'bonus'});
-  if(gemGain)items.push(`+${gemGain} 💎`);
-  if(bonusXp)items.push({text:`+${bonusXp}XP ⚡ Early!`,type:'bonus'});
-  if(bonusCoins)items.push({text:`+${bonusCoins}🪙 Early!`,type:'coin'});
-  showPopup(
-    partial?'⚡ Partial!':(early?`🚀 ${savedMin}m Early!`:'✅ Quest Done!'),
-    partial?'😤':(early?'⚡':'🌟'),items,
-    partial?`Half XP earned, ${heroName()}!`:(early?`Finished ${savedMin}min early! Speed bonus!`:'Your pet got fed! 🐾'));
-  launchConfetti(partial?20:(early?90:50));
+  if(gemGain)items.push('+'+gemGain+' 💎');
+  if(bonusXp)items.push({text:'+'+bonusXp+'XP ⚡ Early!',type:'bonus'});
+  if(bonusCoins)items.push({text:'+'+bonusCoins+'🪙 Early!',type:'coin'});
+  const popTitle=partial?'⚡ Partial!':ontime?'✅ Done On Time!':early?'🚀 '+savedMin+'m Early!':'✅ Quest Done!';
+  const popEmoji=partial?'😤':ontime?'🌟':early?'⚡':'🌟';
+  const popMsg=partial?'Half XP earned, '+heroName()+'!':ontime?'Great work, '+heroName()+'! Full rewards! 🐾':early?'Finished '+savedMin+'min early! Speed bonus!':'Your pet got fed! 🐾';
+  showPopup(popTitle,popEmoji,items,popMsg);
+  launchConfetti(partial?20:early?90:50);
   renderChild();
 }
 
@@ -2952,6 +2962,13 @@ function showPopup(title,emoji,items,msg){
   document.getElementById('reward-popup').classList.add('show');
 }
 function closePopup(){document.getElementById('reward-popup').classList.remove('show')}
+// Sync update notification
+let _firstSync=true;
+function showSyncUpdateToast(){
+  if(_firstSync){_firstSync=false;return;} // skip first load
+  showToast('📲 Quests updated from another device!');
+}
+
 let toastTmr;
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTmr);toastTmr=setTimeout(()=>el.classList.remove('show'),3000);}
 function launchConfetti(n=60){
