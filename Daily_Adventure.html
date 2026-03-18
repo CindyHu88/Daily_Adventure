@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#7C5CBF">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%237C5CBF'/><text y='.9em' font-size='72' x='50%' text-anchor='middle'>⚔️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 :root{
   --yellow:#FFD93D;--orange:#FF6B35;--pink:#FF4D8D;
@@ -621,11 +622,67 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   font-size:.95rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #5a3fa0;margin-top:6px}
 
 #confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
+
+/* ── FIREBASE SYNC UI ── */
+#sync-bar{position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:8px 16px;font-family:'Fredoka One',cursive;font-size:.82rem;
+  transform:translateY(-100%);transition:transform .35s ease;
+  max-width:480px;margin:0 auto}
+#sync-bar.show{transform:translateY(0)}
+#sync-bar.syncing{background:linear-gradient(135deg,#4ECDC4,#36a8a0);color:#fff}
+#sync-bar.synced {background:linear-gradient(135deg,#6BCB77,#3aa84a);color:#fff}
+#sync-bar.offline{background:linear-gradient(135deg,#FF9F43,#e07000);color:#fff}
+#sync-bar.error  {background:linear-gradient(135deg,#FF4444,#c03000);color:#fff}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.8);
+  animation:syncPulse 1s ease-in-out infinite}
+@keyframes syncPulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+/* Login card */
+.login-card{background:var(--card);border-radius:20px;padding:20px;
+  box-shadow:var(--shadow);margin-bottom:12px;border:2px solid #e0d0ff;text-align:center}
+.login-card h3{font-family:'Fredoka One',cursive;color:var(--dark);margin-bottom:6px;font-size:1rem}
+.login-desc{font-size:.78rem;color:#aaa;font-weight:700;margin-bottom:14px;line-height:1.5}
+.google-btn{background:#fff;border:2px solid #DDD;border-radius:14px;
+  padding:12px 20px;font-family:'Fredoka One',cursive;font-size:.9rem;
+  color:var(--dark);cursor:pointer;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 3px 0 #DDD;transition:all .12s}
+.google-btn:hover{border-color:var(--purple);box-shadow:0 3px 0 #9070d0}
+.google-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #DDD}
+.google-logo{width:20px;height:20px}
+.user-row{display:flex;align-items:center;gap:10px;background:#F5F0FF;
+  border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--purple)}
+.user-avatar-fallback{width:36px;height:36px;border-radius:50%;background:var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:1rem;color:#fff;flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--dark);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-email{font-size:.68rem;color:#aaa;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.signout-btn{background:#FFE5E5;border:none;border-radius:8px;
+  padding:6px 10px;font-family:'Fredoka One',cursive;font-size:.72rem;
+  color:var(--red);cursor:pointer;flex-shrink:0}
+.sync-now-btn{width:100%;background:linear-gradient(135deg,var(--blue),#36a8a0);
+  border:none;border-radius:12px;padding:11px;font-family:'Fredoka One',cursive;
+  font-size:.88rem;color:#fff;cursor:pointer;box-shadow:0 3px 0 #268880;
+  margin-top:6px;transition:all .12s}
+.sync-now-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #268880}
+.sync-status-row{font-size:.72rem;font-weight:800;color:#aaa;
+  text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
 <div id="toast"></div>
+
+<!-- SYNC STATUS BAR -->
+<div id="sync-bar">
+  <div class="sync-dot" id="sync-dot"></div>
+  <span id="sync-bar-text">Syncing...</span>
+</div>
 
 <!-- PIN OVERLAY -->
 <div id="pin-overlay">
@@ -858,6 +915,38 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
         <button class="pin-change-btn" onclick="changePin()">Set PIN ✓</button>
       </div>
     </div>
+    <!-- FIREBASE LOGIN CARD -->
+    <div class="login-card" id="login-card">
+      <h3>☁️ Cloud Sync</h3>
+      <div class="login-desc">
+        Sign in with Google to sync your data across all devices automatically.
+        Parent sets tasks on computer → child sees them instantly on iPad!
+      </div>
+      <div id="login-area">
+        <button class="google-btn" onclick="signInWithGoogle()">
+          <svg class="google-logo" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Sign in with Google
+        </button>
+      </div>
+      <div id="signed-in-area" style="display:none">
+        <div class="user-row">
+          <div class="user-avatar-fallback" id="user-avatar-fallback">?</div>
+          <div class="user-info">
+            <div class="user-name" id="user-display-name">—</div>
+            <div class="user-email" id="user-email">—</div>
+          </div>
+          <button class="signout-btn" onclick="signOutGoogle()">Sign out</button>
+        </div>
+        <button class="sync-now-btn" onclick="forceSyncNow()">🔄 Sync Now</button>
+        <div class="sync-status-row" id="sync-status-row">Last synced: never</div>
+      </div>
+    </div>
+
     <div class="backup-card">
       <h3>💾 Data Backup</h3>
       <div class="backup-desc">
@@ -904,6 +993,11 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
     <span class="nav-icon">🏠</span><span class="nav-lbl">Pet Home</span>
   </button>
 </nav>
+
+<!-- Firebase SDKs — loaded right before app code to guarantee availability -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
 // ════════════════════════════════════════════════
@@ -996,8 +1090,183 @@ const ALL_KEYS = [
   'parentPin','lastProgressDate','dataVersion',
 ];
 
+// ══════════════════════════════════════════════════════
+// FIREBASE INIT
+// ══════════════════════════════════════════════════════
+const FB_CONFIG = {
+  apiKey: "AIzaSyArysVJGXrzprNDFMp-Jmez-8pTMRD9sa8",
+  authDomain: "dailyadventure-d4576.firebaseapp.com",
+  databaseURL: "https://dailyadventure-d4576-default-rtdb.firebaseio.com",
+  projectId: "dailyadventure-d4576",
+  storageBucket: "dailyadventure-d4576.firebasestorage.app",
+  messagingSenderId: "146094853545",
+  appId: "1:146094853545:web:aa52e15af071cacd7188b8"
+};
+
+firebase.initializeApp(FB_CONFIG);
+const fbAuth = firebase.auth();
+const fbDB   = firebase.database();
+
+let fbUser = null;          // current signed-in user
+let syncPending = false;    // writes waiting to upload
+let lastSyncTime = null;
+let syncDebounceTimer = null;
+
+// ── LOCAL STORAGE (always works, even offline) ──
 function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
-function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+function save(k,v){
+  // 1. Always write locally first (instant, offline-safe)
+  localStorage.setItem(k,JSON.stringify(v));
+  // 2. If signed in, schedule a cloud sync (debounced 2s)
+  if(fbUser) scheduleSync();
+}
+
+// ══════════════════════════════════════════════════════
+// SYNC ENGINE
+// ══════════════════════════════════════════════════════
+function scheduleSync(){
+  clearTimeout(syncDebounceTimer);
+  syncDebounceTimer = setTimeout(pushToCloud, 2000);
+}
+
+function pushToCloud(){
+  if(!fbUser) return;
+  const uid = fbUser.uid;
+  const bundle = { _syncedAt: Date.now(), _dataVersion: DATA_VERSION };
+  ALL_KEYS.forEach(k=>{ const v=load(k,null); if(v!==null) bundle[k]=v; });
+  showSyncBar('syncing','Syncing to cloud...');
+  fbDB.ref('users/'+uid).set(bundle)
+    .then(()=>{
+      lastSyncTime = new Date();
+      showSyncBar('synced','✅ Synced!');
+      updateSyncStatusRow();
+      setTimeout(hideSyncBar, 2500);
+    })
+    .catch(err=>{
+      console.warn('Sync error:',err);
+      showSyncBar('error','⚠️ Sync failed — data saved locally');
+      setTimeout(hideSyncBar, 3000);
+    });
+}
+
+function pullFromCloud(){
+  if(!fbUser) return;
+  const uid = fbUser.uid;
+  showSyncBar('syncing','Loading your data...');
+  fbDB.ref('users/'+uid).once('value').then(snap=>{
+    const cloud = snap.val();
+    if(!cloud){ 
+      // No cloud data yet — push local data up
+      pushToCloud(); 
+      return; 
+    }
+    // Compare timestamps: use whichever is newer
+    const cloudTime = cloud._syncedAt || 0;
+    const localTime = load('_lastLocalWrite', 0);
+    if(cloudTime >= localTime){
+      // Cloud is newer or equal — restore from cloud
+      ALL_KEYS.forEach(k=>{ if(cloud[k]!==undefined) localStorage.setItem(k,JSON.stringify(cloud[k])); });
+      if(cloud._dataVersion) save('dataVersion', cloud._dataVersion);
+      runMigrations();
+      showSyncBar('synced','☁️ Data loaded from cloud!');
+      setTimeout(hideSyncBar, 2500);
+      renderChild();
+      updateSyncStatusRow();
+    } else {
+      // Local is newer — push up
+      pushToCloud();
+    }
+  }).catch(err=>{
+    console.warn('Pull error:',err);
+    showSyncBar('offline','📱 Using local data (offline)');
+    setTimeout(hideSyncBar, 2500);
+  });
+}
+
+function forceSyncNow(){
+  if(!fbUser){ showToast('⚠️ Sign in first!'); return; }
+  pushToCloud();
+}
+
+// Track local writes with timestamp
+const _origSave = save;
+function save(k,v){
+  localStorage.setItem(k,JSON.stringify(v));
+  localStorage.setItem('_lastLocalWrite', JSON.stringify(Date.now()));
+  if(fbUser) scheduleSync();
+}
+
+// ── SYNC BAR UI ──
+let syncBarTimer;
+function showSyncBar(type, msg){
+  const bar = document.getElementById('sync-bar');
+  const txt = document.getElementById('sync-bar-text');
+  const dot = document.getElementById('sync-dot');
+  if(!bar) return;
+  bar.className = 'sync-bar show ' + type;
+  // fix: set id on bar properly
+  bar.id = 'sync-bar';
+  bar.classList.add('show', type);
+  txt.textContent = msg;
+  dot.style.display = type==='synced'?'none':'block';
+  clearTimeout(syncBarTimer);
+}
+function hideSyncBar(){
+  const bar = document.getElementById('sync-bar');
+  if(bar){ bar.className=''; bar.id='sync-bar'; }
+}
+function updateSyncStatusRow(){
+  const el = document.getElementById('sync-status-row');
+  if(el && lastSyncTime) el.textContent = 'Last synced: ' + lastSyncTime.toLocaleTimeString();
+}
+
+// ══════════════════════════════════════════════════════
+// GOOGLE AUTH
+// ══════════════════════════════════════════════════════
+function signInWithGoogle(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  fbAuth.signInWithPopup(provider).catch(err=>{
+    console.error('Sign in error:',err);
+    showToast('⚠️ Sign in failed: ' + err.message);
+  });
+}
+
+function signOutGoogle(){
+  fbAuth.signOut().then(()=>{
+    showToast('👋 Signed out. Data still saved locally.');
+  });
+}
+
+// Auth state listener — fires on login/logout/page load
+fbAuth.onAuthStateChanged(user=>{
+  fbUser = user;
+  updateLoginUI(user);
+  if(user){
+    // Signed in: pull latest data from cloud
+    pullFromCloud();
+  }
+});
+
+function updateLoginUI(user){
+  const loginArea     = document.getElementById('login-area');
+  const signedInArea  = document.getElementById('signed-in-area');
+  const nameEl        = document.getElementById('user-display-name');
+  const emailEl       = document.getElementById('user-email');
+  const avatarEl      = document.getElementById('user-avatar-fallback');
+  if(!loginArea) return;
+  if(user){
+    loginArea.style.display    = 'none';
+    signedInArea.style.display = 'block';
+    nameEl.textContent  = user.displayName || 'User';
+    emailEl.textContent = user.email || '';
+    avatarEl.textContent = (user.displayName||'U')[0].toUpperCase();
+    updateSyncStatusRow();
+  } else {
+    loginArea.style.display    = 'block';
+    signedInArea.style.display = 'none';
+  }
+}
 
 // ── Migration runner — called once on startup ──
 function runMigrations(){
