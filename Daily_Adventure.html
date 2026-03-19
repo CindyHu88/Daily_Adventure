@@ -2328,6 +2328,11 @@ function tickTimer(key,task,savedTd){
 
 function finishTask(key,mode,isBonus){
   // mode: false=normal(with timer), true=partial, 'ontime'=done without timer
+  // Guard: prevent double-counting if task already done
+  const _prog=load('todayProgress',{});
+  if(_prog[key]==='done'||_prog[key]==='partial'){
+    showToast('Already completed! ✅');return;
+  }
   clearInterval(taskTimers[key]);delete taskTimers[key];
   const td=load('timerData',{});const elapsed=computeElapsed(td[key]||{});
   td[key]={elapsed,startWall:null};save('timerData',td);
