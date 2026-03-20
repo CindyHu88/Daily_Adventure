@@ -144,6 +144,31 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   max-width:200px;text-align:center;pointer-events:none;
   animation:bubblePop .3s cubic-bezier(.175,.885,.32,1.275)}
 .speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;
+@keyframes petHeartFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+
+/* Shop preview modal */
+#shop-preview{position:fixed;inset:0;z-index:700;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px)}
+#shop-preview.show{display:flex}
+.preview-box{background:var(--card);border-radius:24px;padding:0;
+  max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  overflow:hidden;animation:popIn .3s cubic-bezier(.175,.885,.32,1.275)}
+.preview-canvas-wrap{position:relative;width:100%}
+#preview-canvas{display:block;width:100%;height:auto}
+.preview-info{padding:14px 16px}
+.preview-item-name{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--dark);margin-bottom:4px}
+.preview-item-desc{font-size:.78rem;color:#aaa;font-weight:700;margin-bottom:12px}
+.preview-btns{display:flex;gap:8px}
+.preview-buy-btn{flex:1;background:linear-gradient(135deg,var(--orange),var(--pink));
+  border:none;border-radius:12px;padding:12px;font-family:'Fredoka One',cursive;
+  font-size:.9rem;color:#fff;cursor:pointer;box-shadow:0 3px 0 #c0305a}
+.preview-buy-btn:disabled{background:#CCC;box-shadow:0 3px 0 #aaa;cursor:not-allowed}
+.preview-close-btn{background:#EEE;border:none;border-radius:12px;padding:12px 16px;
+  font-family:'Fredoka One',cursive;font-size:.9rem;color:#888;cursor:pointer}
+.preview-equipped-badge{background:var(--purple);color:#fff;border-radius:8px;
+  padding:4px 12px;font-family:'Fredoka One',cursive;font-size:.85rem;
+  display:inline-block;margin-bottom:8px}
   transform:translateX(-50%);border:5px solid transparent;
   border-top-color:#E8E0FF}
 @keyframes bubblePop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
@@ -254,6 +279,66 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .sec-title.bonus-title{color:#d4750a}
 
+/* ── DAILY MINDSET CARD ── */
+.mindset-card{background:linear-gradient(135deg,#667eea,#764ba2);
+  border-radius:18px;padding:14px 16px;margin-bottom:14px;
+  position:relative;overflow:hidden;box-shadow:0 4px 0 rgba(80,40,140,.35)}
+.mindset-card::before{content:'';position:absolute;top:-30px;right:-30px;
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(255,255,255,.08)}
+.mindset-pet{font-size:2rem;flex-shrink:0;animation:mindsetBob 3s ease-in-out infinite}
+@keyframes mindsetBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.mindset-body{flex:1;min-width:0}
+.mindset-quote{font-family:'Fredoka One',cursive;font-size:.88rem;color:#fff;
+  line-height:1.45;margin-bottom:4px}
+.mindset-attr{font-size:.68rem;color:rgba(255,255,255,.65);font-weight:700;font-style:italic}
+
+/* ── RECOMMENDED ORDER BANNER ── */
+.rec-order-bar{background:linear-gradient(135deg,#fff9e6,#fff3cc);
+  border-radius:12px;padding:9px 12px;margin-bottom:10px;
+  border:1.5px solid #FFD93D;display:flex;align-items:center;gap:8px}
+.rec-order-text{font-size:.76rem;font-weight:800;color:#9a6600;flex:1;line-height:1.4}
+.rec-order-icon{font-size:1.3rem;flex-shrink:0}
+
+/* ── I'M STARTING NOW LAUNCH OVERLAY ── */
+#launch-overlay{position:fixed;inset:0;z-index:850;display:none;
+  align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 50%,#1a0533 0%,#0d0d2b 100%)}
+#launch-overlay.show{display:flex}
+.launch-box{text-align:center;position:relative}
+.launch-task-label{font-family:'Fredoka One',cursive;font-size:1rem;
+  color:rgba(255,255,255,.7);margin-bottom:24px;
+  background:rgba(255,255,255,.1);border-radius:20px;
+  padding:8px 20px;display:inline-block}
+.launch-num{font-family:'Fredoka One',cursive;font-size:9rem;line-height:1;
+  background:linear-gradient(135deg,#FFD93D,#FF6B35);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(255,180,0,.7));
+  animation:launchNumPop .5s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes launchNumPop{0%{transform:scale(2);opacity:0}100%{transform:scale(1);opacity:1}}
+.launch-go{font-family:'Fredoka One',cursive;font-size:6rem;line-height:1;
+  background:linear-gradient(135deg,#6BCB77,#4ECDC4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(100,220,150,.8));
+  animation:launchGoPop .6s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes launchGoPop{0%{transform:scale(0) rotate(-20deg);opacity:0}
+  60%{transform:scale(1.25) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.launch-label{font-family:'Fredoka One',cursive;font-size:1rem;
+  color:rgba(255,255,255,.75);margin-top:10px;letter-spacing:1px}
+.launch-stars{position:absolute;inset:0;pointer-events:none}
+.launch-star{position:absolute;font-size:1.2rem;
+  animation:launchStarFly 1s ease-out forwards}
+@keyframes launchStarFly{0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3)}}
+
+/* I'm Starting Now button */
+.launch-btn{width:100%;background:linear-gradient(135deg,#7C5CBF,#FF4D8D);
+  border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;
+  font-size:1rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #5a1a70;
+  margin-top:8px;transition:all .12s;display:flex;align-items:center;
+  justify-content:center;gap:8px}
+.launch-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #5a1a70}
+
 /* BONUS SECTION */
 .bonus-section{background:linear-gradient(135deg,#fff8ed,#fff3e0);
   border-radius:20px;padding:14px;margin-top:4px;margin-bottom:10px;
@@ -355,7 +440,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 .complete-btn{background:linear-gradient(135deg,var(--green),#3dab4e);color:#fff;box-shadow:0 3px 0 #287a34}
 .partial-btn{background:linear-gradient(135deg,var(--orange),#d45500);color:#fff;box-shadow:0 3px 0 #953c00}
 .ontime-btn{background:linear-gradient(135deg,#3dab4e,#287a34);color:#fff;box-shadow:0 3px 0 #1a5c24}
-.timer-btn{background:linear-gradient(135deg,var(--blue),#36a8a0);color:#fff;box-shadow:0 3px 0 #268880;font-size:.75rem}
+.early-btn{background:linear-gradient(135deg,#FFD93D,#FF9500);color:#1a1a1a;box-shadow:0 3px 0 #c07000;font-weight:800}
 .done-note{text-align:center;font-family:'Fredoka One',cursive;font-size:.83rem;
   color:var(--green);margin-top:8px;padding:6px;background:#edfff0;border-radius:8px}
 .partial-note{text-align:center;font-family:'Fredoka One',cursive;font-size:.83rem;
@@ -834,7 +919,21 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
     <div class="stat-card s-shard"><span class="stat-icon">🔮</span><div class="stat-val" id="stat-shards">0</div><div class="stat-lbl">Shards</div></div>
   </div>
 
+  <!-- DAILY MINDSET CARD -->
+  <div class="mindset-card" id="mindset-card" style="display:flex;align-items:flex-start;gap:12px">
+    <div class="mindset-pet" id="mindset-pet">🐣</div>
+    <div class="mindset-body">
+      <div class="mindset-quote" id="mindset-quote">You don't have to be perfect to be amazing.</div>
+      <div class="mindset-attr" id="mindset-attr">— Daily wisdom</div>
+    </div>
+  </div>
+
   <div class="day-banner"><span>📅</span><span id="day-banner-text">Today is Wednesday – Celestia's Quests ⚔️</span></div>
+  <!-- RECOMMENDED ORDER BAR -->
+  <div class="rec-order-bar" id="rec-order-bar" style="display:none">
+    <div class="rec-order-icon">💡</div>
+    <div class="rec-order-text" id="rec-order-text">Today's tip: Start with the easiest task first to build momentum!</div>
+  </div>
   <div class="sec-title">⚔️ Daily Quests</div>
   <div id="quest-list"><div class="quest-card" id="qcard-d_0">
     <div class="q-top">
@@ -987,10 +1086,27 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   </div>
 
   <!-- Room canvas -->
-  <div class="room-wrap" id="room-wrap" onclick="petTapped()">
-    <canvas id="room-canvas" width="440" height="280"></canvas>
-    <div class="room-tap-hint">Tap pet to chat! 💬</div>
+  <div class="room-wrap" id="room-wrap">
+    <canvas id="room-canvas" width="440" height="280" onclick="handleRoomTap(event)"></canvas>
+    <div class="room-tap-hint" id="room-tap-hint">Tap pet to chat! 💬</div>
     <div id="bubble-container" style="position:absolute;inset:0;pointer-events:none"></div>
+    <!-- In-canvas preview action bar (hidden by default) -->
+    <div id="preview-action-bar" style="display:none;position:absolute;bottom:0;left:0;right:0;
+      background:rgba(20,10,40,0.88);backdrop-filter:blur(4px);
+      padding:10px 12px;display:none;align-items:center;gap:8px;flex-wrap:wrap">
+      <div style="flex:1;min-width:0">
+        <div id="pab-name" style="font-family:'Fredoka One',cursive;font-size:.95rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="pab-desc" style="font-size:.7rem;color:rgba(255,255,255,.65);font-weight:700"></div>
+      </div>
+      <button id="pab-buy" onclick="previewBuy()"
+        style="background:linear-gradient(135deg,#FFD93D,#FF9500);border:none;border-radius:10px;
+        padding:8px 14px;font-family:'Fredoka One',cursive;font-size:.82rem;color:#1a1a1a;
+        cursor:pointer;white-space:nowrap;box-shadow:0 3px 0 #c07000;flex-shrink:0"></button>
+      <button onclick="closePreview()"
+        style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:10px;
+        padding:8px 12px;font-family:'Fredoka One',cursive;font-size:.82rem;color:#fff;
+        cursor:pointer;flex-shrink:0">✕</button>
+    </div>
   </div>
 
   <!-- Shop -->
@@ -1426,6 +1542,17 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   </div>
 </div>
 
+<!-- I'M STARTING NOW LAUNCH OVERLAY -->
+<div id="launch-overlay">
+  <div class="launch-stars" id="launch-stars"></div>
+  <div class="launch-box">
+    <div class="launch-task-label" id="launch-task-label">Let's go!</div>
+    <div class="launch-num" id="launch-num" style="display:none"></div>
+    <div class="launch-go" id="launch-go" style="display:none">GO!</div>
+    <div class="launch-label" id="launch-label">Get ready...</div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn" id="nav-quests" onclick="navTo(&#39;quest-view&#39;)">
@@ -1458,13 +1585,21 @@ const DEFAULT_PIN='1234';
 const AVATAR_OPTIONS=['🧙','🦸','🧝','🧛','🧜','🧚','🥷','🦊','🐱','🐶',
   '🦁','🐸','🐼','🦋','🦄','🐉','⚔️','🚀','🌈','🎮'];
 const PET_STAGES=[
-  {min:0,    emoji:'🐣',name:'Baby Egg',    mood:'😴',speech:["I'm still hatching...","Feed me quests! 🍽️","One day I'll be huge!"]},
-  {min:300,  emoji:'🐥',name:'Fluffy Chick',mood:'😊',speech:["Cheep cheep! You did it!","I love when you do quests!","You're my favourite hero! 🌟"]},
-  {min:800,  emoji:'🐱',name:'Curious Cat', mood:'😄',speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You're amazing! 😸"]},
-  {min:2000, emoji:'🦊',name:'Clever Fox',  mood:'😎',speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team! 🦊⚔️"]},
-  {min:5000, emoji:'🐉',name:'Mini Dragon', mood:'🤩',speech:["ROAR! We crushed those quests!","Dragon power activated! 🔥","I'll protect you always! 🐉"]},
-  {min:12000,emoji:'🦄',name:'Magic Unicorn',mood:'🥰',speech:["Magical vibes only! ✨","You're absolutely legendary!","Sprinkle sprinkle quest dust! 🌈"]},
-  {min:25000,emoji:'🌟',name:'Star Guardian',mood:'✨',speech:["You have reached the stars! 🌟","The universe thanks you!","Beyond legendary! Keep going! ⭐"]},
+  // size: base emoji size in px; aura: glow color; ring: orbit ring; particles: floating particles
+  {min:0,    emoji:'🐣',name:'Baby Egg',     mood:'😴',size:64,aura:null,  ring:false,particles:null,
+   speech:["I'm still hatching...","Feed me quests! 🍽️","One day I'll be huge!"]},
+  {min:300,  emoji:'🐥',name:'Fluffy Chick', mood:'😊',size:68,aura:'rgba(255,230,100,0.4)',ring:false,particles:null,
+   speech:["Cheep cheep! You did it!","I love when you do quests!","You're my favourite hero! 🌟"]},
+  {min:800,  emoji:'🐱',name:'Curious Cat',  mood:'😄',size:72,aura:'rgba(255,180,220,0.4)',ring:false,particles:['✨'],
+   speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You're amazing! 😸"]},
+  {min:2000, emoji:'🦊',name:'Clever Fox',   mood:'😎',size:76,aura:'rgba(255,140,60,0.45)',ring:true, particles:['⭐','✨'],
+   speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team! 🦊⚔️"]},
+  {min:5000, emoji:'🐉',name:'Mini Dragon',  mood:'🤩',size:84,aura:'rgba(255,80,80,0.5)',  ring:true, particles:['🔥','⭐'],
+   speech:["ROAR! We crushed those quests!","Dragon power activated! 🔥","I'll protect you always! 🐉"]},
+  {min:12000,emoji:'🦄',name:'Magic Unicorn',mood:'🥰',size:90,aura:'rgba(200,100,255,0.55)',ring:true,particles:['🌈','✨','💜'],
+   speech:["Magical vibes only! ✨","You're absolutely legendary!","Sprinkle sprinkle quest dust! 🌈"]},
+  {min:25000,emoji:'🌟',name:'Star Guardian',mood:'✨',size:100,aura:'rgba(255,220,50,0.65)',ring:true,particles:['⭐','🌟','✨','💫'],
+   speech:["You have reached the stars! 🌟","The universe thanks you!","Beyond legendary! Keep going! ⭐"]},
 ];
 const LVL_XP=[100,160,240,360,520,760,1040];
 const STREAK_MILESTONES=[
@@ -1484,39 +1619,183 @@ const SPEECH_BY_PROGRESS=[
   {min:100, lines:["ALL DONE! You're incredible! 🎉","Perfect day! The room glows for you! ✨","LEGENDARY! Time to rest, hero! 😴"]},
 ];
 
-// ── SHOP CATALOG ── (prices x3 vs original; streakRequired = days needed to unlock)
-const SHOP_CATS=['🌅 Background','🛏 Bed','🌱 Plant','💡 Light','🎮 Toy','✨ Effect'];
+// ── GROWTH MINDSET QUOTES (for Gifted & 2E children) ──
+// Shown daily, rotating by day number. Categories: effort, mistakes, brain, courage, process.
+const MINDSET_QUOTES=[
+  // Effort & Growth
+  {q:"Your brain grows stronger every time you try something hard.",attr:"Neuroscience fact",emoji:"🧠"},
+  {q:"It's not about being smart. It's about working smart.",attr:"Growth Mindset",emoji:"💡"},
+  {q:"The word YET is magic. I can't do this... YET.",attr:"Dr. Carol Dweck",emoji:"✨"},
+  {q:"Every expert was once a beginner who kept going.",attr:"Growth Mindset",emoji:"🌱"},
+  {q:"Hard days make you stronger. Easy days let you rest.",attr:"Daily wisdom",emoji:"💪"},
+  {q:"You don't have to be perfect to be amazing.",attr:"Daily wisdom",emoji:"🌟"},
+  {q:"Mistakes are proof that you're trying.",attr:"Growth Mindset",emoji:"🎯"},
+  // Brain & Learning
+  {q:"Your brain is like a muscle — quests are your workout.",attr:"Neuroscience",emoji:"🧠"},
+  {q:"Slow and steady still gets there. Speed isn't everything.",attr:"Daily wisdom",emoji:"🐢"},
+  {q:"It's okay if today is hard. Hard is how you level up.",attr:"Growth Mindset",emoji:"🎮"},
+  {q:"Focus is a superpower. You have it when you need it.",attr:"Daily wisdom",emoji:"🔮"},
+  {q:"Different brains think differently. Yours is special.",attr:"Neurodiversity",emoji:"🦋"},
+  // Courage & Starting
+  {q:"Starting is the hardest part. After that, you've already won.",attr:"Daily wisdom",emoji:"🚀"},
+  {q:"You are braver than you think, and smarter than you know.",attr:"A.A. Milne",emoji:"🦁"},
+  {q:"Courage is doing it even when it feels hard.",attr:"Daily wisdom",emoji:"⚡"},
+  {q:"One small step is still a step forward.",attr:"Daily wisdom",emoji:"👣"},
+  {q:"The hardest quest is starting. You can do that.",attr:"Daily wisdom",emoji:"🗡️"},
+  // Feelings & Process
+  {q:"It's okay to feel frustrated. That feeling means you care.",attr:"Daily wisdom",emoji:"💛"},
+  {q:"You don't have to feel ready. Just begin.",attr:"Daily wisdom",emoji:"🌈"},
+  {q:"Progress, not perfection. Every little bit counts.",attr:"Growth Mindset",emoji:"📈"},
+  {q:"Your feelings are valid. Your effort is what matters most.",attr:"Daily wisdom",emoji:"❤️"},
+  {q:"Rest is part of the journey, not giving up.",attr:"Daily wisdom",emoji:"🌙"},
+  // Gifted-specific
+  {q:"Being gifted means you feel things deeply. That's your strength.",attr:"Gifted wisdom",emoji:"🎁"},
+  {q:"You think big thoughts. Take it one small step at a time.",attr:"Daily wisdom",emoji:"🔭"},
+  {q:"Your brain notices everything. That's beautiful, not a problem.",attr:"Gifted wisdom",emoji:"🌺"},
+  {q:"It's okay if things take time. Great things usually do.",attr:"Daily wisdom",emoji:"⏳"},
+  {q:"You are exactly who you need to be, right now.",attr:"Daily wisdom",emoji:"💜"},
+  // Fun & Encouraging
+  {q:"Even heroes have hard days. You're still a hero.",attr:"Daily wisdom",emoji:"🦸"},
+  {q:"Today's quests are tomorrow's superpowers.",attr:"Daily wisdom",emoji:"⭐"},
+  {q:"Every quest you finish makes your pet happier!",attr:"Daily wisdom",emoji:"🐾"},
+];
+
+function getDailyQuote(){
+  // Rotate by day of year so it changes daily but is consistent within a day
+  const day=Math.floor(Date.now()/86400000);
+  return MINDSET_QUOTES[day%MINDSET_QUOTES.length];
+}
+
+function renderMindsetCard(){
+  const quote=getDailyQuote();
+  const pet=load('petData',defPet());const stage=petStage(pet.totalXp||0);
+  const qEl=document.getElementById('mindset-quote');
+  const aEl=document.getElementById('mindset-attr');
+  const pEl=document.getElementById('mindset-pet');
+  const cEl=document.getElementById('mindset-card');
+  if(!qEl)return;
+  qEl.textContent='"'+quote.q+'"';
+  aEl.textContent='— '+quote.attr;
+  pEl.textContent=quote.emoji||stage.emoji;
+  // Subtle gradient changes based on time of day
+  const hr=new Date().getHours();
+  const grad=hr<12?'135deg,#667eea,#764ba2':hr<17?'135deg,#f093fb,#f5576c':'135deg,#1a1a5e,#4a1a8a';
+  cEl.style.background='linear-gradient('+grad+')';
+}
+
+// ── SHOP CATALOG ── 9 categories, rich visuals
+// cat: 0=bg, 1=floor, 2=wall, 3=window, 4=bed, 5=plant, 6=light, 7=toy, 8=effect
+const SHOP_CATS=['🌅 Sky','🪵 Floor','🎨 Wall','🪟 Window','🛏 Bed','🌱 Plant','💡 Light','🎮 Toy','✨ Effect','👒 Outfit'];
 const SHOP_ITEMS=[
-  {id:'bg_meadow',cat:0,name:'Sunny Meadow',icon:'🌄',price:0,type:'bg',colors:['#87CEEB','#90EE90','#8FBC8F'],owned:true},
-  {id:'bg_night',cat:0,name:'Night Sky',icon:'🌃',price:80,type:'bg',colors:['#0a0a2e','#1a1a4e','#2a2060']},
-  {id:'bg_ocean',cat:0,name:'Ocean Deep',icon:'🌊',price:150,type:'bg',colors:['#006994','#0099CC','#00CED1']},
-  {id:'bg_castle',cat:0,name:'Magic Castle',icon:'🏰',price:250,type:'bg',colors:['#8B6FBF','#A080D0','#C0A0E8']},
-  {id:'bg_candy',cat:0,name:'Candy Land',icon:'🍭',price:300,type:'bg',colors:['#FFB3C6','#FF8FA3','#FFC8DD']},
-  {id:'bg_galaxy',cat:0,name:'Galaxy ✦',icon:'🌌',price:0,type:'bg',colors:['#0d0d2b','#1a0533','#0a1a3e'],streakRequired:30},
-  {id:'bed_basic',cat:1,name:'Cozy Nest',icon:'🛏',price:0,type:'item',owned:true},
-  {id:'bed_cloud',cat:1,name:'Cloud Bed',icon:'☁️',price:60,type:'item'},
-  {id:'bed_hammock',cat:1,name:'Hammock',icon:'🏕',price:120,type:'item'},
-  {id:'bed_royal',cat:1,name:'Royal Bed',icon:'👑',price:200,type:'item',streakRequired:14},
-  {id:'plant_none',cat:2,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'plant_cactus',cat:2,name:'Cactus',icon:'🌵',price:40,type:'item'},
-  {id:'plant_flower',cat:2,name:'Flower',icon:'🌸',price:60,type:'item'},
-  {id:'plant_tree',cat:2,name:'Bonsai',icon:'🌳',price:100,type:'item'},
-  {id:'plant_mushroom',cat:2,name:'Mushroom',icon:'🍄',price:140,type:'item'},
-  {id:'light_none',cat:3,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'light_candle',cat:3,name:'Candle',icon:'🕯',price:60,type:'item'},
-  {id:'light_moon',cat:3,name:'Moon Lamp',icon:'🌙',price:100,type:'item'},
-  {id:'light_rainbow',cat:3,name:'Rainbow',icon:'🌈',price:180,type:'item',streakRequired:7},
-  {id:'light_fairy',cat:3,name:'Fairy Lights',icon:'✨',price:240,type:'item'},
-  {id:'toy_none',cat:4,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'toy_ball',cat:4,name:'Ball',icon:'⚽',price:30,type:'item'},
-  {id:'toy_book',cat:4,name:'Magic Book',icon:'📚',price:60,type:'item'},
-  {id:'toy_telescope',cat:4,name:'Telescope',icon:'🔭',price:120,type:'item'},
-  {id:'toy_chest',cat:4,name:'Treasure',icon:'💰',price:180,type:'item',streakRequired:14},
-  {id:'fx_none',cat:5,name:'None',icon:'⬜',price:0,type:'item',owned:true},
-  {id:'fx_bubbles',cat:5,name:'Bubbles',icon:'🫧',price:150,type:'item'},
-  {id:'fx_stars',cat:5,name:'Stars',icon:'⭐',price:180,type:'item',streakRequired:7},
-  {id:'fx_firefly',cat:5,name:'Firefly',icon:'🌟',price:240,type:'item',streakRequired:14},
-  {id:'fx_aurora',cat:5,name:'Aurora',icon:'🎆',price:360,type:'item',streakRequired:30},
+  // ── SKY / BACKGROUND ──
+  {id:'bg_meadow',cat:0,name:'Sunny Day',icon:'☀️',price:0,type:'bg',owned:true,
+    wallColor:'#E8F4FD',skyColors:['#87CEEB','#B0E0FF'],sunPos:[0.8,0.15]},
+  {id:'bg_sunset',cat:0,name:'Sunset Glow',icon:'🌅',price:60,type:'bg',
+    wallColor:'#FFF0E8',skyColors:['#FF6B35','#FF9F43','#FFD93D'],sunPos:[0.5,0.3]},
+  {id:'bg_night',cat:0,name:'Starry Night',icon:'🌃',price:80,type:'bg',
+    wallColor:'#1a1a3e',skyColors:['#0a0a2e','#1a1a4e'],moonPos:[0.75,0.18]},
+  {id:'bg_ocean',cat:0,name:'Ocean View',icon:'🌊',price:150,type:'bg',
+    wallColor:'#E0F4FF',skyColors:['#006994','#0099CC','#7EC8E3']},
+  {id:'bg_forest',cat:0,name:'Enchanted Forest',icon:'🌲',price:180,type:'bg',
+    wallColor:'#E8F5E9',skyColors:['#1B5E20','#2E7D32','#388E3C']},
+  {id:'bg_candy',cat:0,name:'Candy Land',icon:'🍭',price:250,type:'bg',
+    wallColor:'#FFF0F5',skyColors:['#FF8FA3','#FFB3C6','#FFC8DD']},
+  {id:'bg_castle',cat:0,name:'Magic Castle',icon:'🏰',price:280,type:'bg',
+    wallColor:'#EDE0FF',skyColors:['#4A0080','#7B1FA2','#AB47BC']},
+  {id:'bg_galaxy',cat:0,name:'Galaxy ✦',icon:'🌌',price:0,type:'bg',streakRequired:30,
+    wallColor:'#0d0620',skyColors:['#0d0d2b','#1a0533','#0a1a3e']},
+
+  // ── FLOOR ──
+  {id:'fl_wood',cat:1,name:'Wood',icon:'🪵',price:0,type:'floor',owned:true,
+    floorColor:'#C8A96E',floorDark:'#A0784A',pattern:'planks'},
+  {id:'fl_tile',cat:1,name:'White Tile',icon:'⬜',price:50,type:'floor',
+    floorColor:'#F0F0F0',floorDark:'#DDD',pattern:'tiles'},
+  {id:'fl_pink',cat:1,name:'Pink Carpet',icon:'🌸',price:80,type:'floor',
+    floorColor:'#FFB3C6',floorDark:'#FF8FA3',pattern:'carpet'},
+  {id:'fl_grass',cat:1,name:'Grass',icon:'🌿',price:100,type:'floor',
+    floorColor:'#4CAF50',floorDark:'#388E3C',pattern:'grass'},
+  {id:'fl_marble',cat:1,name:'Marble',icon:'💎',price:160,type:'floor',
+    floorColor:'#E8E8E8',floorDark:'#BDBDBD',pattern:'marble'},
+  {id:'fl_rainbow',cat:1,name:'Rainbow',icon:'🌈',price:220,type:'floor',streakRequired:7,
+    floorColor:'#FF6B6B',floorDark:'#FF9F43',pattern:'rainbow'},
+
+  // ── WALL ──
+  {id:'wl_plain',cat:2,name:'Cream Wall',icon:'🟡',price:0,type:'wall',owned:true,
+    wallPaper:'#FFF8E7',wallLine:'#F0E8D0'},
+  {id:'wl_stripes',cat:2,name:'Pink Stripes',icon:'💗',price:60,type:'wall',
+    wallPaper:'#FFE4E1',wallLine:'#FFB3C6',wallPattern:'stripes'},
+  {id:'wl_stars',cat:2,name:'Star Pattern',icon:'⭐',price:90,type:'wall',
+    wallPaper:'#E8E0FF',wallLine:'#C5B3FF',wallPattern:'stars'},
+  {id:'wl_bricks',cat:2,name:'Red Bricks',icon:'🧱',price:120,type:'wall',
+    wallPaper:'#C0392B',wallLine:'#922B21',wallPattern:'bricks'},
+  {id:'wl_clouds',cat:2,name:'Cloudy',icon:'☁️',price:150,type:'wall',
+    wallPaper:'#E3F2FD',wallLine:'#90CAF9',wallPattern:'clouds'},
+  {id:'wl_gold',cat:2,name:'Gold Luxury',icon:'✨',price:300,type:'wall',streakRequired:14,
+    wallPaper:'#FFF9C4',wallLine:'#FFD700',wallPattern:'diamonds'},
+
+  // ── WINDOW ──
+  {id:'win_none',cat:3,name:'No Window',icon:'⬜',price:0,type:'window',owned:true},
+  {id:'win_basic',cat:3,name:'Simple',icon:'🪟',price:40,type:'window',
+    view:'sky',frame:'#8D6E63'},
+  {id:'win_garden',cat:3,name:'Garden',icon:'🌺',price:80,type:'window',
+    view:'garden',frame:'#5D4037'},
+  {id:'win_ocean',cat:3,name:'Ocean',icon:'🌊',price:120,type:'window',
+    view:'ocean',frame:'#1565C0'},
+  {id:'win_night',cat:3,name:'Night Sky',icon:'🌙',price:160,type:'window',
+    view:'night',frame:'#263238'},
+  {id:'win_magic',cat:3,name:'Magic Portal',icon:'🔮',price:280,type:'window',streakRequired:14,
+    view:'magic',frame:'#6A1B9A'},
+
+  // ── BED ──
+  {id:'bed_basic',cat:4,name:'Cozy Nest',icon:'🛏',price:0,type:'bed',owned:true},
+  {id:'bed_cloud',cat:4,name:'Cloud Bed',icon:'☁️',price:60,type:'bed'},
+  {id:'bed_tent',cat:4,name:'Cozy Tent',icon:'⛺',price:100,type:'bed'},
+  {id:'bed_hammock',cat:4,name:'Hammock',icon:'🏕',price:120,type:'bed'},
+  {id:'bed_royal',cat:4,name:'Royal Bed',icon:'👑',price:200,type:'bed',streakRequired:14},
+  {id:'bed_space',cat:4,name:'Space Pod',icon:'🚀',price:300,type:'bed',streakRequired:21},
+
+  // ── PLANT ──
+  {id:'plant_none',cat:5,name:'None',icon:'⬜',price:0,type:'plant',owned:true},
+  {id:'plant_cactus',cat:5,name:'Cactus',icon:'🌵',price:40,type:'plant'},
+  {id:'plant_flower',cat:5,name:'Flower',icon:'🌸',price:60,type:'plant'},
+  {id:'plant_tree',cat:5,name:'Bonsai',icon:'🌳',price:100,type:'plant'},
+  {id:'plant_mushroom',cat:5,name:'Mushroom',icon:'🍄',price:140,type:'plant'},
+  {id:'plant_rainbow',cat:5,name:'Rainbow Plant',icon:'🌈',price:200,type:'plant',streakRequired:7},
+
+  // ── LIGHT ──
+  {id:'light_none',cat:6,name:'None',icon:'⬜',price:0,type:'light',owned:true},
+  {id:'light_candle',cat:6,name:'Candle',icon:'🕯',price:60,type:'light'},
+  {id:'light_moon',cat:6,name:'Moon Lamp',icon:'🌙',price:100,type:'light'},
+  {id:'light_string',cat:6,name:'String Lights',icon:'🔆',price:140,type:'light'},
+  {id:'light_rainbow',cat:6,name:'Rainbow Light',icon:'🌈',price:180,type:'light',streakRequired:7},
+  {id:'light_fairy',cat:6,name:'Fairy Lights',icon:'✨',price:240,type:'light'},
+
+  // ── TOY ──
+  {id:'toy_none',cat:7,name:'None',icon:'⬜',price:0,type:'toy',owned:true},
+  {id:'toy_ball',cat:7,name:'Ball',icon:'⚽',price:30,type:'toy'},
+  {id:'toy_book',cat:7,name:'Magic Book',icon:'📚',price:60,type:'toy'},
+  {id:'toy_telescope',cat:7,name:'Telescope',icon:'🔭',price:120,type:'toy'},
+  {id:'toy_chest',cat:7,name:'Treasure',icon:'💰',price:180,type:'toy',streakRequired:14},
+  {id:'toy_music',cat:7,name:'Music Box',icon:'🎵',price:200,type:'toy'},
+
+  // ── EFFECT ──
+  {id:'fx_none',cat:8,name:'None',icon:'⬜',price:0,type:'effect',owned:true},
+  {id:'fx_bubbles',cat:8,name:'Bubbles',icon:'🫧',price:150,type:'effect'},
+  {id:'fx_confetti',cat:8,name:'Confetti',icon:'🎊',price:160,type:'effect'},
+  {id:'fx_stars',cat:8,name:'Falling Stars',icon:'⭐',price:180,type:'effect',streakRequired:7},
+  {id:'fx_firefly',cat:8,name:'Fireflies',icon:'🌟',price:240,type:'effect',streakRequired:14},
+  {id:'fx_aurora',cat:8,name:'Aurora',icon:'🎆',price:360,type:'effect',streakRequired:30},
+  // ── OUTFIT (cat 9) — pet accessories shown on pet ──
+  {id:'out_none',cat:9,name:'No Outfit',icon:'⬜',price:0,type:'outfit',owned:true},
+  {id:'out_crown',cat:9,name:'Crown',icon:'👑',price:80,type:'outfit',accessory:'👑',pos:'top'},
+  {id:'out_hat',cat:9,name:'Party Hat',icon:'🎩',price:60,type:'outfit',accessory:'🎩',pos:'top'},
+  {id:'out_bow',cat:9,name:'Hair Bow',icon:'🎀',price:50,type:'outfit',accessory:'🎀',pos:'topright'},
+  {id:'out_sword',cat:9,name:'Sword',icon:'⚔️',price:100,type:'outfit',accessory:'⚔️',pos:'right'},
+  {id:'out_wand',cat:9,name:'Magic Wand',icon:'🪄',price:120,type:'outfit',accessory:'🪄',pos:'right'},
+  {id:'out_wings',cat:9,name:'Wings',icon:'🦋',price:150,type:'outfit',accessory:'🦋',pos:'back',streakRequired:7},
+  {id:'out_halo',cat:9,name:'Halo',icon:'😇',price:180,type:'outfit',accessory:'✨',pos:'top',streakRequired:14},
+  {id:'out_cape',cat:9,name:'Hero Cape',icon:'🦸',price:200,type:'outfit',accessory:'🌟',pos:'back',streakRequired:14},
+  {id:'out_dragon',cat:9,name:'Dragon Wings',icon:'🐉',price:300,type:'outfit',accessory:'🔥',pos:'back',streakRequired:30},
 ];
 
 // ════════════════════════════════════════════════
@@ -1833,12 +2112,10 @@ function defPet(){return{totalXp:0,shards:0,hatches:0}}
 function defStats(){return{xp:0,streak:0,gems:0,coins:0,lastRewardDate:null,lastProgressDate:null}}
 function defProfile(){return{name:'Hero',avatar:'🧙'}}
 function defShop(){
-  // owned items per category (by item id), equipped per category index
-  const owned={};const equipped={};
+  const owned={};
+  const equipped={0:'bg_meadow',1:'fl_wood',2:'wl_plain',3:'win_none',
+    4:'bed_basic',5:'plant_none',6:'light_none',7:'toy_none',8:'fx_none',9:'out_none'};
   SHOP_ITEMS.filter(i=>i.owned).forEach(i=>owned[i.id]=true);
-  // default equipped per cat
-  equipped[0]='bg_meadow';equipped[1]='bed_basic';equipped[2]='plant_none';
-  equipped[3]='light_none';equipped[4]='toy_none';equipped[5]='fx_none';
   return{owned,equipped};
 }
 
@@ -1859,7 +2136,14 @@ function getShop(){
   let s=load('shopData',null);
   if(!s){s=defShop();save('shopData',s);}
   if(!s.owned){s.owned={};SHOP_ITEMS.filter(i=>i.owned).forEach(i=>s.owned[i.id]=true);}
-  if(!s.equipped){s.equipped={0:'bg_meadow',1:'bed_basic',2:'plant_none',3:'light_none',4:'toy_none',5:'fx_none'};}
+  // Migrate old 6-slot to new 9-slot
+  if(!s.equipped||s.equipped[4]===undefined){
+    const old2=s.equipped||{};
+    s.equipped={0:old2[0]||'bg_meadow',1:'fl_wood',2:'wl_plain',3:'win_none',
+      4:old2[1]||'bed_basic',5:old2[2]||'plant_none',
+      6:old2[3]||'light_none',7:old2[4]||'toy_none',8:old2[5]||'fx_none',9:'out_none'};
+  }
+  SHOP_ITEMS.filter(i=>i.owned).forEach(i=>{if(!s.owned[i.id])s.owned[i.id]=true;});
   return s;
 }
 
@@ -2058,6 +2342,32 @@ function renderChild(){
 
   const listEl=document.getElementById('quest-list');listEl.innerHTML='';
   let doneDaily=0;
+
+  // ── Recommended order banner ──
+  renderMindsetCard();
+  const recBar=document.getElementById('rec-order-bar');
+  const recText=document.getElementById('rec-order-text');
+  if(recBar&&todayTasks.length>1){
+    const pendingTasks=todayTasks.filter((_,i)=>!prog['d_'+i]||prog['d_'+i]==='pending');
+    if(pendingTasks.length>1){
+      const hasHard=pendingTasks.some(t=>t.difficulty==='hard');
+      const hasEasy=pendingTasks.some(t=>t.difficulty==='easy');
+      const hr=new Date().getHours();
+      let tip='';
+      if(hr<12&&hasHard){
+        const hardTask=pendingTasks.find(t=>t.difficulty==='hard');
+        tip='🌅 Morning brain power! Try "'+(hardTask&&hardTask.name?hardTask.name:'the hard task')+'" first — your brain is freshest now!';
+      } else if(hr>=14&&hasEasy){
+        const easyTask=pendingTasks.find(t=>t.difficulty==='easy');
+        tip='⚡ Afternoon tip: Start with "'+( easyTask&&easyTask.name?easyTask.name:'an easy task')+'" to build momentum!';
+      } else if(pendingTasks.length>=3){
+        tip='💡 Tip: Do one task at a time. Just pick the first one and start!';
+      }
+      if(tip){recText.textContent=tip;recBar.style.display='flex';}
+      else recBar.style.display='none';
+    } else recBar.style.display='none';
+  } else if(recBar) recBar.style.display='none';
+
   if(!todayTasks.length){
     listEl.innerHTML=`<div class="empty-state"><span>🏖️</span>No daily quests today!</div>`;
   } else {
@@ -2154,12 +2464,13 @@ function makeCard(task,i,state,td,isBonus){
   }
   let btnHtml='';
   if(state==='pending')btnHtml=`
-    <div class="q-btn-row" style="flex-wrap:wrap;gap:5px">
-      <button class="q-btn ontime-btn" style="flex:2;min-width:120px" onclick="finishTask('${key}','ontime',${isBonus})">✅ Done On Time</button>
-      <button class="q-btn partial-btn" style="flex:1;min-width:80px" onclick="finishTask('${key}',true,${isBonus})">⚡ Partial</button>
-    </div>
-    <div class="q-btn-row" style="margin-top:5px">
-      <button class="q-btn timer-btn" onclick="startTask('${key}')">⏱ Start Timer (for early bonus)</button>
+    <button class="launch-btn" onclick="launchTask('${key}','${esc(task.name||'Quest')}')">
+      🚀 I'm Starting Now!
+    </button>
+    <div class="q-btn-row" style="gap:5px;margin-top:6px">
+      <button class="q-btn ontime-btn" style="flex:2" onclick="finishTask('${key}','ontime',${isBonus})">✅ Done On Time</button>
+      <button class="q-btn early-btn" style="flex:2" onclick="finishTask('${key}','early',${isBonus})">⚡ Early Finish!</button>
+      <button class="q-btn partial-btn" style="flex:1" onclick="finishTask('${key}',true,${isBonus})">½ Partial</button>
     </div>`;
   else if(state==='running')btnHtml=`<div class="q-btn-row">
     <button class="q-btn complete-btn" onclick="finishTask('${key}',false,${isBonus})">✅ Complete</button>
@@ -2215,6 +2526,74 @@ function setCollectBar(totalDone,dailyTotal,dailyDone,totalAll){
   const btn=document.getElementById('collect-btn');
   if(totalDone>0){btn.disabled=false;btn.textContent=dailyDone===dailyTotal&&dailyTotal>0?'🎉 Collect All Rewards + Shard!':`✨ Collect Rewards (${totalDone} done)`;}
   else{btn.disabled=true;btn.textContent='Complete quests first!';}
+}
+
+// ── I'M STARTING NOW — Pure ritual animation, no timing needed ──
+function launchTask(key, taskName){
+  // Give +2 coins brave start bonus
+  let stats=load('heroStats',defStats());
+  stats.coins=(stats.coins||0)+2;
+  save('heroStats',stats);
+  spawnStartBonusFloat();
+  if(navigator.vibrate)navigator.vibrate([60,40,60,40,120]);
+
+  const overlay=document.getElementById('launch-overlay');
+  const numEl=document.getElementById('launch-num');
+  const goEl=document.getElementById('launch-go');
+  const labelEl=document.getElementById('launch-label');
+  const taskLabelEl=document.getElementById('launch-task-label');
+  const starsEl=document.getElementById('launch-stars');
+
+  taskLabelEl.textContent=taskName||'Quest Time!';
+  numEl.style.display='none';
+  goEl.style.display='none';
+  labelEl.textContent='Take a deep breath... 🌬️';
+  starsEl.innerHTML='';
+  overlay.classList.add('show');
+
+  const steps=[
+    {show:'3',label:'Hands ready... ✋',vib:[80]},
+    {show:'2',label:"You've got this! 💪",vib:[80]},
+    {show:'1',label:'Here we GO! 🚀',vib:[80]},
+    {show:'GO',label:'',vib:[40,30,40,30,120]},
+  ];
+
+  let i=0;
+  function tick(){
+    const step=steps[i];
+    if(step.show==='GO'){
+      numEl.style.display='none';
+      goEl.style.display='block';
+      // Force re-animation
+      goEl.style.animation='none';void goEl.offsetWidth;
+      goEl.style.animation='launchGoPop .6s cubic-bezier(.175,.885,.32,1.275) both';
+      labelEl.textContent='';
+      // Burst stars
+      const angles=[0,45,90,135,180,225,270,315];
+      angles.forEach((ang,ai)=>{
+        const star=document.createElement('div');
+        star.className='launch-star';
+        const rad=ang*Math.PI/180;
+        const dist=120+Math.random()*60;
+        star.style.cssText=`left:50%;top:50%;--dx:${Math.cos(rad)*dist}px;--dy:${Math.sin(rad)*dist}px;animation-delay:${ai*0.04}s`;
+        star.textContent=['⭐','✨','🌟','💫'][ai%4];
+        starsEl.appendChild(star);
+      });
+      if(navigator.vibrate)navigator.vibrate(step.vib);
+      setTimeout(()=>{overlay.classList.remove('show');},900);
+    } else {
+      goEl.style.display='none';
+      numEl.style.display='block';
+      numEl.textContent=step.show;
+      // Re-trigger animation
+      numEl.style.animation='none';void numEl.offsetWidth;
+      numEl.style.animation='launchNumPop .5s cubic-bezier(.175,.885,.32,1.275) both';
+      labelEl.textContent=step.label;
+      if(navigator.vibrate)navigator.vibrate(step.vib);
+      i++;setTimeout(tick,900);
+    }
+  }
+  setTimeout(tick,400);
 }
 
 // 3-2-1 Countdown + Brave Start Bonus
@@ -2342,9 +2721,10 @@ function finishTask(key,mode,isBonus){
   if(!task)return;
   const partial=mode===true;
   const ontime=mode==='ontime';
+  const earlyBtn=mode==='early'; // Early Finish! button — gets full bonus without timer
   const durSec=(task.duration||15)*60;
   const xp=taskXP(task,isBonus),coins=taskCoins(task,isBonus),gems=taskGems(task);
-  const early=!partial&&!ontime&&elapsed>5&&elapsed<durSec*.9;
+  const early=earlyBtn||(!partial&&!ontime&&elapsed>5&&elapsed<durSec*.9);
   let xpGain=partial?Math.floor(xp*.5):xp;
   let coinGain=partial?Math.floor(coins*.5):coins;
   let gemGain=partial?0:gems;
@@ -2365,9 +2745,9 @@ function finishTask(key,mode,isBonus){
   if(gemGain)items.push('+'+gemGain+' 💎');
   if(bonusXp)items.push({text:'+'+bonusXp+'XP ⚡ Early!',type:'bonus'});
   if(bonusCoins)items.push({text:'+'+bonusCoins+'🪙 Early!',type:'coin'});
-  const popTitle=partial?'⚡ Partial!':ontime?'✅ Done On Time!':early?'🚀 '+savedMin+'m Early!':'✅ Quest Done!';
-  const popEmoji=partial?'😤':ontime?'🌟':early?'⚡':'🌟';
-  const popMsg=partial?'Half XP earned, '+heroName()+'!':ontime?'Great work, '+heroName()+'! Full rewards! 🐾':early?'Finished '+savedMin+'min early! Speed bonus!':'Your pet got fed! 🐾';
+  const popTitle=partial?'⚡ Partial!':earlyBtn?'⚡ Early Finish!':ontime?'✅ Done On Time!':early?'🚀 '+savedMin+'m Early!':'✅ Quest Done!';
+  const popEmoji=partial?'😤':earlyBtn?'⚡':ontime?'🌟':early?'⚡':'🌟';
+  const popMsg=partial?'Half XP earned, '+heroName()+'!':earlyBtn?'Amazing, '+heroName()+'! Speed bonus earned! ⚡':ontime?'Great work, '+heroName()+'! Full rewards! 🐾':early?'Finished '+savedMin+'min early! Speed bonus!':'Your pet got fed! 🐾';
   showPopup(popTitle,popEmoji,items,popMsg);
   launchConfetti(partial?20:early?90:50);
   renderChild();
@@ -2515,116 +2895,501 @@ function renderHome(){
   renderShop();
 }
 
-function drawRoom(){
+function drawRoom(previewShop){
   const canvas=document.getElementById('room-canvas');
+  if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;
   ctx.clearRect(0,0,W,H);
-
-  const shop=getShop();
+  const t=Date.now()/1000;
+  const shop=previewShop||getShop();
   const pet=load('petData',defPet());
   const stage=petStage(pet.totalXp||0);
-  const bgItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[0])||SHOP_ITEMS[0];
 
-  // Background gradient
-  const grd=ctx.createLinearGradient(0,0,0,H);
-  const cols=bgItem.colors||['#87CEEB','#90EE90','#8FBC8F'];
-  grd.addColorStop(0,cols[0]);grd.addColorStop(.6,cols[1]||cols[0]);grd.addColorStop(1,cols[2]||cols[1]||cols[0]);
-  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+  // Equipped items by new slot indices
+  const bgItem  =SHOP_ITEMS.find(i=>i.id===shop.equipped[0])||SHOP_ITEMS[0];
+  const flItem  =SHOP_ITEMS.find(i=>i.id===shop.equipped[1]);
+  const wallItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[2]);
+  const winItem =SHOP_ITEMS.find(i=>i.id===shop.equipped[3]);
+  const bedItem =SHOP_ITEMS.find(i=>i.id===shop.equipped[4]);
+  const plantItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[5]);
+  const lightItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[6]);
+  const toyItem =SHOP_ITEMS.find(i=>i.id===shop.equipped[7]);
+  const fxItem  =SHOP_ITEMS.find(i=>i.id===shop.equipped[8]);
 
-  // Floor
-  ctx.fillStyle='rgba(0,0,0,.12)';ctx.fillRect(0,H*.65,W,H*.35);
-  ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(0,H*.65,W,4);
+  const FLOOR_Y=H*0.62; // where floor starts
 
-  // Wall texture lines for castle bg
-  if(bgItem.id==='bg_castle'){
-    ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;
-    for(let y=20;y<H*.65;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H*.65);ctx.stroke();}
+  // ── SKY (top portion) ──
+  const skyC=bgItem.skyColors||['#87CEEB','#B0E0FF'];
+  const skyGrd=ctx.createLinearGradient(0,0,0,FLOOR_Y);
+  skyGrd.addColorStop(0,skyC[0]);
+  skyGrd.addColorStop(1,skyC[skyC.length-1]);
+  ctx.fillStyle=skyGrd;ctx.fillRect(0,0,W,FLOOR_Y);
+
+  // Sun or moon in sky
+  if(bgItem.sunPos){
+    const sx=bgItem.sunPos[0]*W,sy=bgItem.sunPos[1]*H;
+    const sunGrd=ctx.createRadialGradient(sx,sy,2,sx,sy,40);
+    sunGrd.addColorStop(0,'rgba(255,230,100,1)');
+    sunGrd.addColorStop(0.5,'rgba(255,200,50,0.8)');
+    sunGrd.addColorStop(1,'rgba(255,180,0,0)');
+    ctx.fillStyle=sunGrd;ctx.beginPath();ctx.arc(sx,sy,40,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,230,100,0.9)';ctx.beginPath();ctx.arc(sx,sy,18,0,Math.PI*2);ctx.fill();
   }
-
-  // Draw equipped items
-  const bedItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[1]);
-  const plantItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[2]);
-  const lightItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[3]);
-  const toyItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[4]);
-  const fxItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[5]);
-
-  // Light glow effect
-  if(lightItem&&lightItem.id!=='light_none'){
-    const lx=W*.82,ly=H*.18;
-    const radGrd=ctx.createRadialGradient(lx,ly,0,lx,ly,120);
-    const lc=lightItem.id==='light_candle'?'rgba(255,200,80,'
-      :lightItem.id==='light_moon'?'rgba(200,220,255,'
-      :lightItem.id==='light_rainbow'?'rgba(255,100,200,'
-      :'rgba(255,255,180,';
-    radGrd.addColorStop(0,lc+'0.3)');radGrd.addColorStop(1,lc+'0)');
-    ctx.fillStyle=radGrd;ctx.fillRect(0,0,W,H);
-    drawEmoji(ctx,lightItem.icon,lx,ly,36);
-  }
-
-  // Plant (left side)
-  if(plantItem&&plantItem.id!=='plant_none')drawEmoji(ctx,plantItem.icon,W*.12,H*.58,44);
-
-  // Toy (right side lower)
-  if(toyItem&&toyItem.id!=='toy_none')drawEmoji(ctx,toyItem.icon,W*.82,H*.72,36);
-
-  // Bed / resting area (center-right)
-  if(bedItem){
-    if(bedItem.id==='bed_cloud'){
-      // draw cloud bed
-      ctx.fillStyle='rgba(255,255,255,.85)';
-      ctx.beginPath();ctx.ellipse(W*.58,H*.78,70,22,0,0,Math.PI*2);ctx.fill();
-      ctx.beginPath();ctx.ellipse(W*.50,H*.74,40,18,0,0,Math.PI*2);ctx.fill();
-      ctx.beginPath();ctx.ellipse(W*.66,H*.74,35,16,0,0,Math.PI*2);ctx.fill();
-    } else if(bedItem.id==='bed_royal'){
-      ctx.fillStyle='rgba(180,120,255,.6)';ctx.beginPath();ctx.roundRect(W*.42,H*.68,W*.32,H*.18,8);ctx.fill();
-      ctx.fillStyle='rgba(255,215,0,.8)';ctx.beginPath();ctx.roundRect(W*.42,H*.64,14,H*.24,4);ctx.fill();
-      ctx.beginPath();ctx.roundRect(W*.74-14,H*.64,14,H*.24,4);ctx.fill();
-    } else if(bedItem.id==='bed_hammock'){
-      ctx.strokeStyle='rgba(180,120,60,.8)';ctx.lineWidth=3;
-      ctx.beginPath();ctx.moveTo(W*.3,H*.6);ctx.quadraticCurveTo(W*.55,H*.82,W*.8,H*.6);ctx.stroke();
-      ctx.lineWidth=1.5;ctx.strokeStyle='rgba(180,120,60,.4)';
-      for(let x=W*.32;x<W*.78;x+=10){ctx.beginPath();ctx.moveTo(x,H*.62);ctx.lineTo(x,H*.75);ctx.stroke();}
-    } else {
-      // basic nest/default
-      ctx.fillStyle='rgba(200,160,100,.5)';ctx.beginPath();ctx.ellipse(W*.56,H*.78,50,16,0,0,Math.PI*2);ctx.fill();
+  if(bgItem.moonPos){
+    const mx=bgItem.moonPos[0]*W,my=bgItem.moonPos[1]*H;
+    ctx.fillStyle='rgba(220,220,180,0.95)';ctx.beginPath();ctx.arc(mx,my,22,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=skyC[0];ctx.beginPath();ctx.arc(mx+8,my-4,18,0,Math.PI*2);ctx.fill();
+    // stars
+    for(let s=0;s<30;s++){
+      const sx2=(Math.sin(s*7.3)*0.5+0.5)*W;
+      const sy2=(Math.cos(s*3.7)*0.5+0.1)*FLOOR_Y*0.8;
+      const a=0.5+Math.sin(t*2+s)*0.4;
+      ctx.fillStyle=`rgba(255,255,220,${a})`;
+      ctx.beginPath();ctx.arc(sx2,sy2,1.5,0,Math.PI*2);ctx.fill();
     }
-    drawEmoji(ctx,bedItem.icon,W*.58,H*.68,26);
   }
 
-  // Particle FX
+  // ── WALL (vertical back wall) ──
+  const wallC=wallItem&&wallItem.wallPaper?wallItem.wallPaper:(bgItem.wallColor||'#FFF8E7');
+  const wallLineC=wallItem&&wallItem.wallLine?wallItem.wallLine:'rgba(0,0,0,0.06)';
+  ctx.fillStyle=wallC;ctx.fillRect(0,0,W,FLOOR_Y);
+
+  if(wallItem&&wallItem.wallPattern){
+    ctx.save();
+    if(wallItem.wallPattern==='stripes'){
+      ctx.strokeStyle=wallLineC;ctx.lineWidth=18;
+      for(let x=-H;x<W+H;x+=32){
+        ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+H,FLOOR_Y);ctx.stroke();
+      }
+    } else if(wallItem.wallPattern==='bricks'){
+      ctx.fillStyle=wallLineC;
+      for(let row=0;row<8;row++){
+        const yy=row*(FLOOR_Y/7);const off=row%2===0?0:44;
+        for(let col=-1;col<7;col++){
+          ctx.fillRect(col*88+off,yy,82,FLOOR_Y/7-4);
+        }
+      }
+      ctx.fillStyle='rgba(255,255,255,0.15)';
+      for(let row=0;row<8;row++){
+        const yy=row*(FLOOR_Y/7);const off=row%2===0?0:44;
+        for(let col=-1;col<7;col++){
+          ctx.fillRect(col*88+off,yy,82,4);
+        }
+      }
+    } else if(wallItem.wallPattern==='stars'){
+      ctx.fillStyle=wallLineC;
+      for(let s=0;s<20;s++){
+        const sx=(Math.sin(s*4.7)*0.5+0.5)*W;
+        const sy=(Math.cos(s*2.9)*0.5+0.5)*FLOOR_Y*0.9;
+        drawEmoji(ctx,'⭐',sx,sy,16);
+      }
+    } else if(wallItem.wallPattern==='clouds'){
+      for(let s=0;s<6;s++){
+        const cx2=(s/6+0.1)*W;const cy=40+s*15;
+        ctx.fillStyle='rgba(255,255,255,0.5)';
+        ctx.beginPath();ctx.ellipse(cx2,cy,40,20,0,0,Math.PI*2);ctx.fill();
+        ctx.beginPath();ctx.ellipse(cx2-25,cy+5,25,15,0,0,Math.PI*2);ctx.fill();
+        ctx.beginPath();ctx.ellipse(cx2+25,cy+5,25,15,0,0,Math.PI*2);ctx.fill();
+      }
+    } else if(wallItem.wallPattern==='diamonds'){
+      ctx.strokeStyle=wallLineC;ctx.lineWidth=1.5;
+      for(let y=0;y<FLOOR_Y;y+=30){
+        for(let x=0;x<W;x+=30){
+          ctx.beginPath();ctx.moveTo(x+15,y);ctx.lineTo(x+30,y+15);
+          ctx.lineTo(x+15,y+30);ctx.lineTo(x,y+15);ctx.closePath();ctx.stroke();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  // Subtle wall-to-floor shadow line
+  const shadowGrd=ctx.createLinearGradient(0,FLOOR_Y-20,0,FLOOR_Y+20);
+  shadowGrd.addColorStop(0,'rgba(0,0,0,0)');
+  shadowGrd.addColorStop(0.5,'rgba(0,0,0,0.18)');
+  shadowGrd.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=shadowGrd;ctx.fillRect(0,FLOOR_Y-20,W,40);
+
+  // ── FLOOR ──
+  const flC=flItem&&flItem.floorColor?flItem.floorColor:'#C8A96E';
+  const flD=flItem&&flItem.floorDark?flItem.floorDark:'#A0784A';
+  const flPat=flItem&&flItem.pattern?flItem.pattern:'planks';
+
+  const flGrd=ctx.createLinearGradient(0,FLOOR_Y,0,H);
+  flGrd.addColorStop(0,flC);flGrd.addColorStop(1,flD);
+  ctx.fillStyle=flGrd;ctx.fillRect(0,FLOOR_Y,W,H-FLOOR_Y);
+
+  ctx.save();
+  if(flPat==='planks'){
+    ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=2;
+    for(let y=FLOOR_Y;y<H;y+=22){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.lineWidth=1;ctx.strokeStyle='rgba(0,0,0,0.06)';
+    for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,FLOOR_Y);ctx.lineTo(x,H);ctx.stroke();}
+  } else if(flPat==='tiles'){
+    ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=2;
+    for(let y=FLOOR_Y;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,FLOOR_Y);ctx.lineTo(x,H);ctx.stroke();}
+  } else if(flPat==='carpet'){
+    ctx.fillStyle='rgba(255,255,255,0.08)';
+    for(let y=FLOOR_Y+6;y<H;y+=12){ctx.fillRect(0,y,W,5);}
+  } else if(flPat==='grass'){
+    for(let gx=0;gx<W;gx+=8){
+      const gh=8+Math.sin(gx*0.7+t)*3;
+      ctx.strokeStyle='rgba(0,100,0,0.4)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(gx,FLOOR_Y);ctx.lineTo(gx+2,FLOOR_Y-gh);ctx.stroke();
+    }
+  } else if(flPat==='marble'){
+    ctx.strokeStyle='rgba(100,100,100,0.12)';ctx.lineWidth=1.5;
+    for(let m=0;m<5;m++){
+      ctx.beginPath();
+      ctx.moveTo(m*W/4,FLOOR_Y);
+      ctx.bezierCurveTo(m*W/4+30,FLOOR_Y+20,m*W/4-20,FLOOR_Y+40,m*W/4+10,H);
+      ctx.stroke();
+    }
+  } else if(flPat==='rainbow'){
+    const rCols=['#FF6B6B','#FF9F43','#FFD93D','#6BCB77','#4ECDC4','#7C5CBF','#FF4D8D'];
+    const bw=W/rCols.length;
+    rCols.forEach((rc,ri)=>{
+      ctx.fillStyle=rc+'CC';ctx.fillRect(ri*bw,FLOOR_Y,bw,H-FLOOR_Y);
+    });
+    ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=2;
+    for(let y=FLOOR_Y;y<H;y+=25){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }
+  ctx.restore();
+
+  // ── WINDOW (upper left area) ──
+  if(winItem&&winItem.id!=='win_none'){
+    const wx=W*0.08,wy=FLOOR_Y*0.12,ww=W*0.22,wh=FLOOR_Y*0.38;
+    const frameC=winItem.frame||'#8D6E63';
+    // Window view fill
+    ctx.save();ctx.beginPath();ctx.roundRect(wx+8,wy+8,ww-16,wh-16,4);ctx.clip();
+    if(winItem.view==='sky'){
+      const wvG=ctx.createLinearGradient(wx,wy,wx,wy+wh);
+      wvG.addColorStop(0,'#87CEEB');wvG.addColorStop(1,'#E0F4FF');
+      ctx.fillStyle=wvG;ctx.fillRect(wx,wy,ww,wh);
+      ctx.fillStyle='rgba(255,255,255,0.8)';
+      ctx.beginPath();ctx.ellipse(wx+ww*0.3,wy+wh*0.4,30,12,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(wx+ww*0.65,wy+wh*0.3,22,9,0,0,Math.PI*2);ctx.fill();
+    } else if(winItem.view==='garden'){
+      ctx.fillStyle='#87CEEB';ctx.fillRect(wx,wy,ww,wh*0.5);
+      ctx.fillStyle='#4CAF50';ctx.fillRect(wx,wy+wh*0.5,ww,wh*0.5);
+      drawEmoji(ctx,'🌺',wx+ww*0.25,wy+wh*0.7,20);
+      drawEmoji(ctx,'🌻',wx+ww*0.65,wy+wh*0.65,22);
+    } else if(winItem.view==='ocean'){
+      const og=ctx.createLinearGradient(wx,wy,wx,wy+wh);
+      og.addColorStop(0,'#87CEEB');og.addColorStop(0.5,'#0099CC');og.addColorStop(1,'#006994');
+      ctx.fillStyle=og;ctx.fillRect(wx,wy,ww,wh);
+      ctx.fillStyle='rgba(255,255,255,0.6)';
+      for(let w2=0;w2<3;w2++){
+        ctx.beginPath();
+        ctx.moveTo(wx,wy+wh*(0.4+w2*0.15));
+        ctx.quadraticCurveTo(wx+ww/2,wy+wh*(0.35+w2*0.15),wx+ww,wy+wh*(0.4+w2*0.15));
+        ctx.lineWidth=3;ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.stroke();
+      }
+    } else if(winItem.view==='night'){
+      ctx.fillStyle='#0a0a2e';ctx.fillRect(wx,wy,ww,wh);
+      ctx.fillStyle='rgba(220,220,180,0.95)';ctx.beginPath();ctx.arc(wx+ww*0.7,wy+wh*0.25,14,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#0a0a2e';ctx.beginPath();ctx.arc(wx+ww*0.77,wy+wh*0.2,11,0,Math.PI*2);ctx.fill();
+      for(let s2=0;s2<12;s2++){
+        ctx.fillStyle=`rgba(255,255,200,${0.4+Math.sin(t*2+s2)*0.4})`;
+        ctx.beginPath();ctx.arc(wx+Math.random()*ww*0.8+wx*0.1,wy+Math.random()*wh*0.7,1.2,0,Math.PI*2);ctx.fill();
+      }
+    } else if(winItem.view==='magic'){
+      const mg=ctx.createRadialGradient(wx+ww/2,wy+wh/2,5,wx+ww/2,wy+wh/2,ww/2);
+      mg.addColorStop(0,'#E040FB');mg.addColorStop(0.5,'#7B1FA2');mg.addColorStop(1,'#1A0040');
+      ctx.fillStyle=mg;ctx.fillRect(wx,wy,ww,wh);
+      for(let s3=0;s3<8;s3++){
+        const ang=s3/8*Math.PI*2+t*0.5;
+        const rx=wx+ww/2+Math.cos(ang)*ww*0.3,ry=wy+wh/2+Math.sin(ang)*wh*0.3;
+        ctx.fillStyle=`rgba(255,220,255,${0.3+Math.sin(t+s3)*0.3})`;
+        ctx.beginPath();ctx.arc(rx,ry,3,0,Math.PI*2);ctx.fill();
+      }
+    }
+    ctx.restore();
+    // Window frame
+    ctx.strokeStyle=frameC;ctx.lineWidth=6;
+    ctx.beginPath();ctx.roundRect(wx+4,wy+4,ww-8,wh-8,6);ctx.stroke();
+    ctx.fillStyle=frameC;
+    // Cross bars
+    ctx.fillRect(wx+ww/2-3,wy+4,6,wh-8);
+    ctx.fillRect(wx+4,wy+wh/2-3,ww-8,6);
+    // Sill
+    ctx.fillStyle=frameC;ctx.fillRect(wx-4,wy+wh,ww+8,10);
+    // Small flower pot on sill
+    if(winItem.view==='garden'){drawEmoji(ctx,'🪴',wx+ww*0.5,wy+wh+14,16);}
+  }
+
+  // ── LIGHT GLOW ──
+  if(lightItem&&lightItem.id!=='light_none'){
+    const lx=W*0.82,ly=FLOOR_Y*0.15;
+    const lColors={
+      light_candle:'rgba(255,200,80,',
+      light_moon:'rgba(200,220,255,',
+      light_string:'rgba(255,240,150,',
+      light_rainbow:'rgba(255,100,200,',
+      light_fairy:'rgba(255,255,150,'
+    };
+    const lc=lColors[lightItem.id]||'rgba(255,255,180,';
+    const radGrd=ctx.createRadialGradient(lx,ly,0,lx,ly,W*0.45);
+    radGrd.addColorStop(0,lc+'0.4)');radGrd.addColorStop(0.5,lc+'0.15)');radGrd.addColorStop(1,lc+'0)');
+    ctx.fillStyle=radGrd;ctx.fillRect(0,0,W,FLOOR_Y*1.1);
+    if(lightItem.id==='light_string'){
+      // String of lights along top
+      ctx.strokeStyle='rgba(150,100,50,0.6)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(0,FLOOR_Y*0.08);
+      for(let lp=0;lp<W;lp+=20){ctx.lineTo(lp,FLOOR_Y*0.08+Math.sin(lp*0.1)*4);}
+      ctx.stroke();
+      for(let lp=10;lp<W;lp+=20){
+        const bulbC=['#FF6B6B','#FFD93D','#6BCB77','#4ECDC4','#FF9F43'];
+        ctx.fillStyle=bulbC[Math.floor(lp/20)%5];
+        ctx.beginPath();ctx.ellipse(lp,FLOOR_Y*0.1+Math.sin(lp*0.1)*4,4,6,0,0,Math.PI*2);ctx.fill();
+      }
+    } else {
+      drawEmoji(ctx,lightItem.icon,lx,ly,38);
+    }
+  }
+
+  // ── PLANT (left corner) ──
+  if(plantItem&&plantItem.id!=='plant_none'){
+    const px=W*0.08,py=FLOOR_Y-10;
+    // Pot
+    ctx.fillStyle='#A0522D';
+    ctx.beginPath();ctx.moveTo(px-12,py);ctx.lineTo(px+12,py);ctx.lineTo(px+8,py+18);ctx.lineTo(px-8,py+18);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,0.1)';ctx.fillRect(px-13,py-2,26,4);
+    drawEmoji(ctx,plantItem.icon,px,py-20,plantItem.id==='plant_tree'?44:36);
+  }
+
+  // ── TOY (right corner) ──
+  if(toyItem&&toyItem.id!=='toy_none'){
+    drawEmoji(ctx,toyItem.icon,W*0.85,FLOOR_Y+22,32);
+    // Small shadow
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    ctx.beginPath();ctx.ellipse(W*0.85,FLOOR_Y+34,18,5,0,0,Math.PI*2);ctx.fill();
+  }
+
+  // ── BED (center-right) ──
+  if(bedItem){
+    const bx=W*0.62,by=FLOOR_Y+8,bw=W*0.32,bh=H*0.28;
+    if(bedItem.id==='bed_cloud'){
+      ctx.fillStyle='rgba(255,255,255,0.92)';
+      ctx.beginPath();ctx.ellipse(bx,by+bh*0.7,bw*0.5,bh*0.25,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(bx-bw*0.18,by+bh*0.55,bw*0.28,bh*0.2,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(bx+bw*0.18,by+bh*0.5,bw*0.25,bh*0.18,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(bx,by+bh*0.42,bw*0.32,bh*0.22,0,0,Math.PI*2);ctx.fill();
+    } else if(bedItem.id==='bed_royal'){
+      // Headboard
+      ctx.fillStyle='#6A1B9A';
+      ctx.beginPath();ctx.roundRect(bx-bw*0.5,by,14,bh*0.8,6);ctx.fill();
+      ctx.beginPath();ctx.roundRect(bx+bw*0.5-14,by,14,bh*0.8,6);ctx.fill();
+      // Mattress
+      const mg2=ctx.createLinearGradient(bx-bw*0.5,by,bx+bw*0.5,by);
+      mg2.addColorStop(0,'#9C27B0');mg2.addColorStop(0.5,'#CE93D8');mg2.addColorStop(1,'#9C27B0');
+      ctx.fillStyle=mg2;ctx.beginPath();ctx.roundRect(bx-bw*0.5,by+bh*0.35,bw,bh*0.5,8);ctx.fill();
+      // Pillow
+      ctx.fillStyle='rgba(255,255,255,0.9)';ctx.beginPath();ctx.roundRect(bx-bw*0.35,by+bh*0.2,bw*0.7,bh*0.22,10);ctx.fill();
+      // Crown on headboard
+      drawEmoji(ctx,'👑',bx,by+8,22);
+      // Gold trim
+      ctx.strokeStyle='#FFD700';ctx.lineWidth=2;
+      ctx.beginPath();ctx.roundRect(bx-bw*0.5,by+bh*0.35,bw,bh*0.5,8);ctx.stroke();
+    } else if(bedItem.id==='bed_hammock'){
+      ctx.strokeStyle='#8D6E63';ctx.lineWidth=4;
+      ctx.beginPath();ctx.moveTo(bx-bw*0.5,by+bh*0.1);ctx.lineTo(bx-bw*0.5,by+bh*0.8);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(bx+bw*0.5,by+bh*0.1);ctx.lineTo(bx+bw*0.5,by+bh*0.8);ctx.stroke();
+      ctx.strokeStyle='#A1887F';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(bx-bw*0.5,by+bh*0.15);
+      ctx.quadraticCurveTo(bx,by+bh*0.75,bx+bw*0.5,by+bh*0.15);ctx.stroke();
+      ctx.lineWidth=1.5;ctx.strokeStyle='rgba(160,130,100,0.4)';
+      for(let hx=bx-bw*0.45;hx<bx+bw*0.45;hx+=14){
+        ctx.beginPath();ctx.moveTo(hx,by+bh*0.18+Math.sin((hx-bx+bw*0.5)/(bw)*Math.PI)*bh*0.55);
+        ctx.lineTo(hx,by+bh*0.8);ctx.stroke();
+      }
+      drawEmoji(ctx,'🏕',bx,by+bh*0.35,20);
+    } else if(bedItem.id==='bed_tent'){
+      // Tent shape
+      ctx.fillStyle='#FF8A65';
+      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx-bw*0.5,by+bh*0.85);ctx.lineTo(bx+bw*0.5,by+bh*0.85);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#BF360C';
+      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx-bw*0.1,by+bh*0.85);ctx.lineTo(bx+bw*0.1,by+bh*0.85);ctx.closePath();ctx.fill();
+      // Door opening
+      ctx.fillStyle='rgba(0,0,0,0.3)';
+      ctx.beginPath();ctx.arc(bx,by+bh*0.7,bh*0.15,Math.PI,0);ctx.fill();
+      drawEmoji(ctx,'⛺',bx,by+bh*0.3,26);
+    } else if(bedItem.id==='bed_space'){
+      // Space pod
+      const podG=ctx.createLinearGradient(bx-bw*0.4,by,bx+bw*0.4,by+bh);
+      podG.addColorStop(0,'#37474F');podG.addColorStop(0.5,'#546E7A');podG.addColorStop(1,'#263238');
+      ctx.fillStyle=podG;
+      ctx.beginPath();ctx.roundRect(bx-bw*0.4,by+bh*0.2,bw*0.8,bh*0.7,20);ctx.fill();
+      // Window
+      ctx.fillStyle='rgba(100,200,255,0.4)';ctx.beginPath();ctx.arc(bx,by+bh*0.45,bh*0.18,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#78909C';ctx.lineWidth=3;ctx.beginPath();ctx.arc(bx,by+bh*0.45,bh*0.18,0,Math.PI*2);ctx.stroke();
+      // Lights
+      ['#FF6B6B','#FFD93D','#6BCB77'].forEach((sc,si)=>{
+        ctx.fillStyle=sc;ctx.beginPath();ctx.arc(bx-bw*0.25+si*bw*0.25,by+bh*0.82,4,0,Math.PI*2);ctx.fill();
+      });
+      drawEmoji(ctx,'🚀',bx+bw*0.3,by+bh*0.15,22);
+    } else {
+      // Basic cozy nest
+      const nestG=ctx.createLinearGradient(bx-bw*0.4,by,bx,by+bh);
+      nestG.addColorStop(0,'#D7CCC8');nestG.addColorStop(1,'#BCAAA4');
+      ctx.fillStyle=nestG;
+      ctx.beginPath();ctx.ellipse(bx,by+bh*0.75,bw*0.42,bh*0.22,0,0,Math.PI*2);ctx.fill();
+      // Pillow
+      ctx.fillStyle='rgba(255,255,255,0.85)';ctx.beginPath();ctx.ellipse(bx,by+bh*0.55,bw*0.28,bh*0.14,0,0,Math.PI*2);ctx.fill();
+      // Blanket
+      const blG=ctx.createLinearGradient(bx-bw*0.35,by+bh*0.62,bx+bw*0.35,by+bh*0.88);
+      blG.addColorStop(0,'#FFB3C6');blG.addColorStop(1,'#FF8FA3');
+      ctx.fillStyle=blG;ctx.beginPath();ctx.ellipse(bx,by+bh*0.75,bw*0.38,bh*0.18,-0.1,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  // ── PARTICLE EFFECTS ──
   if(fxItem&&fxItem.id!=='fx_none'){
-    const t=Date.now()/1000;
-    if(fxItem.id==='fx_bubbles'||fxItem.id==='fx_stars'||fxItem.id==='fx_firefly'){
-      for(let p=0;p<8;p++){
-        const px=((Math.sin(t*.7+p*1.3)*.5+.5))*W;
-        const py=((Math.cos(t*.5+p*1.1)*.4+.3))*H*.65;
-        const icon=fxItem.id==='fx_bubbles'?'🫧':fxItem.id==='fx_stars'?'✨':'🌟';
-        ctx.globalAlpha=.4+Math.sin(t+p)*.3;
-        drawEmoji(ctx,icon,px,py,18);ctx.globalAlpha=1;
+    ctx.save();
+    if(fxItem.id==='fx_bubbles'){
+      for(let p=0;p<12;p++){
+        const px2=((Math.sin(t*0.4+p*0.8)*0.4+0.5))*W;
+        const py2=((Math.cos(t*0.3+p*0.6)*0.35+0.35))*(FLOOR_Y+20);
+        const r=5+Math.sin(t+p*1.7)*2;
+        ctx.globalAlpha=0.25+Math.sin(t*1.5+p)*0.2;
+        ctx.strokeStyle='rgba(150,200,255,0.8)';ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.arc(px2,py2,r,0,Math.PI*2);ctx.stroke();
+        ctx.fillStyle='rgba(200,230,255,0.15)';ctx.fill();
+      }
+    } else if(fxItem.id==='fx_confetti'){
+      const confCols=['#FF6B6B','#FFD93D','#6BCB77','#4ECDC4','#FF9F43','#7C5CBF'];
+      for(let p=0;p<20;p++){
+        const px2=((Math.sin(p*1.9+t*0.3)*0.45+0.5))*W;
+        const py2=((t*0.08+p*0.05)%1)*(FLOOR_Y+40);
+        const rot=(t+p)*2;
+        ctx.globalAlpha=0.7;ctx.save();ctx.translate(px2,py2);ctx.rotate(rot);
+        ctx.fillStyle=confCols[p%confCols.length];ctx.fillRect(-4,-2,8,4);ctx.restore();
+      }
+    } else if(fxItem.id==='fx_stars'){
+      for(let p=0;p<16;p++){
+        const px2=((Math.sin(p*2.1+t*0.2)*0.45+0.5))*W;
+        const py2=((Math.cos(p*1.7+t*0.15)*0.4+0.5))*(FLOOR_Y+20);
+        ctx.globalAlpha=0.4+Math.sin(t*2+p)*0.4;
+        drawEmoji(ctx,'⭐',px2,py2,12+Math.sin(t+p)*4);
+      }
+    } else if(fxItem.id==='fx_firefly'){
+      for(let p=0;p<10;p++){
+        const px2=((Math.sin(t*0.5+p*1.3)*0.4+0.5))*W;
+        const py2=((Math.cos(t*0.4+p*1.1)*0.35+0.4))*(FLOOR_Y+10);
+        const a=0.4+Math.sin(t*3+p)*0.4;
+        ctx.globalAlpha=a;
+        const fg=ctx.createRadialGradient(px2,py2,0,px2,py2,8);
+        fg.addColorStop(0,'rgba(255,255,100,0.9)');fg.addColorStop(1,'rgba(255,200,0,0)');
+        ctx.fillStyle=fg;ctx.beginPath();ctx.arc(px2,py2,8,0,Math.PI*2);ctx.fill();
       }
     } else if(fxItem.id==='fx_aurora'){
-      for(let b=0;b<4;b++){
-        const bGrd=ctx.createLinearGradient(0,H*(.1+b*.05),W,H*(.2+b*.05));
-        bGrd.addColorStop(0,'rgba(0,255,180,0)');
-        bGrd.addColorStop(.5,`rgba(${b%2?'0,200,255':'180,0,255'},.15)`);
-        bGrd.addColorStop(1,'rgba(0,255,180,0)');
-        ctx.fillStyle=bGrd;ctx.fillRect(0,H*(.05+b*.08+Math.sin(t*.3+b)*.03),W,H*.1);
+      for(let b=0;b<5;b++){
+        const aGrd=ctx.createLinearGradient(0,FLOOR_Y*(0.05+b*0.1),W,FLOOR_Y*(0.15+b*0.1));
+        const cols2=['rgba(0,255,150,','rgba(0,200,255,','rgba(150,0,255,','rgba(255,0,150,','rgba(0,255,200,'];
+        aGrd.addColorStop(0,cols2[b%cols2.length]+'0)');
+        aGrd.addColorStop(0.5,cols2[b%cols2.length]+`${0.12+Math.sin(t*0.5+b)*0.08})`);
+        aGrd.addColorStop(1,cols2[b%cols2.length]+'0)');
+        ctx.fillStyle=aGrd;
+        ctx.fillRect(0,FLOOR_Y*(0.02+b*0.1+Math.sin(t*0.3+b)*0.03),W,FLOOR_Y*0.12);
       }
     }
+    ctx.globalAlpha=1;ctx.restore();
   }
 
-  // PET in room (center)
+  // ── PET ──
   const prog=load('todayProgress',{});
-  const wt=getWeek();const td=todayName();
-  const tasks=(wt[td]||{tasks:[]}).tasks||[];
-  const allDone=tasks.length>0&&tasks.every((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial');
-  const petEmoji=allDone?stage.emoji+'💤':stage.emoji;
+  const wt2=getWeek();const tdN=todayName();
+  const tasks2=(wt2[tdN]||{tasks:[]}).tasks||[];
+  const allDone=tasks2.length>0&&tasks2.every((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial');
   ctx.globalAlpha=1;
-  const petY=allDone?H*.7:H*.65+Math.sin(Date.now()/800)*4;
-  drawEmoji(ctx,stage.emoji,W*.44,petY,64);
-  if(allDone){ctx.globalAlpha=.7;drawEmoji(ctx,'💤',W*.44+28,petY-26,22);ctx.globalAlpha=1;}
+  const petX=W*0.38;
+  const bob=allDone?2:Math.sin(t*1.4)*6;
+  const petY2=FLOOR_Y-12+bob;
+  const petSz=stage.size||72;
+
+  // ── Aura glow ──
+  if(stage.aura){
+    const aGrd=ctx.createRadialGradient(petX,petY2,petSz*0.2,petX,petY2,petSz*1.1);
+    aGrd.addColorStop(0,stage.aura);
+    aGrd.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=aGrd;
+    ctx.beginPath();ctx.arc(petX,petY2,petSz*1.1,0,Math.PI*2);ctx.fill();
+  }
+
+  // ── Orbit ring ──
+  if(stage.ring){
+    ctx.save();
+    ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=2;
+    ctx.setLineDash([4,6]);
+    ctx.beginPath();ctx.ellipse(petX,petY2+petSz*0.1,petSz*0.9,petSz*0.25,0,0,Math.PI*2);ctx.stroke();
+    ctx.setLineDash([]);
+    // Orbiting star
+    const orbitAngle=t*1.8;
+    const ox=petX+Math.cos(orbitAngle)*petSz*0.9;
+    const oy=petY2+petSz*0.1+Math.sin(orbitAngle)*petSz*0.25;
+    ctx.globalAlpha=0.85;
+    drawEmoji(ctx,'⭐',ox,oy,14);
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+
+  // ── Floating particles ──
+  if(stage.particles&&stage.particles.length>0){
+    for(let pi=0;pi<4;pi++){
+      const angle=t*0.6+pi*(Math.PI*2/4);
+      const rad=petSz*0.85+Math.sin(t*1.2+pi)*10;
+      const px2=petX+Math.cos(angle)*rad;
+      const py3=petY2+Math.sin(angle)*rad*0.4;
+      ctx.globalAlpha=0.5+Math.sin(t*2+pi)*0.3;
+      drawEmoji(ctx,stage.particles[pi%stage.particles.length],px2,py3,12);
+    }
+    ctx.globalAlpha=1;
+  }
+
+  // ── Pet shadow ──
+  ctx.fillStyle='rgba(0,0,0,0.13)';
+  ctx.beginPath();ctx.ellipse(petX,FLOOR_Y+8,petSz*0.38,petSz*0.11,0,0,Math.PI*2);ctx.fill();
+
+  // ── Pet emoji ──
+  drawEmoji(ctx,stage.emoji,petX,petY2,petSz);
+
+  // ── Outfit accessory ──
+  const outItem=SHOP_ITEMS.find(i=>i.id===(shop.equipped[9]||'out_none'));
+  if(outItem&&outItem.id!=='out_none'&&outItem.accessory){
+    const accOff={
+      top:    [0,-petSz*0.58],
+      topright:[petSz*0.35,-petSz*0.45],
+      right:  [petSz*0.6, petSz*0.1],
+      back:   [-petSz*0.55,petSz*0.05]
+    };
+    const off=accOff[outItem.pos||'top']||[0,-petSz*0.5];
+    const accSize=outItem.pos==='wings'||outItem.pos==='back'?petSz*0.55:petSz*0.42;
+    // Wings/back: draw behind pet (already drawn before pet, but we layer on top too)
+    ctx.globalAlpha=0.92;
+    drawEmoji(ctx,outItem.accessory,petX+off[0],petY2+off[1],accSize);
+    ctx.globalAlpha=1;
+  }
+
+  // ── Sleeping zzz ──
+  if(allDone){
+    ctx.globalAlpha=0.6+Math.sin(t*2)*0.25;
+    drawEmoji(ctx,'💤',petX+petSz*0.55,petY2-petSz*0.48,18);
+    ctx.globalAlpha=1;
+  }
+
+  // ── CELEBRATION MODE ──
+  if(allDone){
+    const celCols=['rgba(255,107,107,','rgba(255,217,61,','rgba(107,203,119,','rgba(78,205,196,','rgba(124,92,191,'];
+    for(let cf=0;cf<18;cf++){
+      const cfx=((Math.sin(cf*1.8+t*0.4)*0.45+0.5))*W;
+      const cfy=((t*0.07+cf*0.056)%1.0)*(H+20)-10;
+      ctx.fillStyle=celCols[cf%celCols.length]+'0.85)';
+      ctx.save();ctx.translate(cfx,cfy);ctx.rotate(t*1.2+cf);
+      ctx.fillRect(-4,-2,8,4);ctx.restore();
+    }
+  }
 }
 
 function drawEmoji(ctx,emoji,x,y,size){
@@ -2641,7 +3406,6 @@ function startRoomAnim(){
 }
 
 function petTapped(){
-  // Show speech bubble
   clearTimeout(bubbleTimer);
   const container=document.getElementById('bubble-container');container.innerHTML='';
   const pet=load('petData',defPet());const txp=pet.totalXp||0;
@@ -2653,18 +3417,180 @@ function petTapped(){
   const speech=getPetSpeech(pct);
   const canvas=document.getElementById('room-canvas');
   const rect=canvas.getBoundingClientRect();
-  const bub=document.createElement('div');
-  bub.className='speech-bubble';
+  // Speech bubble
+  const bub=document.createElement('div');bub.className='speech-bubble';
   bub.textContent=speech;
-  bub.style.left=`${rect.width*.25}px`;
-  bub.style.top=`${rect.height*.08}px`;
+  bub.style.left=(rect.width*0.22)+'px';
+  bub.style.top=(rect.height*0.05)+'px';
   container.appendChild(bub);
-  bubbleTimer=setTimeout(()=>container.innerHTML='',3200);
+  // Floating hearts/stars
+  const emojis=pct>=100?['🌟','✨','💖','🎉']:pct>=60?['💛','⭐','😊']:['💪','🌟','❤️'];
+  for(let hi=0;hi<5;hi++){
+    setTimeout(()=>{
+      const hrt=document.createElement('div');
+      hrt.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      hrt.style.cssText='position:absolute;font-size:1.4rem;pointer-events:none;'+
+        'left:'+(rect.width*0.25+Math.random()*rect.width*0.2)+'px;'+
+        'top:'+(rect.height*0.45)+'px;'+
+        'animation:petHeartFloat 1.2s ease-out forwards;z-index:10';
+      container.appendChild(hrt);
+      setTimeout(()=>hrt.remove(),1300);
+    },hi*120);
+  }
+  if(navigator.vibrate)navigator.vibrate([30,20,30]);
+  bubbleTimer=setTimeout(()=>container.innerHTML='',3500);
 }
 
 // ════════════════════════════════════════════════
 // SHOP SYSTEM
 // ════════════════════════════════════════════════
+// ── SHOP PREVIEW ──
+let _previewItem=null,_previewOwned=false,_previewEquipped=false,_previewAfford=false;
+let _previewActive=false;
+
+function showPreview(item,owned,equipped,canAfford){
+  _previewItem=item;_previewOwned=owned;_previewEquipped=equipped;_previewAfford=canAfford;
+  _previewActive=true;
+  const bar=document.getElementById('preview-action-bar');
+  const nameEl=document.getElementById('pab-name');
+  const descEl=document.getElementById('pab-desc');
+  const buyBtn=document.getElementById('pab-buy');
+  if(!bar)return;
+  nameEl.textContent=item.icon+' '+item.name;
+  if(equipped){
+    descEl.textContent='Currently equipped';
+    buyBtn.textContent='✓ Equipped';buyBtn.disabled=true;buyBtn.style.opacity='0.5';
+  } else if(owned){
+    descEl.textContent='You own this — equip now!';
+    buyBtn.textContent='✅ Equip Now';buyBtn.disabled=false;buyBtn.style.opacity='1';
+  } else if(canAfford){
+    descEl.textContent='You can afford this!';
+    buyBtn.textContent='🪙 Buy & Equip ('+item.price+')';buyBtn.disabled=false;buyBtn.style.opacity='1';
+  } else {
+    const need=item.price-(load('heroStats',defStats()).coins||0);
+    descEl.textContent='Need '+need+' more coins';
+    buyBtn.textContent='🪙 '+item.price+' — Not enough';buyBtn.disabled=true;buyBtn.style.opacity='0.5';
+  }
+  bar.style.display='flex';
+  const hint=document.getElementById('room-tap-hint');if(hint)hint.style.display='none';
+  // Preview directly on the real room canvas
+  const shop=getShop();
+  const previewShop={owned:{...shop.owned},equipped:{...shop.equipped}};
+  previewShop.owned[item.id]=true;
+  previewShop.equipped[item.cat]=item.id;
+  drawRoom(previewShop);
+}
+
+function drawRoomOnCtx(ctx,W,H,shop){
+  // Simplified version of drawRoom for preview
+  const pet=load('petData',defPet());const stage=petStage(pet.totalXp||0);
+  const bgItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[0])||SHOP_ITEMS[0];
+  const flItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[1]);
+  const wallItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[2]);
+  const winItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[3]);
+  const bedItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[4]);
+  const plantItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[5]);
+  const lightItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[6]);
+  const toyItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[7]);
+  const fxItem=SHOP_ITEMS.find(i=>i.id===shop.equipped[8]);
+  const FLOOR_Y=H*0.62;
+
+  // Sky
+  const skyC=bgItem.skyColors||['#87CEEB','#B0E0FF'];
+  const sg=ctx.createLinearGradient(0,0,0,FLOOR_Y);sg.addColorStop(0,skyC[0]);sg.addColorStop(1,skyC[skyC.length-1]);
+  ctx.fillStyle=sg;ctx.fillRect(0,0,W,FLOOR_Y);
+  if(bgItem.sunPos){const sx=bgItem.sunPos[0]*W,sy=bgItem.sunPos[1]*H;ctx.fillStyle='rgba(255,230,100,0.9)';ctx.beginPath();ctx.arc(sx,sy,18,0,Math.PI*2);ctx.fill();}
+  if(bgItem.moonPos){const mx=bgItem.moonPos[0]*W,my=bgItem.moonPos[1]*H;ctx.fillStyle='rgba(220,220,180,0.9)';ctx.beginPath();ctx.arc(mx,my,18,0,Math.PI*2);ctx.fill();ctx.fillStyle=skyC[0];ctx.beginPath();ctx.arc(mx+6,my-3,14,0,Math.PI*2);ctx.fill();}
+
+  // Wall
+  const wallC=wallItem&&wallItem.wallPaper?wallItem.wallPaper:(bgItem.wallColor||'#FFF8E7');
+  ctx.fillStyle=wallC;ctx.fillRect(0,0,W,FLOOR_Y);
+
+  // Wall shadow
+  const sw=ctx.createLinearGradient(0,FLOOR_Y-15,0,FLOOR_Y+10);
+  sw.addColorStop(0,'rgba(0,0,0,0)');sw.addColorStop(0.6,'rgba(0,0,0,0.15)');sw.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=sw;ctx.fillRect(0,FLOOR_Y-15,W,25);
+
+  // Floor
+  const flC=flItem&&flItem.floorColor?flItem.floorColor:'#C8A96E';
+  const flD=flItem&&flItem.floorDark?flItem.floorDark:'#A0784A';
+  const fg=ctx.createLinearGradient(0,FLOOR_Y,0,H);fg.addColorStop(0,flC);fg.addColorStop(1,flD);
+  ctx.fillStyle=fg;ctx.fillRect(0,FLOOR_Y,W,H-FLOOR_Y);
+
+  // Window
+  if(winItem&&winItem.id!=='win_none'){
+    const wx=W*0.08,wy=FLOOR_Y*0.12,ww=W*0.22,wh=FLOOR_Y*0.38;
+    ctx.fillStyle='#87CEEB';ctx.fillRect(wx+8,wy+8,ww-16,wh-16);
+    ctx.strokeStyle=winItem.frame||'#8D6E63';ctx.lineWidth=5;
+    ctx.beginPath();ctx.roundRect(wx+4,wy+4,ww-8,wh-8,4);ctx.stroke();
+    ctx.fillStyle=winItem.frame||'#8D6E63';ctx.fillRect(wx+ww/2-2,wy+4,4,wh-8);ctx.fillRect(wx+4,wy+wh/2-2,ww-8,4);
+  }
+
+  // Light glow
+  if(lightItem&&lightItem.id!=='light_none'){
+    const lx=W*0.82,ly=FLOOR_Y*0.15;
+    const rg=ctx.createRadialGradient(lx,ly,0,lx,ly,W*0.4);
+    rg.addColorStop(0,'rgba(255,230,120,0.35)');rg.addColorStop(1,'rgba(255,230,120,0)');
+    ctx.fillStyle=rg;ctx.fillRect(0,0,W,FLOOR_Y);
+    drawEmoji(ctx,lightItem.icon,lx,ly,32);
+  }
+
+  // Plant
+  if(plantItem&&plantItem.id!=='plant_none'){
+    ctx.fillStyle='#8B4513';ctx.beginPath();ctx.moveTo(W*0.08-8,FLOOR_Y);ctx.lineTo(W*0.08+8,FLOOR_Y);ctx.lineTo(W*0.08+5,FLOOR_Y+14);ctx.lineTo(W*0.08-5,FLOOR_Y+14);ctx.fill();
+    drawEmoji(ctx,plantItem.icon,W*0.08,FLOOR_Y-18,34);
+  }
+
+  // Toy
+  if(toyItem&&toyItem.id!=='toy_none') drawEmoji(ctx,toyItem.icon,W*0.85,FLOOR_Y+20,28);
+
+  // Bed (simplified)
+  if(bedItem){
+    const bx=W*0.62,by=FLOOR_Y+5,bw=W*0.32,bh=H*0.3;
+    if(bedItem.id==='bed_cloud'){ctx.fillStyle='rgba(255,255,255,0.9)';ctx.beginPath();ctx.ellipse(bx,by+bh*0.7,bw*0.48,bh*0.24,0,0,Math.PI*2);ctx.fill();}
+    else if(bedItem.id==='bed_royal'){ctx.fillStyle='#7B1FA2';ctx.beginPath();ctx.roundRect(bx-bw*0.5,by,14,bh*0.8,4);ctx.fill();ctx.beginPath();ctx.roundRect(bx+bw*0.5-14,by,14,bh*0.8,4);ctx.fill();ctx.fillStyle='#CE93D8';ctx.beginPath();ctx.roundRect(bx-bw*0.5,by+bh*0.35,bw,bh*0.5,6);ctx.fill();drawEmoji(ctx,'👑',bx,by+8,18);}
+    else{const ng=ctx.createLinearGradient(bx-bw*0.4,by,bx,by+bh);ng.addColorStop(0,'#D7CCC8');ng.addColorStop(1,'#BCAAA4');ctx.fillStyle=ng;ctx.beginPath();ctx.ellipse(bx,by+bh*0.75,bw*0.4,bh*0.2,0,0,Math.PI*2);ctx.fill();}
+    drawEmoji(ctx,bedItem.icon,bx,by+bh*0.2,20);
+  }
+
+  // Pet with aura
+  const pSz=stage.size||72;const pX=W*0.38,pY=FLOOR_Y-10;
+  if(stage.aura){
+    const ag=ctx.createRadialGradient(pX,pY,pSz*0.2,pX,pY,pSz*1.0);
+    ag.addColorStop(0,stage.aura);ag.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=ag;ctx.beginPath();ctx.arc(pX,pY,pSz*1.0,0,Math.PI*2);ctx.fill();
+  }
+  ctx.fillStyle='rgba(0,0,0,0.1)';ctx.beginPath();ctx.ellipse(pX,FLOOR_Y+6,pSz*0.35,pSz*0.1,0,0,Math.PI*2);ctx.fill();
+  drawEmoji(ctx,stage.emoji,pX,pY,pSz);
+  // Outfit
+  const previewOut=SHOP_ITEMS.find(i=>i.id===(shop.equipped[9]||'out_none'));
+  if(previewOut&&previewOut.id!=='out_none'&&previewOut.accessory){
+    const offMap={top:[0,-pSz*0.55],topright:[pSz*0.32,-pSz*0.42],right:[pSz*0.58,pSz*0.08],back:[-pSz*0.5,pSz*0.04]};
+    const off2=offMap[previewOut.pos||'top']||[0,-pSz*0.5];
+    drawEmoji(ctx,previewOut.accessory,pX+off2[0],pY+off2[1],pSz*0.4);
+  }
+}
+
+function closePreview(){
+  _previewItem=null;_previewActive=false;
+  const bar=document.getElementById('preview-action-bar');
+  if(bar)bar.style.display='none';
+  const hint=document.getElementById('room-tap-hint');
+  if(hint)hint.style.display='block';
+  drawRoom();
+}
+
+function previewBuy(){
+  if(!_previewItem)return;
+  shopItemTapped(_previewItem,_previewOwned,_previewEquipped,_previewAfford);
+  closePreview();
+}
+
+function handleRoomTap(e){
+  if(_previewActive)return;
+  petTapped();
+}
+
 function renderShop(){
   const stats=load('heroStats',defStats());const coins=stats.coins||0;
   const shopData=getShop();
@@ -2696,7 +3622,7 @@ function renderShop(){
     else if(sLocked) priceHtml='<div class="streak-lock-badge">&#x1F525;'+sNeeded+'d streak</div>';
     else priceHtml='<div class="shop-item-price'+(canAfford?'':' cant-afford')+'">&#x1FA99; '+item.price+'</div>';
     div.innerHTML='<span class="shop-item-icon">'+(sLocked?'&#x1F512;':item.icon)+'</span><div class="shop-item-name">'+item.name+'</div>'+priceHtml;
-    div.onclick=()=>sLocked?showToast('&#x1F525; Reach a '+sNeeded+'-day streak to unlock!'):shopItemTapped(item,owned,equipped,canAfford);
+    div.onclick=()=>sLocked?showToast('🔥 Reach a '+sNeeded+'-day streak to unlock!'):(_previewItem&&_previewItem.id===item.id?closePreview():showPreview(item,owned,equipped,canAfford));
     gridEl.appendChild(div);
   });
 }
