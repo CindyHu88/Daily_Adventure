@@ -108,6 +108,61 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 .grace-bar.show{display:flex}
 .grace-bar-text{font-size:.82rem;font-weight:800;color:#c47800;flex:1}
 
+/* STREAK CALENDAR */
+.streak-cal{background:var(--card);border-radius:18px;padding:14px 16px;
+  margin-bottom:14px;box-shadow:var(--shadow);border:2px solid #ffe0b0;
+  cursor:pointer;transition:all .2s}
+.streak-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.streak-cal-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--dark);
+  display:flex;align-items:center;gap:6px}
+.streak-cal-sub{font-size:.68rem;font-weight:800;color:#aaa}
+.streak-cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+.streak-cal-dow-lbl{font-family:'Fredoka One',cursive;font-size:.55rem;color:#bbb;text-align:center}
+.streak-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.s-day{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:.58rem;font-weight:800;position:relative;
+  transition:transform .15s}
+.s-day.done{background:linear-gradient(135deg,#6BCB77,#3dab4e);color:#fff}
+.s-day.partial{background:linear-gradient(135deg,#FF9F43,#e07000);color:#fff}
+.s-day.missed{background:#EEE;color:#ccc}
+.s-day.future{background:#F8F8F8;color:#E8E8E8}
+.s-day.today{box-shadow:0 0 0 2.5px var(--orange)}
+.s-day.today.done{box-shadow:0 0 0 2.5px #2da84a}
+.streak-cal-footer{display:flex;align-items:center;justify-content:space-between;
+  margin-top:8px;flex-wrap:wrap;gap:4px}
+.streak-cal-legend{display:flex;gap:8px;flex-wrap:wrap}
+.s-leg{display:flex;align-items:center;gap:3px;font-size:.62rem;font-weight:800;color:#aaa}
+.s-leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.streak-best{font-family:'Fredoka One',cursive;font-size:.72rem;color:var(--orange)}
+.streak-cal.collapsed .streak-cal-dow,
+.streak-cal.collapsed .streak-cal-grid,
+.streak-cal.collapsed .streak-cal-footer{display:none}
+
+/* RESURRECTION BANNER */
+.res-banner{border-radius:16px;padding:14px;margin-bottom:12px;
+  display:none;flex-direction:column;gap:10px;
+  box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.res-banner.show{display:flex}
+.res-banner.hungry{background:linear-gradient(135deg,#2d1200,#5c2800);border:2px solid #FF9F43}
+.res-banner.repair{background:linear-gradient(135deg,#1a0a3e,#2d1560);border:2px solid #a259ff}
+.res-banner.weekend{background:linear-gradient(135deg,#0a2e1a,#1a5230);border:2px solid #6BCB77}
+.res-top{display:flex;align-items:center;gap:10px}
+.res-pet{font-size:2.4rem;flex-shrink:0;animation:resBob 2.5s ease-in-out infinite}
+@keyframes resBob{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.res-body{flex:1;min-width:0}
+.res-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#fff;margin-bottom:3px}
+.res-msg{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.8);line-height:1.45}
+.res-pbar-wrap{background:rgba(255,255,255,.15);border-radius:20px;height:7px;
+  overflow:hidden;margin-top:6px;display:none}
+.res-pbar{height:100%;border-radius:20px;background:linear-gradient(90deg,#6BCB77,#4ECDC4);transition:width .5s}
+.res-btns{display:flex;gap:7px;flex-wrap:wrap}
+.res-btn{flex:1;min-width:90px;border:none;border-radius:12px;padding:10px 8px;
+  font-family:'Fredoka One',cursive;font-size:.82rem;cursor:pointer;
+  text-align:center;transition:all .12s}
+.res-btn:active{transform:translateY(2px)}
+.res-btn-go{background:linear-gradient(135deg,#FFD93D,#FF9500);color:#1a1a1a;box-shadow:0 3px 0 #c07000}
+.res-btn-soft{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
 .stat-card{background:var(--card);border-radius:12px;padding:9px 4px;text-align:center;
@@ -917,6 +972,44 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
     <div class="stat-card s-gem"><span class="stat-icon">💎</span><div class="stat-val" id="stat-gems">0</div><div class="stat-lbl">Gems</div></div>
     <div class="stat-card s-coin"><span class="stat-icon">🪙</span><div class="stat-val" id="stat-coins">0</div><div class="stat-lbl">Coins</div></div>
     <div class="stat-card s-shard"><span class="stat-icon">🔮</span><div class="stat-val" id="stat-shards">0</div><div class="stat-lbl">Shards</div></div>
+  </div>
+
+  <!-- STREAK CALENDAR -->
+  <div class="streak-cal" id="streak-cal" onclick="toggleStreakCal()">
+    <div class="streak-cal-header">
+      <div class="streak-cal-title">🔥 Streak Calendar</div>
+      <div class="streak-cal-sub" id="streak-cal-sub">tap to expand</div>
+    </div>
+    <div class="streak-cal-dow" id="streak-cal-dow">
+      <div class="streak-cal-dow-lbl">Mon</div><div class="streak-cal-dow-lbl">Tue</div>
+      <div class="streak-cal-dow-lbl">Wed</div><div class="streak-cal-dow-lbl">Thu</div>
+      <div class="streak-cal-dow-lbl">Fri</div><div class="streak-cal-dow-lbl">Sat</div>
+      <div class="streak-cal-dow-lbl">Sun</div>
+    </div>
+    <div class="streak-cal-grid" id="streak-cal-grid"></div>
+    <div class="streak-cal-footer">
+      <div class="streak-cal-legend">
+        <div class="s-leg"><div class="s-leg-dot" style="background:#6BCB77"></div>All done</div>
+        <div class="s-leg"><div class="s-leg-dot" style="background:#FF9F43"></div>Partial</div>
+        <div class="s-leg"><div class="s-leg-dot" style="background:#EEE"></div>Missed</div>
+      </div>
+      <div class="streak-best" id="streak-best"></div>
+    </div>
+  </div>
+
+  <!-- RESURRECTION BANNER -->
+  <div class="res-banner" id="res-banner">
+    <div class="res-top">
+      <div class="res-pet" id="res-pet">🐾</div>
+      <div class="res-body">
+        <div class="res-title" id="res-title">Your pet missed you!</div>
+        <div class="res-msg" id="res-msg">Your companion is waiting...</div>
+        <div class="res-pbar-wrap" id="res-pbar-wrap">
+          <div class="res-pbar" id="res-pbar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="res-btns" id="res-btns"></div>
   </div>
 
   <!-- DAILY MINDSET CARD -->
@@ -2109,7 +2202,12 @@ function updateVersionBadge(){
 }
 function defWeek(){const o={};DAYS.forEach(d=>o[d]={tasks:[],bonus:[]});return o}
 function defPet(){return{totalXp:0,shards:0,hatches:0}}
-function defStats(){return{xp:0,streak:0,gems:0,coins:0,lastRewardDate:null,lastProgressDate:null}}
+function defStats(){return{
+  xp:0,streak:0,gems:0,coins:0,
+  lastRewardDate:null,lastProgressDate:null,
+  prevStreak:0,streakBrokeDate:null,
+  repairActive:false,repairProgress:0,repairGoal:0
+}}
 function defProfile(){return{name:'Hero',avatar:'🧙'}}
 function defShop(){
   const owned={};
@@ -2319,6 +2417,8 @@ function renderChild(){
     } else mBanner.classList.remove('show');
   } else if(mBanner) mBanner.classList.remove('show');
 
+  renderStreakCal(stats);
+  renderResBanner(stats);
   document.getElementById('stat-xp').textContent=stats.xp;
   // Streak card with next milestone hint
   document.getElementById('stat-streak').textContent=streakNow;
@@ -2706,11 +2806,15 @@ function tickTimer(key,task,savedTd){
 }
 
 function finishTask(key,mode,isBonus){
-  // mode: false=normal(with timer), true=partial, 'ontime'=done without timer
-  // Guard: prevent double-counting if task already done
+  // Guard 1: task already marked done/partial
   const _prog=load('todayProgress',{});
   if(_prog[key]==='done'||_prog[key]==='partial'){
     showToast('Already completed! ✅');return;
+  }
+  // Guard 2: today already collected — no more XP/coins allowed
+  const _stats=load('heroStats',defStats());
+  if(_stats.lastRewardDate===new Date().toDateString()){
+    showToast('All done for today! Come back tomorrow ✨');return;
   }
   clearInterval(taskTimers[key]);delete taskTimers[key];
   const td=load('timerData',{});const elapsed=computeElapsed(td[key]||{});
@@ -2829,6 +2933,18 @@ function collectDayRewards(){
   if(allDailyDone){
     const prev=stats.streak||0;
     stats.streak=prev+1;
+    // Repair progress
+    if(stats.repairActive){
+      stats.repairProgress=(stats.repairProgress||0)+1;
+      if(stats.repairProgress>=(stats.repairGoal||2)){
+        // RESTORED
+        const restored=stats.prevStreak||stats.streak;
+        stats.streak=restored;
+        stats.repairActive=false;stats.repairProgress=0;
+        stats.coins=(stats.coins||0)+100;
+        setTimeout(function(){showStreakRestoredPopup(restored);},900);
+      }
+    }
     stats.coins=(stats.coins||0)+20;bonusCoins=20;
     let pet=load('petData',defPet());pet.shards=Math.min((pet.shards||0)+1,SHARDS_NEEDED*2);save('petData',pet);
     markHistoryAllDone(todayStr);
@@ -2871,11 +2987,209 @@ function collectDayRewards(){
   renderChild();
 }
 
+// ════════════════════════════════════════════════
+// STREAK CALENDAR
+// ════════════════════════════════════════════════
+var streakCalExpanded=true;
+function toggleStreakCal(){
+  streakCalExpanded=!streakCalExpanded;
+  var el=document.getElementById('streak-cal');
+  if(el) el.className='streak-cal'+(streakCalExpanded?'':' collapsed');
+}
+
+function renderStreakCal(stats){
+  var grid=document.getElementById('streak-cal-grid');
+  var sub=document.getElementById('streak-cal-sub');
+  var best=document.getElementById('streak-best');
+  if(!grid)return;
+  var streak=stats.streak||0;
+  var hist=load('questHistory',[]);
+
+  // Build date→status map from history
+  var statusMap={};
+  hist.forEach(function(e){
+    if(!e.date)return;
+    var d=new Date(e.date);
+    var key=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+    statusMap[key]=e.allDone?'done':(e.tasks&&e.tasks.length>0?'partial':'missed');
+  });
+
+  // Show 5 weeks (35 cells), starting Monday
+  var today=new Date(); today.setHours(0,0,0,0);
+  var start=new Date(today); start.setDate(today.getDate()-27);
+  var dow=start.getDay(); var roll=dow===0?6:dow-1;
+  start.setDate(start.getDate()-roll);
+
+  grid.innerHTML='';
+  var doneTotal=0,bestRun=0,run=0;
+  for(var i=0;i<35;i++){
+    var d=new Date(start); d.setDate(start.getDate()+i); d.setHours(0,0,0,0);
+    var isFuture=d>today;
+    var isToday=d.getTime()===today.getTime();
+    var key=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+    var status=statusMap[key];
+    var cls='s-day';
+    var label=String(d.getDate());
+    if(isFuture){cls+=' future';run=0;}
+    else if(status==='done'){cls+=' done';doneTotal++;run++;if(run>bestRun)bestRun=run;}
+    else if(status==='partial'){cls+=' partial';run=0;}
+    else{cls+=' missed';run=0;}
+    if(isToday)cls+=' today';
+    var div=document.createElement('div');
+    div.className=cls;
+    div.innerHTML='<span style="font-size:.55rem;opacity:.7">'+label+'</span>';
+    if(status==='done'&&!isFuture){
+      var tick=document.createElement('span');
+      tick.style.cssText='position:absolute;font-size:.65rem;bottom:1px;right:1px;line-height:1';
+      tick.textContent='✓'; div.appendChild(tick);
+    }
+    grid.appendChild(div);
+  }
+  if(sub) sub.textContent=streak+' day streak · '+doneTotal+' days completed';
+  if(best){
+    if(streak>0) best.textContent='Keep it up! '+streak+' days in a row 🔥';
+    else if(bestRun>1) best.textContent='Best in view: '+bestRun+' days 🏆';
+    else best.textContent='Start your streak today ⭐';
+  }
+}
+
+function pad2(n){return n<10?'0'+n:String(n);}
+
+// ════════════════════════════════════════════════
+// RESURRECTION SYSTEM
+// ════════════════════════════════════════════════
+function renderResBanner(stats){
+  var banner=document.getElementById('res-banner');
+  if(!banner)return;
+  var prev=stats.prevStreak||0;
+  var broke=stats.streakBrokeDate;
+  if(!prev||!broke){banner.className='res-banner';return;}
+  var brokeDaysAgo=Math.floor((Date.now()-new Date(broke).getTime())/86400000);
+  var todayDow=new Date().getDay(); // 0=Sun,6=Sat
+  var isWeekend=(todayDow===0||todayDow===6);
+  var stage=petStage(load('petData',defPet()).totalXp||0);
+  var petEl=document.getElementById('res-pet');
+  var titleEl=document.getElementById('res-title');
+  var msgEl=document.getElementById('res-msg');
+  var btnsEl=document.getElementById('res-btns');
+  var pbarWrap=document.getElementById('res-pbar-wrap');
+  var pbar=document.getElementById('res-pbar');
+  if(petEl)petEl.textContent=stage.emoji;
+
+  // REPAIR ACTIVE — show progress
+  if(stats.repairActive){
+    banner.className='res-banner repair show';
+    var done=stats.repairProgress||0;
+    var goal=stats.repairGoal||2;
+    if(titleEl)titleEl.textContent='Streak Repair Quest in progress!';
+    if(msgEl)msgEl.textContent='Complete '+goal+' full days to restore your '+prev+'-day streak. ('+done+'/'+goal+' done)';
+    if(pbarWrap)pbarWrap.style.display='block';
+    if(pbar)pbar.style.width=Math.round(done/goal*100)+'%';
+    if(btnsEl){
+      btnsEl.innerHTML='';
+      var btn=document.createElement('button');
+      btn.className='res-btn res-btn-go';
+      btn.textContent='Keep going! ('+done+'/'+goal+' days)';
+      btn.onclick=function(){banner.className='res-banner';};
+      btnsEl.appendChild(btn);
+    }
+    return;
+  }
+
+  // BROKE recently — show repair options
+  if(brokeDaysAgo>4&&!isWeekend){banner.className='res-banner';return;}
+
+  if(isWeekend&&brokeDaysAgo<=5&&stats.streak===0){
+    // WEEKEND RESCUE
+    banner.className='res-banner weekend show';
+    if(titleEl)titleEl.textContent='Weekend Rescue Challenge!';
+    if(msgEl)msgEl.textContent='You missed a day this week. Complete all tasks this weekend and your '+prev+'-day streak is restored!';
+    if(pbarWrap)pbarWrap.style.display='none';
+    if(btnsEl){
+      btnsEl.innerHTML='';
+      var wb=document.createElement('button');
+      wb.className='res-btn res-btn-go';
+      wb.style.background='linear-gradient(135deg,#6BCB77,#3dab4e)';
+      wb.style.boxShadow='0 3px 0 #287a34';
+      wb.textContent='Accept Weekend Challenge!';
+      wb.onclick=function(){
+        var s2=load('heroStats',defStats());
+        s2.repairActive=true;s2.repairProgress=0;s2.repairGoal=2;
+        save('heroStats',s2);
+        showToast('Weekend Repair started! Complete 2 full days to restore your streak!');
+        renderChild();
+      };
+      btnsEl.appendChild(wb);
+    }
+    return;
+  }
+
+  if(brokeDaysAgo<=3&&stats.streak===0){
+    // JUST BROKE — offer repair
+    banner.className='res-banner hungry show';
+    if(titleEl)titleEl.textContent=stage.emoji+' Your pet is worried about you...';
+    if(prev>=7)
+      {if(msgEl)msgEl.textContent='Your '+prev+'-day streak! Complete 2 full days in a row and your pet will bring it back!';}
+    else
+      {if(msgEl)msgEl.textContent='Your '+prev+'-day streak paused. Finish today and tomorrow to restore it!';}
+    if(pbarWrap)pbarWrap.style.display='none';
+    if(btnsEl){
+      btnsEl.innerHTML='';
+      var rb=document.createElement('button');
+      rb.className='res-btn res-btn-go';
+      rb.textContent='Start Repair Quest!';
+      rb.onclick=function(){
+        var s3=load('heroStats',defStats());
+        s3.repairActive=true;s3.repairProgress=0;s3.repairGoal=2;
+        save('heroStats',s3);
+        showToast('Repair Quest started! 2 full days = streak restored!');
+        renderChild();
+      };
+      btnsEl.appendChild(rb);
+      var sb=document.createElement('button');
+      sb.className='res-btn res-btn-soft';
+      sb.textContent='Just do a bit today';
+      sb.onclick=function(){
+        banner.className='res-banner';
+        showToast('Every little bit counts! Keep going!');
+      };
+      btnsEl.appendChild(sb);
+    }
+    return;
+  }
+
+  banner.className='res-banner';
+}
+
+function showStreakRestoredPopup(restored){
+  showPopup(
+    'STREAK RESTORED!',
+    '🔥',
+    [
+      {text:'Your '+restored+'-day streak is BACK!',type:'bonus'},
+      {text:'+100 coins Repair Bonus!',type:'coin'},
+      'What incredible persistence!'
+    ],
+    'Your pet is so proud of you! Nothing can stop you now!'
+  );
+  launchConfetti(150);
+}
+
 function dayRollover(stats){
   const wt=getWeek();const d=stats.lastProgressDate;if(!d)return;
   const yDay=JS_TO_DAY[new Date(d).getDay()];
   const yTasks=(wt[yDay]||{tasks:[]}).tasks||[];
-  if(yTasks.length>0&&stats.lastRewardDate!==d)stats.streak=0;
+  if(yTasks.length>0&&stats.lastRewardDate!==d){
+    if((stats.streak||0)>0){
+      stats.prevStreak=stats.streak;
+      stats.streakBrokeDate=new Date().toDateString();
+      stats.repairActive=true;
+      stats.repairProgress=0;
+      // Repair goal: complete 1 bonus challenge OR 2 full days
+      stats.repairGoal=2;
+    }
+    stats.streak=0;
+  }
 }
 
 // ════════════════════════════════════════════════
