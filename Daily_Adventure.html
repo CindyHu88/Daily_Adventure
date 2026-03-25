@@ -102,11 +102,74 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 .streak-danger-text{font-family:'Fredoka One',cursive;font-size:.88rem;color:#fff;flex:1}
 
 /* GRACE BAR */
+/* ── STREAK CALENDAR ── */
+.streak-cal-card{background:var(--card);border-radius:18px;padding:14px 16px;
+  margin-bottom:14px;box-shadow:var(--shadow);border:2px solid #ffe0b0;cursor:pointer}
+.streak-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.streak-cal-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--dark)}
+.streak-cal-sub{font-size:.7rem;font-weight:800;color:#aaa}
+.streak-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.streak-cal-day{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:.55rem;font-weight:800;position:relative}
+.streak-cal-day.done{background:linear-gradient(135deg,#6BCB77,#3dab4e);color:#fff}
+.streak-cal-day.partial{background:linear-gradient(135deg,#FF9F43,#e07000);color:#fff}
+.streak-cal-day.missed{background:#F0F0F0;color:#ccc}
+.streak-cal-day.today{box-shadow:0 0 0 2.5px var(--orange);z-index:1}
+.streak-cal-day.future{background:#F8F8F8;color:#e0e0e0}
+.streak-cal-day.today.done{box-shadow:0 0 0 2.5px #2da84a}
+.streak-cal-dow{font-family:'Fredoka One',cursive;font-size:.58rem;color:#bbb;
+  text-align:center;margin-bottom:2px}
+.streak-cal-legend{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+.streak-cal-legend-item{display:flex;align-items:center;gap:4px;
+  font-size:.65rem;font-weight:800;color:#aaa}
+.streak-cal-legend-dot{width:10px;height:10px;border-radius:3px}
+.streak-best{font-family:'Fredoka One',cursive;font-size:.78rem;color:var(--orange);
+  margin-top:6px;text-align:center}
+.streak-cal-collapsed .streak-cal-grid,
+.streak-cal-collapsed .streak-cal-legend,
+.streak-cal-collapsed .streak-best,
+.streak-cal-collapsed .streak-cal-dow-row{display:none}
+.streak-cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:2px}
+
 .grace-bar{background:linear-gradient(135deg,#fff3e0,#fff8f0);border:2px solid #FFD93D;
   border-radius:12px;padding:10px 14px;margin-bottom:12px;
   display:none;align-items:center;gap:10px}
 .grace-bar.show{display:flex}
 .grace-bar-text{font-size:.82rem;font-weight:800;color:#c47800;flex:1}
+
+/* ── RESURRECTION BANNER ── */
+.resurrection-banner{border-radius:18px;padding:14px 16px;margin-bottom:12px;
+  display:none;flex-direction:column;gap:10px;position:relative;overflow:hidden;
+  box-shadow:0 4px 0 rgba(140,60,0,.25)}
+.resurrection-banner.show{display:flex}
+.resurrection-banner.hungry{
+  background:linear-gradient(135deg,#2d1b00,#4a2800);border:2px solid #FF9F43}
+.resurrection-banner.repair{
+  background:linear-gradient(135deg,#1a0a3e,#2d1560);border:2px solid #a259ff}
+.resurrection-banner.weekend{
+  background:linear-gradient(135deg,#0a2e1a,#1a5c2e);border:2px solid #6BCB77}
+.res-top{display:flex;align-items:center;gap:12px}
+.res-pet{font-size:2.8rem;animation:resPetShake 2s ease-in-out infinite;flex-shrink:0}
+@keyframes resPetShake{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.res-body{flex:1;min-width:0}
+.res-title{font-family:'Fredoka One',cursive;font-size:1rem;color:#fff;margin-bottom:3px}
+.res-msg{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.4}
+.res-actions{display:flex;gap:8px;flex-wrap:wrap}
+.res-action-btn{flex:1;min-width:100px;border:none;border-radius:12px;padding:10px 8px;
+  font-family:'Fredoka One',cursive;font-size:.82rem;cursor:pointer;
+  transition:all .12s;text-align:center}
+.res-action-btn:active{transform:translateY(2px)}
+.res-btn-primary{background:linear-gradient(135deg,#FFD93D,#FF9500);color:#1a1a1a;box-shadow:0 3px 0 #c07000}
+.res-btn-secondary{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.res-progress-bar{background:rgba(255,255,255,.15);border-radius:20px;height:6px;overflow:hidden;margin-top:4px}
+.res-progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#6BCB77,#4ECDC4);transition:width .5s}
+
+/* Hungry pet overlay on pet card */
+.pet-hungry-overlay{position:absolute;top:6px;right:6px;
+  background:rgba(255,140,0,.9);border-radius:20px;
+  padding:3px 10px;font-family:'Fredoka One',cursive;font-size:.7rem;color:#fff;
+  display:none;animation:hungryPulse 1.5s ease-in-out infinite}
+@keyframes hungryPulse{0%,100%{opacity:1}50%{opacity:.6}}
 
 /* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
@@ -889,6 +952,21 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
     <div class="grace-bar-text">Shield Active! Streak protected until 10:00 AM. Keep going!</div>
   </div>
 
+  <!-- RESURRECTION BANNER -->
+  <div class="resurrection-banner" id="resurrection-banner">
+    <div class="res-top">
+      <div class="res-pet" id="res-pet">🐾</div>
+      <div class="res-body">
+        <div class="res-title" id="res-title">Your pet missed you!</div>
+        <div class="res-msg" id="res-msg">Your little companion is waiting...</div>
+        <div class="res-progress-bar" id="res-progress-bar" style="display:none">
+          <div class="res-progress-fill" id="res-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="res-actions" id="res-actions"></div>
+  </div>
+
   <!-- PET COMPACT CARD -->
   <div class="pet-card" id="pet-card">
     <div class="pet-stars" id="pet-stars"></div>
@@ -897,6 +975,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
         <span class="pet-emoji" id="pet-emoji">🐣</span>
         <span class="zzz-overlay" id="zzz1" style="display: none;">💤</span>
         <span class="zzz-overlay zzz2" id="zzz2" style="display: none;">💤</span>
+        <div class="pet-hungry-overlay" id="pet-hungry-overlay">😢 Hungry!</div>
       </div>
       <div class="pet-pj-badge">😴 PJ Mode</div>
     </div>
@@ -917,6 +996,27 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
     <div class="stat-card s-gem"><span class="stat-icon">💎</span><div class="stat-val" id="stat-gems">0</div><div class="stat-lbl">Gems</div></div>
     <div class="stat-card s-coin"><span class="stat-icon">🪙</span><div class="stat-val" id="stat-coins">0</div><div class="stat-lbl">Coins</div></div>
     <div class="stat-card s-shard"><span class="stat-icon">🔮</span><div class="stat-val" id="stat-shards">0</div><div class="stat-lbl">Shards</div></div>
+  </div>
+
+  <!-- STREAK CALENDAR -->
+  <div class="streak-cal-card" id="streak-cal-card" onclick="toggleStreakCal()">
+    <div class="streak-cal-header">
+      <div class="streak-cal-title">🔥 Streak Calendar</div>
+      <div class="streak-cal-sub" id="streak-cal-sub">0 days · tap to expand</div>
+    </div>
+    <div class="streak-cal-dow-row" id="streak-cal-dow-row">
+      <div class="streak-cal-dow">Mon</div><div class="streak-cal-dow">Tue</div>
+      <div class="streak-cal-dow">Wed</div><div class="streak-cal-dow">Thu</div>
+      <div class="streak-cal-dow">Fri</div><div class="streak-cal-dow">Sat</div>
+      <div class="streak-cal-dow">Sun</div>
+    </div>
+    <div class="streak-cal-grid" id="streak-cal-grid"></div>
+    <div class="streak-cal-legend">
+      <div class="streak-cal-legend-item"><div class="streak-cal-legend-dot" style="background:#6BCB77"></div>All done</div>
+      <div class="streak-cal-legend-item"><div class="streak-cal-legend-dot" style="background:#FF9F43"></div>Partial</div>
+      <div class="streak-cal-legend-item"><div class="streak-cal-legend-dot" style="background:#F0F0F0"></div>Missed</div>
+    </div>
+    <div class="streak-best" id="streak-best"></div>
   </div>
 
   <!-- DAILY MINDSET CARD -->
@@ -2109,7 +2209,17 @@ function updateVersionBadge(){
 }
 function defWeek(){const o={};DAYS.forEach(d=>o[d]={tasks:[],bonus:[]});return o}
 function defPet(){return{totalXp:0,shards:0,hatches:0}}
-function defStats(){return{xp:0,streak:0,gems:0,coins:0,lastRewardDate:null,lastProgressDate:null}}
+function defStats(){return{
+  xp:0,streak:0,gems:0,coins:0,
+  lastRewardDate:null,lastProgressDate:null,
+  prevStreak:0,          // streak before it broke
+  streakBrokeDate:null,  // when it broke
+  repairProgress:0,      // tasks completed toward repair goal
+  repairGoal:0,          // tasks needed to repair
+  repairActive:false,    // repair quest is active
+  weekendChallengeActive:false,
+  weekendBonusTasks:0    // extra tasks done on weekend for repair
+}}
 function defProfile(){return{name:'Hero',avatar:'🧙'}}
 function defShop(){
   const owned={};
@@ -2304,6 +2414,9 @@ function renderChild(){
     dangerTextEl.textContent=`🔥 Streak is in danger! ${remaining} quest${remaining!==1?'s':''} left to protect your ${stats.streak}-day streak!`;
   } else dangerEl.classList.remove('show');
 
+  // ── Resurrection banner ──
+  renderResurrectionBanner(stats);
+
   // Milestone banner (show when within 3 days of next milestone)
   const streakNow=stats.streak||0;
   const nextMil=STREAK_MILESTONES.find(m=>m.days>streakNow);
@@ -2345,6 +2458,7 @@ function renderChild(){
 
   // ── Recommended order banner ──
   renderMindsetCard();
+  renderStreakCalendar();
   const recBar=document.getElementById('rec-order-bar');
   const recText=document.getElementById('rec-order-text');
   if(recBar&&todayTasks.length>1){
@@ -2707,10 +2821,16 @@ function tickTimer(key,task,savedTd){
 
 function finishTask(key,mode,isBonus){
   // mode: false=normal(with timer), true=partial, 'ontime'=done without timer
-  // Guard: prevent double-counting if task already done
+  // Guard 1: prevent double-counting if task already done today
   const _prog=load('todayProgress',{});
   if(_prog[key]==='done'||_prog[key]==='partial'){
     showToast('Already completed! ✅');return;
+  }
+  // Guard 2: prevent any rewards if today already collected (day reset happened)
+  const _stats=load('heroStats',defStats());
+  const _todayStr=new Date().toDateString();
+  if(_stats.lastRewardDate===_todayStr){
+    showToast('All done for today! Come back tomorrow ✨');return;
   }
   clearInterval(taskTimers[key]);delete taskTimers[key];
   const td=load('timerData',{});const elapsed=computeElapsed(td[key]||{});
@@ -2829,6 +2949,20 @@ function collectDayRewards(){
   if(allDailyDone){
     const prev=stats.streak||0;
     stats.streak=prev+1;
+    // Resurrection repair progress
+    if(stats.repairActive){
+      stats.repairProgress=(stats.repairProgress||0)+1;
+      if(stats.repairProgress>=stats.repairGoal){
+        // REPAIR COMPLETE — restore streak!
+        stats.streak=stats.prevStreak||1;
+        stats.repairActive=false;
+        stats.repairProgress=0;
+        stats.repairGoal=0;
+        // Bonus coins for completing repair
+        stats.coins=(stats.coins||0)+100;
+        setTimeout(()=>showRepairCompletePopup(stats.streak),800);
+      }
+    }
     stats.coins=(stats.coins||0)+20;bonusCoins=20;
     let pet=load('petData',defPet());pet.shards=Math.min((pet.shards||0)+1,SHARDS_NEEDED*2);save('petData',pet);
     markHistoryAllDone(todayStr);
@@ -2871,11 +3005,281 @@ function collectDayRewards(){
   renderChild();
 }
 
+// ════════════════════════════════════════════════
+// STREAK CALENDAR
+// ════════════════════════════════════════════════
+let streakCalExpanded = true; // start expanded
+
+function toggleStreakCal(){
+  streakCalExpanded=!streakCalExpanded;
+  const card=document.getElementById('streak-cal-card');
+  if(card){
+    if(streakCalExpanded) card.classList.remove('streak-cal-collapsed');
+    else card.classList.add('streak-cal-collapsed');
+  }
+}
+
+function renderStreakCalendar(){
+  const grid=document.getElementById('streak-cal-grid');
+  const subEl=document.getElementById('streak-cal-sub');
+  const bestEl=document.getElementById('streak-best');
+  if(!grid)return;
+
+  const stats=load('heroStats',defStats());
+  const hist=load('questHistory',[]);
+  const streak=stats.streak||0;
+
+  // Build a map of date -> status from questHistory
+  const statusMap={}; // 'YYYY-MM-DD' -> 'done'|'partial'
+  hist.forEach(entry=>{
+    if(entry.date){
+      const d=new Date(entry.date);
+      const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      if(entry.allDone) statusMap[key]='done';
+      else if(entry.tasks&&entry.tasks.length>0) statusMap[key]='partial';
+    }
+  });
+
+  // Show last 28 days, starting from Monday
+  const today=new Date();
+  today.setHours(0,0,0,0);
+
+  // Find the Monday 27 days ago (so we show 4 complete weeks)
+  const startDay=new Date(today);
+  startDay.setDate(today.getDate()-27);
+  // Roll back to Monday
+  const dow=startDay.getDay(); // 0=Sun
+  const rollback=dow===0?6:dow-1; // days to roll back to Monday
+  startDay.setDate(startDay.getDate()-rollback);
+
+  grid.innerHTML='';
+  let doneCount=0,partialCount=0;
+  let currentStreak=0,bestStreak=0,tempStreak=0;
+
+  const totalDays=Math.ceil((today-startDay)/86400000)+1;
+  for(let i=0;i<35;i++){ // 5 weeks = 35 cells
+    const d=new Date(startDay);
+    d.setDate(startDay.getDate()+i);
+    d.setHours(0,0,0,0);
+    const isFuture=d>today;
+    const isToday=d.getTime()===today.getTime();
+    const dateKey=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const status=statusMap[dateKey];
+    const dayNum=d.getDate();
+
+    let cls='streak-cal-day';
+    let label=String(dayNum);
+    let emoji='';
+
+    if(isFuture){
+      cls+=' future';
+    } else if(status==='done'){
+      cls+=' done';emoji='✓';doneCount++;
+      tempStreak++;if(tempStreak>bestStreak)bestStreak=tempStreak;
+    } else if(status==='partial'){
+      cls+=' partial';emoji='~';partialCount++;
+      tempStreak=0;
+    } else {
+      cls+=' missed';
+      tempStreak=0;
+    }
+    if(isToday)cls+=' today';
+
+    const div=document.createElement('div');
+    div.className=cls;
+    div.title=(isFuture?'Future':status||'no data')+' · '+dateKey;
+    // Show day number, small; emoji overlay for done
+    div.innerHTML='<span style="font-size:.55rem;opacity:.7">'+label+'</span>';
+    if(emoji&&!isFuture){
+      const emojiEl=document.createElement('span');
+      emojiEl.style.cssText='position:absolute;font-size:.7rem;bottom:1px;right:2px';
+      emojiEl.textContent=emoji;
+      div.appendChild(emojiEl);
+    }
+    grid.appendChild(div);
+  }
+
+  // Update subtitle
+  if(subEl){
+    subEl.textContent=streak+' day streak · '+doneCount+' days done';
+  }
+  // Best streak note
+  if(bestEl){
+    if(bestStreak>streak&&bestStreak>1)
+      bestEl.textContent='Best streak in view: '+bestStreak+' days 🏆';
+    else if(streak>0)
+      bestEl.textContent='Current streak: '+streak+' days 🔥 Keep it up!';
+    else
+      bestEl.textContent='Start your streak today! Every day counts ⭐';
+  }
+}
+
+// ════════════════════════════════════════════════
+// RESURRECTION SYSTEM
+// ════════════════════════════════════════════════
+
+function renderResurrectionBanner(stats){
+  const banner=document.getElementById('resurrection-banner');
+  const hungerOverlay=document.getElementById('pet-hungry-overlay');
+  if(!banner)return;
+
+  const todayStr=new Date().toDateString();
+  const todayDay=new Date().getDay(); // 0=Sun,6=Sat
+  const isWeekend=(todayDay===0||todayDay===6);
+  const prevStreak=stats.prevStreak||0;
+  const streakBroke=stats.streakBrokeDate;
+
+  // Only show if streak recently broke (within 7 days)
+  const brokeDaysAgo=streakBroke?
+    Math.floor((Date.now()-new Date(streakBroke).getTime())/86400000):999;
+
+  if(!stats.repairActive&&brokeDaysAgo>3&&!isWeekend){
+    banner.classList.remove('show');
+    if(hungerOverlay)hungerOverlay.style.display='none';
+    return;
+  }
+
+  const stage=petStage(load('petData',defPet()).totalXp||0);
+  const petEl=document.getElementById('res-pet');
+  const titleEl=document.getElementById('res-title');
+  const msgEl=document.getElementById('res-msg');
+  const actionsEl=document.getElementById('res-actions');
+  const progressBar=document.getElementById('res-progress-bar');
+  const progressFill=document.getElementById('res-progress-fill');
+
+  // ── REPAIR ACTIVE ──
+  if(stats.repairActive){
+    banner.className='resurrection-banner repair show';
+    if(petEl)petEl.textContent=stage.emoji;
+    const done=stats.repairProgress||0;
+    const goal=stats.repairGoal||2;
+    const pct=Math.round(done/goal*100);
+    if(titleEl)titleEl.textContent='⚡ Streak Repair Quest!';
+    if(msgEl)msgEl.innerHTML=
+      'Complete <strong style="color:#FFD93D">'+goal+' full days</strong> in a row to restore your '+
+      '<strong style="color:#a259ff">'+prevStreak+'-day streak</strong>! '+
+      '('+done+'/'+goal+' done)';
+    if(progressBar){progressBar.style.display='block';}
+    if(progressFill){progressFill.style.width=pct+'%';}
+    if(hungerOverlay)hungerOverlay.style.display='block';
+    if(actionsEl){
+      actionsEl.innerHTML='';
+      const btn=document.createElement('button');
+      btn.className='res-action-btn res-btn-primary';
+      btn.textContent='💪 Keep Going! ('+done+'/'+goal+' days)';
+      btn.onclick=()=>{banner.classList.remove('show');};
+      actionsEl.appendChild(btn);
+    }
+    return;
+  }
+
+  // ── HUNGRY PET (streak broke, not yet started repair) ──
+  if(prevStreak>0&&brokeDaysAgo<=3&&stats.streak===0){
+    banner.className='resurrection-banner hungry show';
+    if(petEl)petEl.textContent=stage.emoji;
+    if(hungerOverlay)hungerOverlay.style.display='block';
+
+    // Different messages based on streak size
+    const bigStreak=prevStreak>=7;
+    if(titleEl)titleEl.textContent= bigStreak?
+      stage.emoji+' Your pet is worried about you...':
+      stage.emoji+' Oh no! Your streak broke!';
+
+    if(msgEl){
+      if(prevStreak>=30)
+        msgEl.innerHTML='Your '+prevStreak+'-day streak! Don't worry — complete <strong style="color:#FFD93D">2 days in a row</strong> and your pet will bring it back! 🔥';
+      else if(prevStreak>=7)
+        msgEl.innerHTML='Your '+prevStreak+'-day streak is sleeping... Complete <strong style="color:#FFD93D">2 full days</strong> to wake it up! Even starting today helps.';
+      else
+        msgEl.innerHTML='Your '+prevStreak+'-day streak paused. Start a <strong style="color:#6BCB77">Streak Repair Quest</strong>: finish today + tomorrow = streak restored! 💪';
+    }
+
+    if(progressBar)progressBar.style.display='none';
+    if(actionsEl){
+      actionsEl.innerHTML='';
+      // Primary: start repair
+      const repairBtn=document.createElement('button');
+      repairBtn.className='res-action-btn res-btn-primary';
+      repairBtn.textContent='🔥 Start Repair Quest!';
+      repairBtn.onclick=()=>{startRepairQuest(stats);};
+      actionsEl.appendChild(repairBtn);
+      // Secondary: just do partial today
+      const partialBtn=document.createElement('button');
+      partialBtn.className='res-action-btn res-btn-secondary';
+      partialBtn.textContent='😊 Just do a bit today';
+      partialBtn.onclick=()=>{banner.classList.remove('show');showToast('Every little bit counts! 💛');};
+      actionsEl.appendChild(partialBtn);
+    }
+    return;
+  }
+
+  // ── WEEKEND CHALLENGE (broke on weekday, now it is weekend) ──
+  if(isWeekend&&prevStreak>0&&brokeDaysAgo<=5&&stats.streak===0){
+    banner.className='resurrection-banner weekend show';
+    if(petEl)petEl.textContent='🌟';
+    if(hungerOverlay)hungerOverlay.style.display='block';
+    if(titleEl)titleEl.textContent='🌟 Weekend Rescue Challenge!';
+    if(msgEl)msgEl.innerHTML=
+      'You missed a day this week — complete <strong style="color:#6BCB77">all tasks today + tomorrow</strong> and your '+prevStreak+'-day streak comes back!';
+    if(progressBar)progressBar.style.display='none';
+    if(actionsEl){
+      actionsEl.innerHTML='';
+      const btn=document.createElement('button');
+      btn.className='res-action-btn res-btn-primary';
+      btn.style.background='linear-gradient(135deg,#6BCB77,#3aa84a)';
+      btn.style.boxShadow='0 3px 0 #287a34';
+      btn.textContent='🌅 Accept Weekend Challenge!';
+      btn.onclick=()=>{startRepairQuest(stats);};
+      actionsEl.appendChild(btn);
+    }
+    return;
+  }
+
+  // No resurrection needed
+  banner.classList.remove('show');
+  if(hungerOverlay)hungerOverlay.style.display='none';
+}
+
+function startRepairQuest(stats){
+  stats.repairActive=true;
+  stats.repairProgress=0;
+  stats.repairGoal=2;
+  save('heroStats',stats);
+  showToast('🔥 Repair Quest started! Complete 2 full days to restore your streak!');
+  renderChild();
+}
+
+function showRepairCompletePopup(restoredStreak){
+  showPopup(
+    '🔥 STREAK RESTORED!',
+    '🏆',
+    [
+      {text:'Your '+restoredStreak+'-day streak is BACK!',type:'bonus'},
+      {text:'+100🪙 Repair Bonus!',type:'coin'},
+      'You showed incredible persistence!'
+    ],
+    'Your pet is so proud of you! 🐾 Nothing can stop you now!'
+  );
+  launchConfetti(150);
+}
+
 function dayRollover(stats){
   const wt=getWeek();const d=stats.lastProgressDate;if(!d)return;
   const yDay=JS_TO_DAY[new Date(d).getDay()];
   const yTasks=(wt[yDay]||{tasks:[]}).tasks||[];
-  if(yTasks.length>0&&stats.lastRewardDate!==d)stats.streak=0;
+  if(yTasks.length>0&&stats.lastRewardDate!==d){
+    // Streak is breaking — save it for resurrection
+    if(stats.streak>0){
+      stats.prevStreak=stats.streak;
+      stats.streakBrokeDate=new Date().toDateString();
+      // Set repair goal: 2 days of tasks to restore any streak
+      // For big streaks (>7), weekend challenge also unlocks
+      stats.repairGoal=2;
+      stats.repairProgress=0;
+      stats.repairActive=true;
+    }
+    stats.streak=0;
+  }
 }
 
 // ════════════════════════════════════════════════
