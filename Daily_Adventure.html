@@ -1707,10 +1707,82 @@ const HATCH_PETS=['🐰','🐸','🦋','🐼','🦁','🐬','🦅','🦔','🐙'
 // ── Pet speech lines by completion level ──
 const SPEECH_BY_PROGRESS=[
   {min:0,   lines:["Let's start some quests today! 💪","I believe in you! Start a quest!","The adventure begins when you try! ⚔️"]},
-  {min:25,  lines:["Great start! Keep going! 🚀","You're on your way! Don't stop!","Halfway done is not done — push through!"]},
-  {min:60,  lines:["Almost there! You're so close! ⭐","So proud of you right now! 🌟","Last few quests — you've got this!"]},
-  {min:100, lines:["ALL DONE! You're incredible! 🎉","Perfect day! The room glows for you! ✨","LEGENDARY! Time to rest, hero! 😴"]},
+  {min:25,  lines:["Great start! Keep going! 🚀","You are on your way! Don't stop!","Halfway done is not done — push through!"]},
+  {min:60,  lines:["Almost there! You are so close! ⭐","So proud of you right now! 🌟","Last few quests — you have got this!"]},
+  {min:100, lines:["ALL DONE! You are incredible! 🎉","Perfect day! The room glows for you! ✨","LEGENDARY! Time to rest, hero! 😴"]},
 ];
+
+// ── RICH PET DIALOGUE (psychology-based, shown on tap) ──
+// Categories: time management, emotion regulation, growth mindset, encouragement, efficiency
+const PET_DIALOGUE={
+  time:[
+    "Big tasks feel smaller when you break them into steps! Try just the first one. ⏱",
+    "Set a timer for 10 minutes and just BEGIN. Starting is the hardest part! 🚀",
+    "Brains focus better in short bursts. Do one quest, then take a breath! 🌬",
+    "Time tip: do the hardest quest first while your brain is fresh! 🧠",
+    "You don't need to finish everything at once. One task at a time! 🐢",
+    "10 minutes of focus beats an hour of distraction. You can do 10 minutes! ⏰",
+    "Your future self will thank you for starting RIGHT NOW. Go! 💫",
+  ],
+  emotion:[
+    "Feeling frustrated is a sign your brain is working hard. That is good! 💛",
+    "It is okay to feel tired. Take a breath, then try one small step. 🌈",
+    "Hard feelings pass. You are stronger than any hard moment. 💪",
+    "Even heroes have hard days. The quest still counts if you try! 🦸",
+    "When things feel big, do the smallest possible thing. Then the next. 🌱",
+    "Your feelings are real and valid. And you can STILL do this. ✨",
+    "Breathe in for 4, hold for 4, out for 4. Now try the next quest! 🌬",
+  ],
+  growth:[
+    "Every quest you finish makes your brain a little stronger! 🧠",
+    "Mistakes are just proof you are trying. Keep going! 🎯",
+    "You are not behind. You are exactly where you need to be. 🌟",
+    "Difficult things become easy with practice. You are practicing right now! 💡",
+    "The word YET is magic. You cannot do it YET — but you will! ✨",
+    "Small wins add up to big transformations. Today counts! 📈",
+    "Your effort today is an investment in tomorrow's amazing self! 🚀",
+  ],
+  encourage:[
+    "I believe in you more than you believe in yourself right now! 💖",
+    "Look how far you have already come today! I am so proud! 🌟",
+    "You showed up today. That is already a win! 🏆",
+    "Every single quest you do makes me a little bit stronger too! 🐾",
+    "You are doing something hard — and that makes you incredible! ⚡",
+    "I have been watching. You are SO much braver than you think! 🦁",
+    "One quest closer to an amazing version of you. Keep it up! 💫",
+  ],
+  efficiency:[
+    "Tip: Put your phone away before starting a quest. Focus mode ON! 📵",
+    "Body doubled with me! Pretend I am sitting next to you working too! 🐾",
+    "Reward yourself after each quest — a stretch, a sip of water, a smile! 🌈",
+    "Your environment affects your focus. Tidy spot = tidy thinking! ✨",
+    "Transition tip: say OUT LOUD what you are about to do next. It helps! 💬",
+    "Music with no lyrics helps your brain focus. Try it! 🎵",
+    "One tab, one task, one amazing you. Close the rest! 💻",
+  ]
+};
+
+// Get a rotating pet dialogue line based on day+tap count+category
+var _tapCount=0;
+function getRichPetSpeech(pct,stage){
+  _tapCount++;
+  // Choose category based on tap count rotation + time of day
+  var hr=new Date().getHours();
+  var cats=Object.keys(PET_DIALOGUE);
+  // Morning: time management; Afternoon: encouragement; Evening: emotion + growth
+  var catOrder=hr<12?['time','growth','encourage','efficiency','emotion']
+    :hr<17?['encourage','growth','time','emotion','efficiency']
+    :['emotion','encourage','growth','time','efficiency'];
+  var cat=catOrder[_tapCount%catOrder.length];
+  var lines=PET_DIALOGUE[cat];
+  // Also sometimes use progress-based speech
+  if(_tapCount%4===0){
+    var progressLines=SPEECH_BY_PROGRESS[0].lines;
+    SPEECH_BY_PROGRESS.forEach(function(s){if(pct>=s.min)progressLines=s.lines;});
+    return progressLines[Math.floor(Math.random()*progressLines.length)];
+  }
+  return lines[Math.floor(Date.now()/1000+_tapCount)%lines.length];
+}
 
 // ── GROWTH MINDSET QUOTES (for Gifted & 2E children) ──
 // Shown daily, rotating by day number. Categories: effort, mistakes, brain, courage, process.
@@ -2928,16 +3000,19 @@ function collectDayRewards(){
   const dailyDone=tasks.filter((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial').length;
   const bonusDone=bonusTasks.filter((_,i)=>prog['b_'+i]==='done'||prog['b_'+i]==='partial').length;
   if(!dailyDone&&!bonusDone){showToast('⚠️ No completed quests!');return;}
-  const allDailyDone=dailyDone===tasks.length&&tasks.length>0;
+  // allTouched: every task has SOME effort (done OR partial) → keeps streak
+  // allFullDone: every task is fully done → bonus rewards on top
+  const allTouched=tasks.length>0&&tasks.every((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial');
+  const allFullDone=tasks.length>0&&tasks.every((_,i)=>prog['d_'+i]==='done');
+  const streakWorthy=allTouched; // partial counts for streak!
   let bonusCoins=0,milestone=null;
-  if(allDailyDone){
+  if(streakWorthy){
     const prev=stats.streak||0;
     stats.streak=prev+1;
     // Repair progress
     if(stats.repairActive){
       stats.repairProgress=(stats.repairProgress||0)+1;
       if(stats.repairProgress>=(stats.repairGoal||2)){
-        // RESTORED
         const restored=stats.prevStreak||stats.streak;
         stats.streak=restored;
         stats.repairActive=false;stats.repairProgress=0;
@@ -2945,10 +3020,15 @@ function collectDayRewards(){
         setTimeout(function(){showStreakRestoredPopup(restored);},900);
       }
     }
-    stats.coins=(stats.coins||0)+20;bonusCoins=20;
-    let pet=load('petData',defPet());pet.shards=Math.min((pet.shards||0)+1,SHARDS_NEEDED*2);save('petData',pet);
-    markHistoryAllDone(todayStr);
-    // Check streak milestone
+    // Shard only for full completion
+    if(allFullDone){
+      let pet=load('petData',defPet());pet.shards=Math.min((pet.shards||0)+1,SHARDS_NEEDED*2);save('petData',pet);
+      markHistoryAllDone(todayStr);
+    }
+    // All-done bonus coins only for full completion
+    if(allFullDone){stats.coins=(stats.coins||0)+20;bonusCoins=20;}
+    else{stats.coins=(stats.coins||0)+5;bonusCoins=5;} // small bonus for partial-complete
+    // Milestone check
     milestone=STREAK_MILESTONES.find(m=>m.days===stats.streak);
     if(milestone){
       stats.coins=(stats.coins||0)+milestone.coins;bonusCoins+=milestone.coins;
@@ -2966,24 +3046,34 @@ function collectDayRewards(){
   if(bonusCoins>0)floatCoins(bonusCoins,window.innerWidth*.5,window.innerHeight*.5);
 
   const items=[];
-  if(allDailyDone){
-    items.push({text:'+1 🔮 Shard',type:'shard'});
+  if(streakWorthy){
     items.push('🔥 Streak: '+stats.streak+' day'+(stats.streak!==1?'s':''));
-    items.push({text:'+20🪙 All-Done Bonus!',type:'coin'});
+    if(allFullDone){
+      items.push({text:'+1 🔮 Shard',type:'shard'});
+      items.push({text:'+20🪙 All-Done Bonus!',type:'coin'});
+    } else {
+      items.push({text:'+5🪙 Every Task Tried!',type:'coin'});
+      items.push('Streak kept! Partial counts! 💛');
+    }
     if(milestone){
       items.push({text:'+'+milestone.coins+'🪙 '+milestone.label,type:'coin'});
-      if(milestone.shards>0)items.push({text:'+'+milestone.shards+' 🔮 Milestone Shards!',type:'shard'});
+      if(milestone.shards>0)items.push({text:'+'+milestone.shards+' 🔮 Milestone!',type:'shard'});
     }
   }
   if(bonusDone)items.push('⭐ '+bonusDone+' Bonus Quest'+(bonusDone>1?'s':'')+' done!');
-  if(!allDailyDone&&tasks.length>0)items.push(dailyDone+'/'+tasks.length+' daily done');
+  if(!streakWorthy&&tasks.length>0)items.push(dailyDone+'/'+tasks.length+' tasks done');
   const nextAfter=STREAK_MILESTONES.find(m=>m.days>(stats.streak||0));
-  const hint=nextAfter?'Next milestone: '+nextAfter.days+' days — +'+nextAfter.coins+'🪙'+(nextAfter.shards?' +'+nextAfter.shards+'🔮':'')+'!':'Legendary hero! 🏆';
-  showPopup(
-    milestone?milestone.emoji+' '+milestone.label:allDailyDone?'🏆 All Done, '+heroName()+'!':'💪 Partial Rewards!',
-    milestone?milestone.emoji:allDailyDone?'🎊':'⚡',items,
-    allDailyDone?hint:'Complete all daily quests for extra 20🪙 bonus!');
-  if(allDailyDone)launchConfetti(milestone?150:100);
+  const hint=nextAfter?'Next milestone: '+nextAfter.days+' days!':'Legendary hero! 🏆';
+  const popTitle=milestone?milestone.emoji+' '+milestone.label
+    :allFullDone?'🏆 All Done, '+heroName()+'!'
+    :streakWorthy?'💛 Streak Kept, '+heroName()+'!'
+    :'💪 Partial Rewards!';
+  const popEmoji=milestone?milestone.emoji:allFullDone?'🎊':streakWorthy?'💛':'⚡';
+  const popMsg=allFullDone?hint
+    :streakWorthy?'Every task touched = streak saved! Full done = extra shard!'
+    :'Try to touch every quest to keep your streak!';
+  showPopup(popTitle,popEmoji,items,popMsg);
+  if(streakWorthy)launchConfetti(allFullDone?(milestone?150:100):40);
   renderChild();
 }
 
@@ -3728,31 +3818,44 @@ function petTapped(){
   const tasks=(wt[td]||{tasks:[]}).tasks||[];
   const doneCount=tasks.filter((_,i)=>prog['d_'+i]==='done'||prog['d_'+i]==='partial').length;
   const pct=tasks.length>0?Math.round(doneCount/tasks.length*100):0;
-  const speech=getPetSpeech(pct);
+  const speech=getRichPetSpeech(pct,stage);
   const canvas=document.getElementById('room-canvas');
   const rect=canvas.getBoundingClientRect();
-  // Speech bubble
-  const bub=document.createElement('div');bub.className='speech-bubble';
-  bub.textContent=speech;
-  bub.style.left=(rect.width*0.22)+'px';
-  bub.style.top=(rect.height*0.05)+'px';
+
+  // Animated speech bubble — wider, nicer
+  const bub=document.createElement('div');
+  bub.className='speech-bubble';
+  bub.style.cssText='left:8px;top:'+(rect.height*0.04)+'px;max-width:'+(rect.width*0.82)+'px;'+
+    'font-size:.78rem;line-height:1.45;padding:10px 13px;border-radius:14px;'+
+    'background:#fff;border:2px solid #E8E0FF;box-shadow:0 4px 16px rgba(124,92,191,.18);'+
+    'pointer-events:none;animation:bubblePop .3s cubic-bezier(.175,.885,.32,1.275)';
+  // Pet name tag at top
+  const tag=document.createElement('div');
+  tag.style.cssText='font-family:Fredoka One,cursive;font-size:.65rem;color:var(--purple);'+
+    'margin-bottom:5px;display:flex;align-items:center;gap:4px';
+  tag.innerHTML=stage.emoji+' <span>'+stage.name+' says:</span>';
+  const msg=document.createElement('div');
+  msg.style.cssText='color:#333;font-weight:700';
+  msg.textContent=speech;
+  bub.appendChild(tag);bub.appendChild(msg);
   container.appendChild(bub);
-  // Floating hearts/stars
+
+  // Floating particles based on mood
   const emojis=pct>=100?['🌟','✨','💖','🎉']:pct>=60?['💛','⭐','😊']:['💪','🌟','❤️'];
-  for(let hi=0;hi<5;hi++){
+  for(let hi=0;hi<6;hi++){
     setTimeout(()=>{
       const hrt=document.createElement('div');
       hrt.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      hrt.style.cssText='position:absolute;font-size:1.4rem;pointer-events:none;'+
-        'left:'+(rect.width*0.25+Math.random()*rect.width*0.2)+'px;'+
-        'top:'+(rect.height*0.45)+'px;'+
-        'animation:petHeartFloat 1.2s ease-out forwards;z-index:10';
+      hrt.style.cssText='position:absolute;font-size:1.3rem;pointer-events:none;'+
+        'left:'+(rect.width*0.2+Math.random()*rect.width*0.25)+'px;'+
+        'top:'+(rect.height*0.42)+'px;'+
+        'animation:petHeartFloat 1.4s ease-out forwards;z-index:10';
       container.appendChild(hrt);
-      setTimeout(()=>hrt.remove(),1300);
-    },hi*120);
+      setTimeout(()=>hrt.remove(),1500);
+    },hi*100);
   }
-  if(navigator.vibrate)navigator.vibrate([30,20,30]);
-  bubbleTimer=setTimeout(()=>container.innerHTML='',3500);
+  if(navigator.vibrate)navigator.vibrate([25,15,25]);
+  bubbleTimer=setTimeout(()=>container.innerHTML='',5000);
 }
 
 // ════════════════════════════════════════════════
