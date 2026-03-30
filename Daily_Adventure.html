@@ -326,6 +326,66 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   border:none;border-radius:12px;padding:9px;font-family:'Fredoka One',cursive;
   font-size:.88rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #7a00d4;
   margin-top:8px;transition:all .1s;animation:pulse 1.5s ease-in-out infinite}
+
+/* HATCH MODAL */
+#hatch-modal{position:fixed;inset:0;z-index:800;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(10,5,30,0.92);backdrop-filter:blur(8px)}
+#hatch-modal.show{display:flex}
+.hatch-box{background:linear-gradient(160deg,#1a0533,#0d0d2b);border-radius:28px;
+  padding:28px 20px;max-width:360px;width:100%;text-align:center;
+  border:2px solid rgba(160,100,255,.4);
+  box-shadow:0 0 60px rgba(120,60,255,.4),0 20px 60px rgba(0,0,0,.6);
+  animation:popIn .35s cubic-bezier(.175,.885,.32,1.275)}
+.hatch-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#fff;margin-bottom:4px}
+.hatch-sub{font-size:.78rem;color:rgba(255,255,255,.55);font-weight:700;margin-bottom:20px}
+.hatch-eggs{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.hatch-egg{width:88px;cursor:pointer;border-radius:18px;padding:14px 8px;
+  border:2.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
+  transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.hatch-egg:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.12);transform:translateY(-4px)}
+.hatch-egg.selected{border-color:#FFD93D;background:rgba(255,215,0,.15);transform:translateY(-6px);
+  box-shadow:0 0 20px rgba(255,215,0,.3)}
+.hatch-egg-icon{font-size:2.8rem;line-height:1}
+.hatch-egg-question{font-size:2.8rem;line-height:1;filter:drop-shadow(0 0 8px rgba(160,100,255,.8))}
+.hatch-egg-rarity{font-family:'Fredoka One',cursive;font-size:.65rem;
+  padding:2px 8px;border-radius:20px;color:#fff}
+.hatch-egg-label{font-family:'Fredoka One',cursive;font-size:.72rem;color:rgba(255,255,255,.6)}
+.hatch-confirm-btn{width:100%;background:linear-gradient(135deg,#FFD93D,#FF9500);
+  border:none;border-radius:14px;padding:13px;font-family:'Fredoka One',cursive;
+  font-size:.95rem;color:#1a1a1a;cursor:pointer;box-shadow:0 4px 0 #c07000;
+  margin-bottom:8px;transition:all .12s}
+.hatch-confirm-btn:disabled{background:#444;color:#888;box-shadow:none;cursor:not-allowed}
+.hatch-cancel-btn{width:100%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:14px;padding:10px;font-family:'Fredoka One',cursive;
+  font-size:.85rem;color:rgba(255,255,255,.7);cursor:pointer}
+
+/* REVEAL ANIMATION */
+.hatch-reveal{font-size:5rem;margin:12px 0;animation:revealPop .6s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes revealPop{0%{transform:scale(0) rotate(-20deg);opacity:0}
+  60%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.hatch-rarity-banner{font-family:'Fredoka One',cursive;font-size:1.1rem;
+  padding:6px 20px;border-radius:20px;margin:6px auto;display:inline-block}
+
+/* PET COLLECTION DRAWER */
+.collection-section{background:var(--card);border-radius:18px;padding:14px 16px;
+  margin-top:12px;box-shadow:var(--shadow);border:2px solid #e0d0ff}
+.collection-header{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--dark);
+  margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.collection-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.collection-pet{background:#F5F0FF;border-radius:14px;padding:10px 6px;text-align:center;
+  border:2px solid #EEE;cursor:pointer;transition:all .15s;position:relative}
+.collection-pet:hover{border-color:var(--purple);transform:translateY(-2px)}
+.collection-pet.active-display{border-color:#FFD93D;background:#FFF9E6;
+  box-shadow:0 0 0 3px rgba(255,215,0,.3)}
+.collection-pet-emoji{font-size:1.8rem;display:block;margin-bottom:3px}
+.collection-pet-name{font-size:.62rem;font-weight:800;color:var(--dark)}
+.collection-pet-rarity{font-size:.55rem;font-weight:800;padding:1px 5px;
+  border-radius:10px;color:#fff;display:inline-block;margin-top:2px}
+.collection-pet-active-badge{position:absolute;top:-5px;right:-5px;background:#FFD93D;
+  border-radius:20px;padding:1px 5px;font-family:'Fredoka One',cursive;
+  font-size:.55rem;color:#1a1a1a}
+.collection-empty{text-align:center;padding:20px;color:#bbb;font-size:.82rem;font-weight:700}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
 .new-pet-btn:active{transform:scale(.98)}
 
@@ -1156,7 +1216,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
       <span id="shard-count-lbl" style="color:#888">0 / 20</span>
     </div>
     <div class="shard-row" id="shard-row"><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div><div class="shard-pip"></div></div>
-    <button class="new-pet-btn" id="new-pet-btn" onclick="hatchNewPet()" style="display:none">🥚 Hatch New Pet! (20 Shards ready!)</button>
+    <button class="new-pet-btn" id="new-pet-btn" onclick="openHatchModal()" style="display:none">🥚 Hatch a New Pet! (20 Shards ready!) ✨</button>
   </div>
 
   <div class="collect-bar">
@@ -1207,6 +1267,15 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
     <h3>🛒 Pet Shop <span style="font-size:.75rem;font-weight:700;color:#aaa;font-family:&#39;Nunito&#39;,sans-serif">— decorate your pet's home!</span></h3>
     <div class="shop-cats" id="shop-cats"></div>
     <div class="shop-grid" id="shop-grid"></div>
+  </div>
+
+  <!-- Pet Collection -->
+  <div class="collection-section">
+    <div class="collection-header">
+      <span>🐾 My Pet Collection</span>
+      <span style="font-size:.68rem;font-weight:700;color:#aaa" id="collection-count">0 pets</span>
+    </div>
+    <div class="collection-grid" id="collection-grid"></div>
   </div>
 </div>
 
@@ -1646,6 +1715,29 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
   </div>
 </div>
 
+<!-- HATCH MODAL -->
+<div id="hatch-modal">
+  <div class="hatch-box" id="hatch-box">
+    <!-- State 1: Choose an egg -->
+    <div id="hatch-choose">
+      <div class="hatch-title">🥚 Hatch a New Pet!</div>
+      <div class="hatch-sub">Pick one egg — but choose wisely!</div>
+      <div class="hatch-eggs" id="hatch-eggs"></div>
+      <button class="hatch-confirm-btn" id="hatch-confirm-btn" onclick="confirmHatch()" disabled>Choose an egg first!</button>
+      <button class="hatch-cancel-btn" onclick="closeHatchModal()">Maybe later</button>
+    </div>
+    <!-- State 2: Reveal -->
+    <div id="hatch-reveal-state" style="display:none">
+      <div class="hatch-title">✨ It hatched!</div>
+      <div class="hatch-reveal" id="hatch-reveal-emoji">🐰</div>
+      <div class="hatch-rarity-banner" id="hatch-rarity-banner">Common</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#fff;margin:8px 0" id="hatch-reveal-name">Bunny</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.65);font-weight:700;margin-bottom:16px" id="hatch-reveal-msg">Added to your collection!</div>
+      <button class="hatch-confirm-btn" onclick="closeHatchModal()">Awesome! 🎉</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-btn" id="nav-quests" onclick="navTo(&#39;quest-view&#39;)">
@@ -1678,23 +1770,44 @@ const DEFAULT_PIN='1234';
 const AVATAR_OPTIONS=['🧙','🦸','🧝','🧛','🧜','🧚','🥷','🦊','🐱','🐶',
   '🦁','🐸','🐼','🦋','🦄','🐉','⚔️','🚀','🌈','🎮'];
 const PET_STAGES=[
-  // size: base emoji size in px; aura: glow color; ring: orbit ring; particles: floating particles
-  {min:0,    emoji:'🐣',name:'Baby Egg',     mood:'😴',size:64,aura:null,  ring:false,particles:null,
-   speech:["I'm still hatching...","Feed me quests! 🍽️","One day I'll be huge!"]},
-  {min:300,  emoji:'🐥',name:'Fluffy Chick', mood:'😊',size:68,aura:'rgba(255,230,100,0.4)',ring:false,particles:null,
-   speech:["Cheep cheep! You did it!","I love when you do quests!","You're my favourite hero! 🌟"]},
-  {min:800,  emoji:'🐱',name:'Curious Cat',  mood:'😄',size:72,aura:'rgba(255,180,220,0.4)',ring:false,particles:['✨'],
-   speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You're amazing! 😸"]},
-  {min:2000, emoji:'🦊',name:'Clever Fox',   mood:'😎',size:76,aura:'rgba(255,140,60,0.45)',ring:true, particles:['⭐','✨'],
-   speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team! 🦊⚔️"]},
-  {min:5000, emoji:'🐉',name:'Mini Dragon',  mood:'🤩',size:84,aura:'rgba(255,80,80,0.5)',  ring:true, particles:['🔥','⭐'],
-   speech:["ROAR! We crushed those quests!","Dragon power activated! 🔥","I'll protect you always! 🐉"]},
-  {min:12000,emoji:'🦄',name:'Magic Unicorn',mood:'🥰',size:90,aura:'rgba(200,100,255,0.55)',ring:true,particles:['🌈','✨','💜'],
-   speech:["Magical vibes only! ✨","You're absolutely legendary!","Sprinkle sprinkle quest dust! 🌈"]},
-  {min:25000,emoji:'🌟',name:'Star Guardian',mood:'✨',size:100,aura:'rgba(255,220,50,0.65)',ring:true,particles:['⭐','🌟','✨','💫'],
-   speech:["You have reached the stars! 🌟","The universe thanks you!","Beyond legendary! Keep going! ⭐"]},
+  // 9 stages over 18 months: monthly for first 3, then every 2/2.5/3 months
+  {min:0,     emoji:'🐣',name:'Baby Egg',      mood:'😴',size:64, aura:null,                   ring:false,particles:null,
+   speech:["I am still hatching...","Feed me quests!","One day I will be huge!"]},
+  {min:6300,  emoji:'🐥',name:'Fluffy Chick',  mood:'😊',size:68, aura:'rgba(255,230,100,0.4)',ring:false,particles:null,
+   speech:["Cheep cheep! You did it!","I love when you do quests!","You are my favourite hero!"]},
+  {min:12600, emoji:'🐱',name:'Curious Cat',   mood:'😄',size:72, aura:'rgba(255,180,220,0.4)',ring:false,particles:['✨'],
+   speech:["Purrrr... more quests please!","I explored the whole room today!","Meow! You are amazing!"]},
+  {min:18900, emoji:'🦊',name:'Clever Fox',    mood:'😎',size:76, aura:'rgba(255,140,60,0.45)',ring:true, particles:['⭐','✨'],
+   speech:["A clever hero needs a clever pet!","Your brain is getting stronger!","We make a great team!"]},
+  {min:31500, emoji:'🐉',name:'Mini Dragon',   mood:'🤩',size:84, aura:'rgba(255,80,80,0.5)',  ring:true, particles:['🔥','⭐'],
+   speech:["ROAR! We crushed those quests!","Dragon power activated!","I will protect you always!"]},
+  {min:44100, emoji:'🦄',name:'Magic Unicorn', mood:'🥰',size:90, aura:'rgba(200,100,255,0.55)',ring:true,particles:['🌈','✨','💜'],
+   speech:["Magical vibes only!","You are absolutely legendary!","Sprinkle sprinkle quest dust!"]},
+  {min:59850, emoji:'🌟',name:'Star Guardian', mood:'✨',size:96, aura:'rgba(255,220,50,0.6)', ring:true, particles:['⭐','🌟','✨'],
+   speech:["You have reached the stars!","The universe thanks you!","Beyond legendary! Keep going!"]},
+  {min:75600, emoji:'🪐',name:'Cosmic Beast',  mood:'🌌',size:104,aura:'rgba(100,180,255,0.65)',ring:true,particles:['💫','🌟','⭐','✨'],
+   speech:["Cosmic power activated!","You are one with the universe!","Galaxies bow before your effort!"]},
+  {min:94500, emoji:'✨',name:'Legend Guardian',mood:'👑',size:112,aura:'rgba(255,255,200,0.7)',ring:true,particles:['✨','💫','🌟','👑','⭐'],
+   speech:["LEGENDARY! You are beyond words!","The greatest hero this world has ever seen!","You ARE the quest! Pure legend!"]},
 ];
-const LVL_XP=[100,160,240,360,520,760,1040];
+const LVL_XP=[200,320,480,720,1040,1520,2080,2800,3600];
+// Hatching pool — common/rare/epic with rarity weights
+// rarity: 0=common(60%), 1=rare(30%), 2=epic(10%)
+const HATCH_POOL=[
+  {emoji:'🐰',name:'Bunny',    rarity:0,color:'#FFB3C6'},
+  {emoji:'🐸',name:'Froggy',   rarity:0,color:'#6BCB77'},
+  {emoji:'🐼',name:'Panda',    rarity:0,color:'#888'},
+  {emoji:'🦔',name:'Hedgehog', rarity:0,color:'#C8A96E'},
+  {emoji:'🦋',name:'Butterfly',rarity:1,color:'#7C5CBF'},
+  {emoji:'🦁',name:'Lion',     rarity:1,color:'#FF9F43'},
+  {emoji:'🦅',name:'Eagle',    rarity:1,color:'#54A0FF'},
+  {emoji:'🐙',name:'Octopus',  rarity:1,color:'#FF6B6B'},
+  {emoji:'🐬',name:'Dolphin',  rarity:2,color:'#4ECDC4'},
+  {emoji:'🦖',name:'Dino',     rarity:2,color:'#6BCB77'},
+  {emoji:'🐲',name:'Dragon',   rarity:2,color:'#FF4D8D'},
+];
+const RARITY_NAMES=['Common','Rare','Epic'];
+const RARITY_COLORS=['#aaa','#4ECDC4','#FFD93D'];
 const STREAK_MILESTONES=[
   {days:3,  coins:50,  shards:0,label:'3-Day Hero!',     emoji:'🔥'},
   {days:7,  coins:150, shards:1,label:'One Week Wonder!', emoji:'🌟'},
@@ -2273,7 +2386,13 @@ function updateVersionBadge(){
   if(el) el.textContent = 'App v' + APP_VERSION + ' · Data schema v' + DATA_VERSION;
 }
 function defWeek(){const o={};DAYS.forEach(d=>o[d]={tasks:[],bonus:[]});return o}
-function defPet(){return{totalXp:0,shards:0,hatches:0}}
+function defPet(){return{
+  totalXp:0,        // evolution XP — NEVER resets
+  shards:0,
+  hatches:0,
+  collection:[],    // array of hatched pets: {emoji,name,rarity,color,hatchedAt}
+  displayPet:null   // if set, show this collected pet in room instead of evolution pet
+}}
 function defStats(){return{
   xp:0,streak:0,gems:0,coins:0,
   lastRewardDate:null,lastProgressDate:null,
@@ -2968,13 +3087,160 @@ function markHistoryAllDone(todayStr){let hist=load('questHistory',[]);const e=h
 // PET
 // ════════════════════════════════════════════════
 function feedPet(xp){let pet=load('petData',defPet());pet.totalXp=(pet.totalXp||0)+xp;save('petData',pet);}
-function hatchNewPet(){
-  let pet=load('petData',defPet());
-  if((pet.shards||0)<SHARDS_NEEDED){showToast('⚠️ Not enough shards!');return;}
-  pet.shards-=SHARDS_NEEDED;pet.totalXp=0;pet.hatches=(pet.hatches||0)+1;save('petData',pet);
-  const newEmoji=HATCH_PETS[pet.hatches%HATCH_PETS.length];
-  showPopup('🥚 New Pet Hatched!',newEmoji,[{text:'Used 20 🔮 Shards',type:'shard'},'Pet XP reset!'],`Keep completing quests, ${heroName()}!`);
-  launchConfetti(120);renderChild();
+// ════════════════════════════════════════════════
+// HATCH SYSTEM — independent from evolution
+// ════════════════════════════════════════════════
+var _hatchChoices=[];  // 3 random candidates shown to player
+var _hatchSelected=-1; // index of chosen egg
+
+function openHatchModal(){
+  var pet=load('petData',defPet());
+  if((pet.shards||0)<SHARDS_NEEDED){showToast('Not enough shards!');return;}
+  // Pick 3 random pets weighted by rarity
+  _hatchChoices=pickHatchChoices(pet.collection||[]);
+  _hatchSelected=-1;
+  // Reset modal to choose state
+  document.getElementById('hatch-choose').style.display='block';
+  document.getElementById('hatch-reveal-state').style.display='none';
+  renderHatchEggs();
+  document.getElementById('hatch-modal').classList.add('show');
+}
+
+function pickHatchChoices(collection){
+  // Weight: common=6, rare=3, epic=1
+  var weights=[6,3,1];
+  var pool=HATCH_POOL.slice();
+  // Shuffle with weights
+  var weighted=[];
+  pool.forEach(function(p){weighted.push({pet:p,w:weights[p.rarity]});});
+  // Pick 3 distinct pets (prefer ones not yet collected)
+  var notOwned=weighted.filter(function(w){
+    return !collection.some(function(c){return c.emoji===w.pet.emoji;});
+  });
+  var source=notOwned.length>=3?notOwned:weighted;
+  // Weighted random selection without replacement
+  var chosen=[];
+  var src=source.slice();
+  for(var i=0;i<3&&src.length>0;i++){
+    var total=src.reduce(function(s,x){return s+x.w;},0);
+    var r=Math.random()*total;
+    var cum=0;
+    for(var j=0;j<src.length;j++){
+      cum+=src[j].w;
+      if(r<=cum){chosen.push(src[j].pet);src.splice(j,1);break;}
+    }
+  }
+  return chosen;
+}
+
+function renderHatchEggs(){
+  var grid=document.getElementById('hatch-eggs');
+  if(!grid)return;
+  grid.innerHTML='';
+  _hatchChoices.forEach(function(pet,idx){
+    var div=document.createElement('div');
+    div.className='hatch-egg';
+    div.innerHTML=
+      '<div class="hatch-egg-question">🥚</div>'+
+      '<div class="hatch-egg-rarity" style="background:'+RARITY_COLORS[pet.rarity]+'">'+RARITY_NAMES[pet.rarity]+'</div>'+
+      '<div class="hatch-egg-label">Egg '+(idx+1)+'</div>';
+    div.onclick=(function(i){return function(){selectHatchEgg(i);};})(idx);
+    grid.appendChild(div);
+  });
+}
+
+function selectHatchEgg(idx){
+  _hatchSelected=idx;
+  var eggs=document.querySelectorAll('.hatch-egg');
+  eggs.forEach(function(e,i){
+    e.className='hatch-egg'+(i===idx?' selected':'');
+    // Reveal rarity hint when selected
+    if(i===idx){
+      var pet=_hatchChoices[idx];
+      e.innerHTML=
+        '<div class="hatch-egg-question" style="filter:drop-shadow(0 0 12px '+RARITY_COLORS[pet.rarity]+')">🥚</div>'+
+        '<div class="hatch-egg-rarity" style="background:'+RARITY_COLORS[pet.rarity]+'">'+RARITY_NAMES[pet.rarity]+'</div>'+
+        '<div class="hatch-egg-label" style="color:#FFD93D">Selected!</div>';
+    }
+  });
+  var btn=document.getElementById('hatch-confirm-btn');
+  if(btn){
+    var rarity=_hatchChoices[idx].rarity;
+    btn.disabled=false;
+    btn.textContent='Hatch this '+(rarity===2?'Epic':rarity===1?'Rare':'Common')+' egg! 🥚';
+  }
+}
+
+function confirmHatch(){
+  if(_hatchSelected<0||_hatchSelected>=_hatchChoices.length)return;
+  var pet=load('petData',defPet());
+  if((pet.shards||0)<SHARDS_NEEDED){showToast('Not enough shards!');return;}
+  var chosen=_hatchChoices[_hatchSelected];
+  // Spend shards — DO NOT touch totalXp (evolution is independent!)
+  pet.shards-=SHARDS_NEEDED;
+  pet.hatches=(pet.hatches||0)+1;
+  if(!pet.collection)pet.collection=[];
+  var newPet={emoji:chosen.emoji,name:chosen.name,rarity:chosen.rarity,
+    color:chosen.color,hatchedAt:new Date().toDateString()};
+  pet.collection.push(newPet);
+  save('petData',pet);
+  // Show reveal
+  document.getElementById('hatch-choose').style.display='none';
+  document.getElementById('hatch-reveal-state').style.display='block';
+  document.getElementById('hatch-reveal-emoji').textContent=chosen.emoji;
+  var rarBanner=document.getElementById('hatch-rarity-banner');
+  rarBanner.textContent=RARITY_NAMES[chosen.rarity]+' Pet!';
+  rarBanner.style.background=RARITY_COLORS[chosen.rarity];
+  rarBanner.style.color=chosen.rarity===0?'#333':'#fff';
+  document.getElementById('hatch-reveal-name').textContent=chosen.emoji+' '+chosen.name;
+  document.getElementById('hatch-reveal-msg').textContent=
+    chosen.rarity===2?'WOW! An Epic pet! So rare! Added to your collection!':
+    chosen.rarity===1?'A Rare pet! Nice pull! Added to your collection!':
+    'A sweet Common pet! Added to your collection!';
+  launchConfetti(chosen.rarity===2?180:chosen.rarity===1?120:60);
+  // Update shard display
+  renderChild();
+}
+
+function closeHatchModal(){
+  document.getElementById('hatch-modal').classList.remove('show');
+  if(currentView==='home-view')renderHome();
+}
+
+function setDisplayPet(emoji){
+  var pet=load('petData',defPet());
+  // Toggle: if already displaying this pet, switch back to evolution pet
+  pet.displayPet=(pet.displayPet===emoji)?null:emoji;
+  save('petData',pet);
+  renderHome();
+  showToast(pet.displayPet?'Showing '+emoji+' in your room!':'Showing your evolution pet!');
+}
+
+function renderCollection(){
+  var grid=document.getElementById('collection-grid');
+  var countEl=document.getElementById('collection-count');
+  if(!grid)return;
+  var pet=load('petData',defPet());
+  var coll=pet.collection||[];
+  if(countEl)countEl.textContent=coll.length+' pet'+(coll.length!==1?'s':'');
+  grid.innerHTML='';
+  if(!coll.length){
+    grid.innerHTML='<div class="collection-empty" style="grid-column:1/-1">Hatch pets with 🔮 shards to build your collection!</div>';
+    return;
+  }
+  coll.forEach(function(p){
+    var isActive=pet.displayPet===p.emoji;
+    var div=document.createElement('div');
+    div.className='collection-pet'+(isActive?' active-display':'');
+    div.title='Tap to '+(isActive?'stop displaying':'display in room');
+    div.innerHTML=
+      '<span class="collection-pet-emoji">'+p.emoji+'</span>'+
+      '<div class="collection-pet-name">'+p.name+'</div>'+
+      '<div class="collection-pet-rarity" style="background:'+RARITY_COLORS[p.rarity]+'">'+RARITY_NAMES[p.rarity]+'</div>'+
+      (isActive?'<div class="collection-pet-active-badge">ON</div>':'');
+    div.onclick=(function(emoji){return function(){setDisplayPet(emoji);};})(p.emoji);
+    grid.appendChild(div);
+  });
 }
 
 // ════════════════════════════════════════════════
@@ -3292,11 +3558,15 @@ function renderHome(){
   const stats=load('heroStats',defStats());
   const pet=load('petData',defPet());
   const stage=petStage(pet.totalXp||0);
-  document.getElementById('home-avatar').textContent=stage.emoji;
-  document.getElementById('home-pet-title').textContent=`${stage.name}'s Home`;
-  document.getElementById('home-coin-sub').textContent=`🪙 ${stats.coins||0} coins to spend`;
+  // If displaying a collected pet, show that emoji; otherwise show evolution pet
+  const displayEmoji=pet.displayPet||stage.emoji;
+  document.getElementById('home-avatar').textContent=displayEmoji;
+  document.getElementById('home-pet-title').textContent=
+    pet.displayPet?'My Pet Collection':''+stage.name+"'s Home";
+  document.getElementById('home-coin-sub').textContent='🪙 '+(stats.coins||0)+' coins to spend';
   drawRoom();
   renderShop();
+  renderCollection();
 }
 
 function drawRoom(previewShop){
@@ -3711,6 +3981,9 @@ function drawRoom(previewShop){
   const petX=W*0.38;
   const bob=allDone?2:Math.sin(t*1.4)*6;
   const petY2=FLOOR_Y-12+bob;
+  // Use display pet if set, otherwise use evolution pet
+  const _petData=load('petData',defPet());
+  const _displayEmoji=_petData.displayPet||stage.emoji;
   const petSz=stage.size||72;
 
   // ── Aura glow ──
@@ -3757,7 +4030,7 @@ function drawRoom(previewShop){
   ctx.beginPath();ctx.ellipse(petX,FLOOR_Y+8,petSz*0.38,petSz*0.11,0,0,Math.PI*2);ctx.fill();
 
   // ── Pet emoji ──
-  drawEmoji(ctx,stage.emoji,petX,petY2,petSz);
+  drawEmoji(ctx,_displayEmoji,petX,petY2,petSz);
 
   // ── Outfit accessory ──
   const outItem=SHOP_ITEMS.find(i=>i.id===(shop.equipped[9]||'out_none'));
